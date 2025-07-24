@@ -13,11 +13,12 @@ const AuthRedirect = ({ lang }) => {
   const pathname = usePathname()
 
   // ℹ️ Bring me `lang`
-  const redirectUrl = `/${lang}/login?redirectTo=${pathname}`
-  const login = `/${lang}/login`
-  const homePage = getLocalizedUrl(themeConfig.homePageUrl, lang)
+  const redirectUrl = `/${lang}/signin?redirectTo=${pathname}`
+  const signin = `/${lang}/signin`
+  // const homePage = getLocalizedUrl(themeConfig.homePageUrl, lang)
+  const on2doorDashboardPage = getLocalizedUrl(themeConfig.on2doorDashboardPageUrl, lang)
 
-  return redirect(pathname === login ? login : pathname === homePage ? login : redirectUrl)
+  return redirect(pathname === signin ? signin : pathname === on2doorDashboardPage ? signin : redirectUrl)
 }
 
 export default AuthRedirect
