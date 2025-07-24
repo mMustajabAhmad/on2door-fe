@@ -17,7 +17,8 @@
  */
 const themeConfig = {
   templateName: 'Materio',
-  homePageUrl: '/dashboards/crm',
+  // homePageUrl: '/dashboards/crm',
+  on2doorDashboardPageUrl: '/dashboards',
   settingsCookieName: 'materio-mui-next-demo-1',
   mode: 'system', // 'system', 'light', 'dark'
   skin: 'default', // 'default', 'bordered'
