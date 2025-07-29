@@ -14,7 +14,7 @@ const AuthRedirect = ({ lang }) => {
 
   // ℹ️ Bring me `lang`
   const redirectUrl = `/${lang}/signin?redirectTo=${pathname}`
-  const signin = `/${lang}/signin`
+  const signin = `/${lang}/login`
   // const homePage = getLocalizedUrl(themeConfig.homePageUrl, lang)
   const on2doorDashboardPage = getLocalizedUrl(themeConfig.on2doorDashboardPageUrl, lang)
 

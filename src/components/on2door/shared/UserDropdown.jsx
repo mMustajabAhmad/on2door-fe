@@ -2,6 +2,7 @@
 
 // React Imports
 import { useRef, useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 
 // Next Imports
 import { useParams, useRouter } from 'next/navigation'
@@ -28,6 +29,7 @@ import { useSettings } from '@core/hooks/useSettings'
 
 // Util Imports
 import { getLocalizedUrl } from '@/utils/i18n'
+import { logoutAdministratorApi } from '@/app/api/on2door/actions'
 
 // Styled component for badge content
 const BadgeContentSpan = styled('span')({
@@ -68,17 +70,19 @@ const UserDropdown = () => {
     setOpen(false)
   }
 
-  const handleUserLogout = async () => {
-    try {
-      // Sign out from the app
-        await signOut({ callbackUrl: `/${locale}/dashboard` })
-    } catch (error) {
-      console.error(error)
+  const { mutate: logoutAdministrator, isPending } = useMutation({
+    mutationFn: logoutAdministratorApi,
 
-      // Show above error in a toast like following
-      // toastService.error((err as Error).message)
+    onSuccess: () => {
+      localStorage.removeItem('authToken')
+      localStorage.removeItem('currentUser')
+      router.replace(getLocalizedUrl('/login', locale))
+    },
+
+    onError: err => {
+      console.error('Logout failed:', err)
     }
-  }
+  })
 
   return (
     <>
@@ -150,7 +154,7 @@ const UserDropdown = () => {
                       color='error'
                       size='small'
                       endIcon={<i className='ri-logout-box-r-line' />}
-                      onClick={handleUserLogout}
+                      onClick={logoutAdministrator}
                       sx={{ '& .MuiButton-endIcon': { marginInlineStart: 1.5 } }}
                     >
                       Logout
