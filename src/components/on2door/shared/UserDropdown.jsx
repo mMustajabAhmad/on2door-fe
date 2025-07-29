@@ -126,15 +126,15 @@ const UserDropdown = () => {
                   </div>
                   <Divider className='mlb-1' />
                   {/* <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, '/pages/user-profile')}> */}
-                  <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, '/administrator-profile')}>
+                  <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, '/administrator/profile')}>
                     <i className='ri-user-3-line' />
                     <Typography color='text.primary'>My Profile</Typography>
                   </MenuItem>
                   {/* <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, '/pages/account-settings')}> */}
-                  <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, '/account-settings')}>
+                  {/* <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, '/account-settings')}>
                     <i className='ri-settings-4-line' />
                     <Typography color='text.primary'>Settings</Typography>
-                  </MenuItem>
+                  </MenuItem> */}
                   {/* <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, '/pages/pricing')}>
                     <i className='ri-money-dollar-circle-line' />
                     <Typography color='text.primary'>Pricing</Typography>
