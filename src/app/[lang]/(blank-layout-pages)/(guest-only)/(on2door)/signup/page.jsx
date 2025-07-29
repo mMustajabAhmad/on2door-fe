@@ -16,4 +16,4 @@ const SignupPage = async () => {
   return <Signup mode={mode} />
 }
 
-export default SignupPage
+export default SignupPage 
