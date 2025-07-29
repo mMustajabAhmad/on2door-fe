@@ -7,6 +7,7 @@ import { useTheme } from '@mui/material/styles'
 
 // Third-party Imports
 import PerfectScrollbar from 'react-perfect-scrollbar'
+import { useSession } from 'next-auth/react'
 
 // Component Imports
 import { Menu, SubMenu, MenuItem, MenuSection } from '@menu/vertical-menu'
@@ -33,11 +34,16 @@ const SideNav = ({ dictionary, scrollMenu }) => {
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
   const params = useParams()
+  const { data: session } = useSession()
 
   // Vars
   const { isBreakpointReached, transitionDuration } = verticalNavOptions
   const { lang: locale } = params
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
+
+  // Get organization ID from session or use a default value
+  // You can modify this based on how you store organization data in your session
+  const organizationId = session?.user?.organizationId || 'default'
 
   return (
     // eslint-disable-next-line lines-around-comment
@@ -130,7 +136,7 @@ const SideNav = ({ dictionary, scrollMenu }) => {
           </SubMenu> */}
           {/* <MenuItem href={`/${locale}/pages/on2door/user-profile`} icon={<i className='ri-info-card-line' />}>{dictionary['navigation'].userProfile}</MenuItem> */}
           {/* <MenuItem href={`/${locale}/pages/on2door/account-settings`} icon={<i className='ri-account-circle-line' />}>{dictionary['navigation'].accountSettings}</MenuItem> */}
-          <MenuItem href={`/${locale}/organization`} icon={<i className='ri-building-line' />}>{dictionary['on2door'].organization}</MenuItem>
+          <MenuItem href={`/${locale}/organizations`} icon={<i className='ri-building-line' />}>{dictionary['on2door'].organization}</MenuItem>
           {/* <SubMenu label={dictionary['navigation'].pages} icon={<i className='ri-layout-left-line' />}>
             <MenuItem href={`/${locale}/pages/user-profile`}>{dictionary['navigation'].userProfile}</MenuItem>
             <MenuItem href={`/${locale}/pages/account-settings`}>{dictionary['navigation'].accountSettings}</MenuItem>
