@@ -103,7 +103,7 @@ const SideNav = ({ dictionary, scrollMenu }) => {
             <MenuItem href={`/${locale}/apps/user/list`} icon={<i className='ri-user-line' />}>{dictionary['navigation'].list}</MenuItem>
             <MenuItem href={`/${locale}/apps/user/view`}>{dictionary['navigation'].view}</MenuItem>
           </SubMenu> */}
-          <MenuItem href={`/${locale}/dispatchers`} icon={<i className='ri-user-line' />}>{dictionary['on2door'].dispatchers}</MenuItem>
+          <MenuItem href={`/${locale}/administrators/dispatchers`} icon={<i className='ri-user-line' />}>{dictionary['on2door'].dispatchers}</MenuItem>
           {/* <SubMenu label={dictionary['on2door'].dispatchers} icon={<i className='ri-user-line' />}>
             <MenuItem href={`/${locale}/apps/user/list`}>{dictionary['navigation'].list}</MenuItem>
             <MenuItem href={`/${locale}/apps/user/view`}>{dictionary['navigation'].view}</MenuItem>
