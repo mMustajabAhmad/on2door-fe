@@ -1,5 +1,5 @@
 // Component Imports
-import DispatcherList from '@views/on2door/apps/administrators/dispatchers/list'
+import DispatcherList from '@views/on2door/administrators/dispatchers/list'
 
 // Data Imports
 import { getUserData } from '@/app/server/actions'

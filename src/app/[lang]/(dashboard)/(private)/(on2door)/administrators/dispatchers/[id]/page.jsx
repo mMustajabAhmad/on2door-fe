@@ -9,8 +9,8 @@ import Grid from '@mui/material/Grid2'
 // import UserLeftOverview from '@views/apps/user/view/user-left-overview'
 // import UserRight from '@views/apps/user/view/user-right'
 
-import DispatcherLeftOverview from '@/views/on2door/apps/administrators/dispatchers/view/dispatcher-left-overview'
-import DispatcherRight from '@/views/on2door/apps/administrators/dispatchers/view/dispatcher-right'
+import DispatcherLeftOverview from '@/views/on2door/administrators/dispatchers/view/dispatcher-left-overview'
+import DispatcherRight from '@/views/on2door/administrators/dispatchers/view/dispatcher-right'
 
 // Data Imports
 import { getPricingData, getDispatcherById } from '@/app/server/actions'
@@ -21,11 +21,11 @@ import { getPricingData, getDispatcherById } from '@/app/server/actions'
 // const NotificationsTab = dynamic(() => import('@views/apps/user/view/user-right/notifications'))
 // const ConnectionsTab = dynamic(() => import('@views/apps/user/view/user-right/connections'))
 
-const OverViewTab = dynamic(() => import('@/views/on2door/apps/administrators/dispatchers/view/dispatcher-right/overview'))
-const SecurityTab = dynamic(() => import('@/views/on2door/apps/administrators/dispatchers/view/dispatcher-right/security'))
-const BillingPlans = dynamic(() => import('@/views/on2door/apps/administrators/dispatchers/view/dispatcher-right/billing-plans'))
-const NotificationsTab = dynamic(() => import('@/views/on2door/apps/administrators/dispatchers/view/dispatcher-right/notifications'))
-const ConnectionsTab = dynamic(() => import('@/views/on2door/apps/administrators/dispatchers/view/dispatcher-right/connections'))
+const OverViewTab = dynamic(() => import('@/views/on2door/administrators/dispatchers/view/dispatcher-right/overview'))
+const SecurityTab = dynamic(() => import('@/views/on2door/administrators/dispatchers/view/dispatcher-right/security'))
+const BillingPlans = dynamic(() => import('@/views/on2door/administrators/dispatchers/view/dispatcher-right/billing-plans'))
+const NotificationsTab = dynamic(() => import('@/views/on2door/administrators/dispatchers/view/dispatcher-right/notifications'))
+const ConnectionsTab = dynamic(() => import('@/views/on2door/administrators/dispatchers/view/dispatcher-right/connections'))
 
 // Vars
 const tabContentList = (data, userData) => ({

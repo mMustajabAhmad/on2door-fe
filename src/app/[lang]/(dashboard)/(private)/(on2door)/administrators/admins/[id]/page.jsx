@@ -9,8 +9,8 @@ import Grid from '@mui/material/Grid2'
 // import UserLeftOverview from '@views/apps/user/view/user-left-overview'
 // import UserRight from '@views/apps/user/view/user-right'
 
-import AdminLeftOverview from '@/views/on2door/apps/administrators/admins/view/admin-left-overview'
-import AdminRight from '@/views/on2door/apps/administrators/admins/view/admin-right'
+import AdminLeftOverview from '@/views/on2door/administrators/admins/view/admin-left-overview'
+import AdminRight from '@/views/on2door/administrators/admins/view/admin-right'
 
 // Data Imports
 import { getPricingData, getAdminById } from '@/app/server/actions'
@@ -21,11 +21,11 @@ import { getPricingData, getAdminById } from '@/app/server/actions'
 // const NotificationsTab = dynamic(() => import('@views/apps/user/view/user-right/notifications'))
 // const ConnectionsTab = dynamic(() => import('@views/apps/user/view/user-right/connections'))
 
-const OverViewTab = dynamic(() => import('@/views/on2door/apps/administrators/admins/view/admin-right/overview'))
-const SecurityTab = dynamic(() => import('@/views/on2door/apps/administrators/admins/view/admin-right/security'))
-const BillingPlans = dynamic(() => import('@/views/on2door/apps/administrators/admins/view/admin-right/billing-plans'))
-const NotificationsTab = dynamic(() => import('@/views/on2door/apps/administrators/admins/view/admin-right/notifications'))
-const ConnectionsTab = dynamic(() => import('@/views/on2door/apps/administrators/admins/view/admin-right/connections'))
+const OverViewTab = dynamic(() => import('@/views/on2door/administrators/admins/view/admin-right/overview'))
+const SecurityTab = dynamic(() => import('@/views/on2door/administrators/admins/view/admin-right/security'))
+const BillingPlans = dynamic(() => import('@/views/on2door/administrators/admins/view/admin-right/billing-plans'))
+const NotificationsTab = dynamic(() => import('@/views/on2door/administrators/admins/view/admin-right/notifications'))
+const ConnectionsTab = dynamic(() => import('@/views/on2door/administrators/admins/view/admin-right/connections'))
 
 // Vars
 const tabContentList = (data, userData) => ({

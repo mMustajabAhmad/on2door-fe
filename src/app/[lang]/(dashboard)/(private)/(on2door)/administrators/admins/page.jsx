@@ -1,5 +1,5 @@
 // Component Imports
-import AdminList from '@views/on2door/apps/administrators/admins/list'
+import AdminList from '@views/on2door/administrators/admins/list'
   
 // Data Imports
 import { getUserData } from '@/app/server/actions'
