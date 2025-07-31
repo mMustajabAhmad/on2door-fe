@@ -55,3 +55,8 @@ export const getPricingData = async () => {
 export const getStatisticsData = async () => {
   return statisticsData
 }
+
+export const getUserById = async (id) => {
+  const user = userData.find(user => user.id === parseInt(id))
+  return user || null
+}

@@ -1,6 +1,6 @@
 // Component Imports
-import UserList from '@views/apps/user/list'
-
+import AdminList from '@views/on2door/apps/administrators/admins/list'
+  
 // Data Imports
 import { getUserData } from '@/app/server/actions'
 
@@ -24,7 +24,7 @@ const UserListApp = async () => {
   // Vars
   const data = await getUserData()
 
-  return <UserList userData={data} />
+  return <AdminList userData={data} />
 }
 
 export default UserListApp
