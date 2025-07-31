@@ -13,7 +13,7 @@ import AdminLeftOverview from '@/views/on2door/apps/administrators/admins/view/a
 import AdminRight from '@/views/on2door/apps/administrators/admins/view/admin-right'
 
 // Data Imports
-import { getPricingData, getUserById } from '@/app/server/actions'
+import { getPricingData, getAdminById } from '@/app/server/actions'
 
 // const OverViewTab = dynamic(() => import('@views/apps/user/view/user-right/overview'))
 // const SecurityTab = dynamic(() => import('@views/apps/user/view/user-right/security'))
@@ -38,7 +38,7 @@ const tabContentList = (data, userData) => ({
 
 const UserViewPage = async ({ params }) => {
   // Get user data by ID
-  const userData = await getUserById(params.id)
+  const userData = await getAdminById(params.id)
 
   if (!userData)  notFound()
 
