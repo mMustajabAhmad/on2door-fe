@@ -1,61 +1,60 @@
 // Next Imports
 import dynamic from 'next/dynamic'
+import { notFound } from 'next/navigation'
 
 // MUI Imports
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-import UserLeftOverview from '@views/apps/user/view/user-left-overview'
-import UserRight from '@views/apps/user/view/user-right'
+// import UserLeftOverview from '@views/apps/user/view/user-left-overview'
+// import UserRight from '@views/apps/user/view/user-right'
+
+import DispatcherLeftOverview from '@/views/on2door/apps/administrators/dispatchers/view/dispatcher-left-overview'
+import DispatcherRight from '@/views/on2door/apps/administrators/dispatchers/view/dispatcher-right'
 
 // Data Imports
-import { getPricingData } from '@/app/server/actions'
+import { getPricingData, getUserById } from '@/app/server/actions'
 
-const OverViewTab = dynamic(() => import('@views/apps/user/view/user-right/overview'))
-const SecurityTab = dynamic(() => import('@views/apps/user/view/user-right/security'))
-const BillingPlans = dynamic(() => import('@views/apps/user/view/user-right/billing-plans'))
-const NotificationsTab = dynamic(() => import('@views/apps/user/view/user-right/notifications'))
-const ConnectionsTab = dynamic(() => import('@views/apps/user/view/user-right/connections'))
+// const OverViewTab = dynamic(() => import('@views/apps/user/view/user-right/overview'))
+// const SecurityTab = dynamic(() => import('@views/apps/user/view/user-right/security'))
+// const BillingPlans = dynamic(() => import('@views/apps/user/view/user-right/billing-plans'))
+// const NotificationsTab = dynamic(() => import('@views/apps/user/view/user-right/notifications'))
+// const ConnectionsTab = dynamic(() => import('@views/apps/user/view/user-right/connections'))
+
+const OverViewTab = dynamic(() => import('@/views/on2door/apps/administrators/dispatchers/view/dispatcher-right/overview'))
+const SecurityTab = dynamic(() => import('@/views/on2door/apps/administrators/dispatchers/view/dispatcher-right/security'))
+const BillingPlans = dynamic(() => import('@/views/on2door/apps/administrators/dispatchers/view/dispatcher-right/billing-plans'))
+const NotificationsTab = dynamic(() => import('@/views/on2door/apps/administrators/dispatchers/view/dispatcher-right/notifications'))
+const ConnectionsTab = dynamic(() => import('@/views/on2door/apps/administrators/dispatchers/view/dispatcher-right/connections'))
 
 // Vars
-const tabContentList = data => ({
-  overview: <OverViewTab />,
-  security: <SecurityTab />,
-  'billing-plans': <BillingPlans data={data} />,
-  notifications: <NotificationsTab />,
-  connections: <ConnectionsTab />
+const tabContentList = (data, userData) => ({
+  overview: <OverViewTab userData={userData} />,
+  security: <SecurityTab userData={userData} />,
+  'billing-plans': <BillingPlans data={data} userData={userData} />,
+  notifications: <NotificationsTab userData={userData} />,
+  connections: <ConnectionsTab userData={userData} />
 })
 
-/**
- * ! If you need data using an API call, uncomment the below API code, update the `process.env.API_URL` variable in the
- * ! `.env` file found at root of your project and also update the API endpoints like `/pages/pricing` in below example.
- * ! Also, remove the above server action import and the action itself from the `src/app/server/actions.ts` file to clean up unused code
- * ! because we've used the server action for getting our static data.
- */
-/* const getPricingData = async () => {
-  // Vars
-  const res = await fetch(`${process.env.API_URL}/pages/pricing`)
+const UserViewPage = async ({ params }) => {
+  // Get user data by ID
+  const userData = await getUserById(params.id)
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch data')
-  }
+  if (!userData)  notFound()
 
-  return res.json()
-} */
-const UserViewTab = async () => {
-  // Vars
+  // Get pricing data for billing plans
   const data = await getPricingData()
 
   return (
     <Grid container spacing={6}>
       <Grid size={{ xs: 12, lg: 4, md: 5 }}>
-        <UserLeftOverview />
+        <DispatcherLeftOverview userData={userData} />
       </Grid>
       <Grid size={{ xs: 12, lg: 8, md: 7 }}>
-        <UserRight tabContentList={tabContentList(data)} />
+        <DispatcherRight tabContentList={tabContentList(data, userData)} />
       </Grid>
     </Grid>
   )
 }
 
-export default UserViewTab
+export default UserViewPage
