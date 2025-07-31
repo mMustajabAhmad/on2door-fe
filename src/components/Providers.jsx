@@ -1,4 +1,4 @@
-import ClientProviders from './ClientProviders'
+import ClientProviders from './on2door/ClientProviders'
 import { getMode, getSettingsFromCookie, getSystemMode } from '@core/utils/serverHelpers'
 
 const Providers = async ({ children, direction }) => {

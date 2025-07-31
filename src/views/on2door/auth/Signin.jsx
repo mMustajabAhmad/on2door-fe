@@ -47,7 +47,7 @@ const schema = object({
   password: pipe(
     string(),
     nonEmpty('This field is required'),
-    minLength(5, 'Password must be at least 5 characters long')
+    minLength(6, 'Password must be at least 5 characters long')
   )
 })
 
@@ -109,6 +109,15 @@ const Login = ({ mode }) => {
     onError: err => setErrorState(err)
   })
 
+  const onSubmit = data => {
+      const payload = {
+        administrator: {
+          email: data.email,
+          password: data.password
+        }}
+      loginAdministrator(payload)
+  }
+
   return (
     <div className='flex bs-full justify-center'>
       <div
@@ -153,7 +162,7 @@ const Login = ({ mode }) => {
           <form
             noValidate
             autoComplete='off'
-            onSubmit={handleSubmit(data => loginAdministrator({ administrator: data }))}
+            onSubmit={handleSubmit(onSubmit)}
             className='flex flex-col gap-5'
           >
             <Controller
@@ -227,7 +236,7 @@ const Login = ({ mode }) => {
 
             <div className='flex justify-center items-center flex-wrap gap-2'>
               <Typography>New on our platform?</Typography>
-              <Typography component={Link} href='/register' color='primary.main'>
+              <Typography component={Link} href='/signup' color='primary.main'>
                 Create an account
               </Typography>
             </div>
