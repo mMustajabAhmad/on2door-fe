@@ -75,3 +75,8 @@ export const getOrganizationById = async (id) => {
   const user = userData.find(user => user.id === parseInt(id))
   return user || null
 }
+
+export const getDriverById = async (id) => {
+  const user = userData.find(user => user.id === parseInt(id))
+  return user || null
+}
