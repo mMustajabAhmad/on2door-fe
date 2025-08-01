@@ -40,8 +40,11 @@ export const getPermissionsData = async () => {
   return permissionData
 }
 
-export const getProfileData = async () => {
-  return profileData
+export const getProfileData = async (userId = '1') => {
+  // In a real application, we will fetch user data from database based on the userId
+  const baseData = { ...profileData }
+
+  return { ...baseData, userId: userId }
 }
 
 export const getFaqData = async () => {

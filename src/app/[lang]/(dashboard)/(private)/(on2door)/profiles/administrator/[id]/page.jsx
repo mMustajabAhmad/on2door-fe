@@ -2,15 +2,21 @@
 import dynamic from 'next/dynamic'
 
 // Component Imports
-import UserProfile from '@views/pages/user-profile'
+// import UserProfile from '@views/pages/user-profile'
+import AdministratorProfile from '@/views/on2door/profiles'
 
 // Data Imports
 import { getProfileData } from '@/app/server/actions'
 
-const ProfileTab = dynamic(() => import('@views/pages/user-profile/profile/index'))
-const TeamsTab = dynamic(() => import('@views/pages/user-profile/teams/index'))
-const ProjectsTab = dynamic(() => import('@views/pages/user-profile/projects/index'))
-const ConnectionsTab = dynamic(() => import('@views/pages/user-profile/connections/index'))
+// const ProfileTab = dynamic(() => import('@views/pages/user-profile/profile/index'))
+// const TeamsTab = dynamic(() => import('@views/pages/user-profile/teams/index'))
+// const ProjectsTab = dynamic(() => import('@views/pages/user-profile/projects/index'))
+// const ConnectionsTab = dynamic(() => import('@views/pages/user-profile/connections/index'))
+
+const ProfileTab = dynamic(() => import('@/views/on2door/profiles/profile/index'))
+const TeamsTab = dynamic(() => import('@/views/on2door/profiles/teams/index'))
+const ProjectsTab = dynamic(() => import('@/views/on2door/profiles/projects/index'))
+const ConnectionsTab = dynamic(() => import('@/views/on2door/profiles/connections/index'))
 
 // Vars
 const tabContentList = data => ({
@@ -36,11 +42,12 @@ const tabContentList = data => ({
 
   return res.json()
 } */
-const ProfilePage = async () => {
+const ProfilePage = async ({ params }) => {
   // Vars
-  const data = await getProfileData()
+  const { id } = params
+  const data = await getProfileData(id)
 
-  return <UserProfile data={data} tabContentList={tabContentList(data)} />
+  return <AdministratorProfile data={data} tabContentList={tabContentList(data)} userId={id} />
 }
 
 export default ProfilePage
