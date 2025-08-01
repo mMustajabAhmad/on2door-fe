@@ -321,11 +321,11 @@ const UserListTable = ({ tableData }) => {
             <DebouncedInput
               value={globalFilter ?? ''}
               onChange={value => setGlobalFilter(String(value))}
-              placeholder='Search Admin'
+              placeholder='Search Hub'
               className='max-sm:is-full'
             />
             <Button variant='contained' onClick={() => setAddUserOpen(!addUserOpen)} className='max-sm:is-full'>
-              Add New Admin
+              Add New Hub
             </Button>
           </div>
         </div>
