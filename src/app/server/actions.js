@@ -40,8 +40,11 @@ export const getPermissionsData = async () => {
   return permissionData
 }
 
-export const getProfileData = async () => {
-  return profileData
+export const getProfileData = async (userId = '1') => {
+  // In a real application, we will fetch user data from database based on the userId
+  const baseData = { ...profileData }
+
+  return { ...baseData, userId: userId }
 }
 
 export const getFaqData = async () => {
@@ -54,4 +57,44 @@ export const getPricingData = async () => {
 
 export const getStatisticsData = async () => {
   return statisticsData
+}
+
+export const getUserById = async (id) => {
+  const user = userData.find(user => user.id === parseInt(id))
+  return user || null
+}
+
+export const getAdminById = async (id) => {
+  const user = userData.find(user => user.id === parseInt(id))
+  return user || null
+}
+
+export const getDispatcherById = async (id) => {
+  const user = userData.find(user => user.id === parseInt(id))
+  return user || null
+}
+
+export const getOrganizationById = async (id) => {
+  const user = userData.find(user => user.id === parseInt(id))
+  return user || null
+}
+
+export const getDriverById = async (id) => {
+  const user = userData.find(user => user.id === parseInt(id))
+  return user || null
+}
+
+export const getHubById = async (id) => {
+  const user = userData.find(user => user.id === parseInt(id))
+  return user || null
+}
+
+export const getTaskById = async (id) => {
+  const user = userData.find(user => user.id === parseInt(id))
+  return user || null
+}
+
+export const getTeamById = async (id) => {
+  const user = userData.find(user => user.id === parseInt(id))
+  return user || null
 }

@@ -43,7 +43,7 @@ const SideNav = ({ dictionary, scrollMenu }) => {
 
   // Get organization ID from session or use a default value
   // You can modify this based on how you store organization data in your session
-  const organizationId = session?.user?.organizationId || 'default'
+  const organizationId = session?.user?.organizationId || '1'
 
   return (
     // eslint-disable-next-line lines-around-comment
@@ -98,12 +98,12 @@ const SideNav = ({ dictionary, scrollMenu }) => {
           </MenuItem>
         </SubMenu>
         <MenuSection label={dictionary['navigation'].appsPages}>
-          <MenuItem href={`/${locale}/administrators`} icon={<i className='ri-admin-line' />}>{dictionary['on2door'].admins}</MenuItem>
+          <MenuItem href={`/${locale}/administrators/admins`} icon={<i className='ri-admin-line' />}>{dictionary['on2door'].admins}</MenuItem>
           {/* <SubMenu label={dictionary['on2door'].admins} icon={<i className='ri-user-line' />}>
             <MenuItem href={`/${locale}/apps/user/list`} icon={<i className='ri-user-line' />}>{dictionary['navigation'].list}</MenuItem>
             <MenuItem href={`/${locale}/apps/user/view`}>{dictionary['navigation'].view}</MenuItem>
           </SubMenu> */}
-          <MenuItem href={`/${locale}/dispatchers`} icon={<i className='ri-user-line' />}>{dictionary['on2door'].dispatchers}</MenuItem>
+          <MenuItem href={`/${locale}/administrators/dispatchers`} icon={<i className='ri-user-line' />}>{dictionary['on2door'].dispatchers}</MenuItem>
           {/* <SubMenu label={dictionary['on2door'].dispatchers} icon={<i className='ri-user-line' />}>
             <MenuItem href={`/${locale}/apps/user/list`}>{dictionary['navigation'].list}</MenuItem>
             <MenuItem href={`/${locale}/apps/user/view`}>{dictionary['navigation'].view}</MenuItem>
@@ -136,7 +136,7 @@ const SideNav = ({ dictionary, scrollMenu }) => {
           </SubMenu> */}
           {/* <MenuItem href={`/${locale}/pages/on2door/user-profile`} icon={<i className='ri-info-card-line' />}>{dictionary['navigation'].userProfile}</MenuItem> */}
           {/* <MenuItem href={`/${locale}/pages/on2door/account-settings`} icon={<i className='ri-account-circle-line' />}>{dictionary['navigation'].accountSettings}</MenuItem> */}
-          <MenuItem href={`/${locale}/organizations`} icon={<i className='ri-building-line' />}>{dictionary['on2door'].organization}</MenuItem>
+          <MenuItem href={`/${locale}/organizations/${organizationId}`} icon={<i className='ri-building-line' />}>{dictionary['on2door'].organization}</MenuItem>
           {/* <SubMenu label={dictionary['navigation'].pages} icon={<i className='ri-layout-left-line' />}>
             <MenuItem href={`/${locale}/pages/user-profile`}>{dictionary['navigation'].userProfile}</MenuItem>
             <MenuItem href={`/${locale}/pages/account-settings`}>{dictionary['navigation'].accountSettings}</MenuItem>

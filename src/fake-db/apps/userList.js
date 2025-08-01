@@ -10,7 +10,7 @@ export const db = [
     email: 'gslixby0@abc.net.au',
     currentPlan: 'enterprise',
     status: 'inactive',
-    avatar: '',
+    avatar: '/images/avatars/1.png',
     avatarColor: 'primary'
   },
   {
