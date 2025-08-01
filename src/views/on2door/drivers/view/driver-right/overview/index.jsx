@@ -28,43 +28,6 @@ const OverViewTab = ({ userData }) => {
         setInvoiceData(data)
       } catch (error) {
         console.error('Error fetching invoice data:', error)
-        // Fallback to mock data if server action fails
-        const mockData = [
-          {
-            id: '4987',
-            issuedDate: '13 Dec 2024',
-            address: '7777 Mendez Plains',
-            company: 'Hall-Robbins PLC',
-            companyEmail: 'don85@johnson.com',
-            country: 'USA',
-            contact: '(616) 865-4180',
-            name: 'Jordan Stevenson',
-            service: 'Software Development',
-            total: 3428,
-            avatar: '',
-            avatarColor: 'primary',
-            invoiceStatus: 'Paid',
-            balance: '$724',
-            dueDate: '23 Dec 2024'
-          },
-          {
-            id: '4988',
-            issuedDate: '17 Dec 2024',
-            address: '04033 Wesley Wall Apt. 961',
-            company: 'Mccann LLC and Sons',
-            companyEmail: 'brenda49@taylor.info',
-            country: 'Haiti',
-            contact: '(226) 204-8287',
-            name: 'Stephanie Burns',
-            service: 'UI/UX Design & Development',
-            total: 5219,
-            avatar: '/images/avatars/1.png',
-            invoiceStatus: 'Downloaded',
-            balance: 0,
-            dueDate: '15 Dec 2024'
-          }
-        ]
-        setInvoiceData(mockData)
       }
     }
 
