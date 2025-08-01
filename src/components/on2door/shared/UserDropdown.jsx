@@ -20,6 +20,7 @@ import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
 
 // Third-party Imports
 import { signOut, useSession } from 'next-auth/react'
@@ -153,11 +154,19 @@ const UserDropdown = () => {
                       variant='contained'
                       color='error'
                       size='small'
-                      endIcon={<i className='ri-logout-box-r-line' />}
+                      type='button'
+                      disabled={isPending}
                       onClick={logoutAdministrator}
+                      endIcon={
+                        isPending ? (
+                          <CircularProgress size={20} sx={{ color: '#fff', ml: 2 }} />
+                        ) : (
+                          <i className='ri-logout-box-r-line' />
+                        )
+                      }
                       sx={{ '& .MuiButton-endIcon': { marginInlineStart: 1.5 } }}
                     >
-                      Logout
+                      {isPending ? 'Logging out...' : 'Logout'}
                     </Button>
                   </div>
                 </MenuList>

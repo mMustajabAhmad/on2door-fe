@@ -43,6 +43,7 @@ import { signupAdministratorApi } from '@/app/api/on2door/actions'
 import { countries } from 'countries-list'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import { useTheme } from '@mui/material/styles'
 
 // Validation schema
 const schema = object({
@@ -195,7 +196,6 @@ const RegisterV2 = ({ mode }) => {
           )}
 
           <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
-            {/* First Name | Last Name */}
             <div className='flex gap-4'>
               <Controller
                 name='first_name'
@@ -204,13 +204,13 @@ const RegisterV2 = ({ mode }) => {
                   <TextField
                     {...field}
                     fullWidth
+                    autoFocus
                     label='First Name'
                     error={!!errors.first_name}
                     helperText={errors.first_name?.message}
                   />
                 )}
               />
-
               <Controller
                 name='last_name'
                 control={control}
@@ -226,7 +226,6 @@ const RegisterV2 = ({ mode }) => {
               />
             </div>
 
-            {/* Email | Country */}
             <div className='flex gap-4'>
               <Controller
                 name='email'
@@ -234,7 +233,6 @@ const RegisterV2 = ({ mode }) => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    autoFocus
                     fullWidth
                     label='Email'
                     error={!!errors.email}
@@ -242,7 +240,6 @@ const RegisterV2 = ({ mode }) => {
                   />
                 )}
               />
-
               <Controller
                 name='country'
                 control={control}
@@ -269,43 +266,44 @@ const RegisterV2 = ({ mode }) => {
               />
             </div>
 
-            {/* Phone Number | Password */}
             <div className='flex gap-4'>
               <Controller
                 name='phone_number'
                 control={control}
-                render={({ field }) => (
-                  <div style={{ width: '100%' }}>
-                    <PhoneInput
-                      country={watch('country')?.toLowerCase() || 'pk'}
-                      value={field.value}
-                      onChange={field.onChange}
-                      inputStyle={{
-                        width: '100%',
-                        height: '56px',
-                        fontSize: '16px',
-                        backgroundColor: 'transparent',
-                        border: errors.phone_number ? '1px solid #d32f2f' : '1px solid #ccc'
-                      }}
-                      buttonStyle={{
-                        backgroundColor: 'transparent',
-                        border: errors.phone_number ? '1px solid #d32f2f' : '1px solid #ccc',
-                        borderRadius: '4px'
-                      }}
-                      dropdownStyle={{
-                        backgroundColor: '#fff', // or whatever your theme background is
-                        border: '1px solid #ccc',
-                        borderRadius: '4px',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                        color: '#333' // or your theme text color
-                      }}
-                      containerStyle={{ width: '100%' }}
-                      specialLabel='Phone Number'
-                      enableSearch
-                    />
-                    {errors.phone_number && <FormHelperText error>{errors.phone_number.message}</FormHelperText>}
-                  </div>
-                )}
+                render={({ field }) => {
+                  const theme = useTheme()
+                  const commonBorder = `1px solid ${errors.phone_number ? theme.palette.error.main : theme.palette.divider}`
+
+                  return (
+                    <FormControl fullWidth error={!!errors.phone_number}>
+                      <PhoneInput
+                        country={watch('country')?.toLowerCase() || 'pk'}
+                        value={field.value}
+                        onChange={field.onChange}
+                        specialLabel='Phone Number'
+                        enableSearch
+                        inputStyle={{
+                          width: '100%',
+                          height: '56px',
+                          fontSize: '16px',
+                          borderRadius: '5px',
+                          backgroundColor: 'transparent',
+                          border: commonBorder
+                        }}
+                        buttonStyle={{
+                          backgroundColor: 'transparent',
+                          border: commonBorder
+                        }}
+                        dropdownStyle={{
+                          borderRadius: '4px',
+                          color: '#727272'
+                        }}
+                        containerStyle={{ width: '100%' }}
+                      />
+                      {errors.phone_number && <FormHelperText>{errors.phone_number.message}</FormHelperText>}
+                    </FormControl>
+                  )
+                }}
               />
               <Controller
                 name='password'
@@ -339,7 +337,6 @@ const RegisterV2 = ({ mode }) => {
               />
             </div>
 
-            {/* Organization Name | Monthly Delivery Volume */}
             <div className='flex gap-4'>
               <Controller
                 name='organization_name'
@@ -354,7 +351,6 @@ const RegisterV2 = ({ mode }) => {
                   />
                 )}
               />
-
               <Controller
                 name='monthly_delivery_volume'
                 control={control}
