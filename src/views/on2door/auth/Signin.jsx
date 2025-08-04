@@ -47,7 +47,7 @@ const schema = object({
   password: pipe(
     string(),
     nonEmpty('This field is required'),
-    minLength(6, 'Password must be at least 5 characters long')
+    minLength(6, 'Password must be at least 6 characters long')
   )
 })
 
@@ -110,12 +110,13 @@ const Login = ({ mode }) => {
   })
 
   const onSubmit = data => {
-      const payload = {
-        administrator: {
-          email: data.email,
-          password: data.password
-        }}
-      loginAdministrator(payload)
+    const payload = {
+      administrator: {
+        email: data.email,
+        password: data.password
+      }
+    }
+    loginAdministrator(payload)
   }
 
   return (
