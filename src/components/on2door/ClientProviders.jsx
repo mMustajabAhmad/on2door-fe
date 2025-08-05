@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState } from 'react'
 
 // Context Imports
-import { NextAuthProvider } from '@/contexts/nextAuthProvider'
+// import { NextAuthProvider } from '@/contexts/nextAuthProvider'
 import { VerticalNavProvider } from '@menu/contexts/verticalNavContext'
 import { SettingsProvider } from '@core/contexts/settingsContext'
 import ThemeProvider from '@components/theme'
@@ -18,7 +18,7 @@ const ClientProviders = ({ children, mode, settingsCookie, systemMode, direction
 
   return (
     <QueryClientProvider client={queryClient}>
-      <NextAuthProvider basePath={process.env.NEXTAUTH_BASEPATH}>
+      {/* <NextAuthProvider basePath={process.env.NEXTAUTH_BASEPATH}> */}
         <VerticalNavProvider>
           <SettingsProvider settingsCookie={settingsCookie} mode={mode}>
             <ThemeProvider direction={direction} systemMode={systemMode}>
@@ -27,7 +27,7 @@ const ClientProviders = ({ children, mode, settingsCookie, systemMode, direction
             </ThemeProvider>
           </SettingsProvider>
         </VerticalNavProvider>
-      </NextAuthProvider>
+      {/* </NextAuthProvider> */}
     </QueryClientProvider>
   )
 }

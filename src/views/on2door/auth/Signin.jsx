@@ -160,12 +160,7 @@ const Login = ({ mode }) => {
             </Alert>
           )}
 
-          <form
-            noValidate
-            autoComplete='off'
-            onSubmit={handleSubmit(onSubmit)}
-            className='flex flex-col gap-5'
-          >
+          <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
             <Controller
               name='email'
               control={control}

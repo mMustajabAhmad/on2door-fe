@@ -23,7 +23,7 @@ import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 
 // Third-party Imports
-import { signOut, useSession } from 'next-auth/react'
+// import { signOut, useSession } from 'next-auth/react'
 
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
@@ -51,9 +51,11 @@ const UserDropdown = () => {
 
   // Hooks
   const router = useRouter()
-  const { data: session } = useSession()
+  // const { data: session } = useSession()
   const { settings } = useSettings()
   const { lang: locale } = useParams()
+
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}')
 
   const handleDropdownOpen = () => {
     !open ? setOpen(true) : setOpen(false)
@@ -96,8 +98,8 @@ const UserDropdown = () => {
       >
         <Avatar
           ref={anchorRef}
-          alt={session?.user?.name || ''}
-          src={session?.user?.image || ''}
+          alt={currentUser.name || 'User'}
+          src={currentUser.avatar || ''}
           onClick={handleDropdownOpen}
           className='cursor-pointer bs-[38px] is-[38px]'
         />
@@ -121,17 +123,20 @@ const UserDropdown = () => {
               <ClickAwayListener onClickAway={e => handleDropdownClose(e)}>
                 <MenuList>
                   <div className='flex items-center plb-2 pli-4 gap-2' tabIndex={-1}>
-                    <Avatar alt={session?.user?.name || ''} src={session?.user?.image || ''} />
+                    <Avatar alt={currentUser.name || 'User'} src={currentUser.avatar || ''} />
                     <div className='flex items-start flex-col'>
                       <Typography className='font-medium' color='text.primary'>
-                        {session?.user?.name || ''}
+                        {currentUser.first_name || 'User'}
                       </Typography>
-                      <Typography variant='caption'>{session?.user?.email || ''}</Typography>
+                      <Typography variant='caption'>{currentUser.email || 'user@example.com'}</Typography>
                     </div>
                   </div>
                   <Divider className='mlb-1' />
                   {/* <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, '/pages/user-profile')}> */}
-                  <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, `/profiles/administrator/${session?.user?.id || '1'}`)}>
+                  <MenuItem
+                    className='gap-3'
+                    onClick={e => handleDropdownClose(e, `/profiles/administrator/${currentUser.id || '1'}`)}
+                  >
                     <i className='ri-user-3-line' />
                     <Typography color='text.primary'>My Profile</Typography>
                   </MenuItem>
