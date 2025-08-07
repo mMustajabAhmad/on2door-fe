@@ -108,7 +108,7 @@ const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...prop
 // Column Definitions
 const columnHelper = createColumnHelper()
 
-const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange }) => {
+const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange, searchQuery, setSearchQuery }) => {
   // const buttonProps = (children, color, variant) => ({
   //   children,
   //   color,
@@ -119,7 +119,7 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
   const [rowSelection, setRowSelection] = useState({})
 
   // Transform API data to match expected format
-  const transformApiData = (apiData) => {
+  const transformApiData = apiData => {
     if (!apiData?.administrators?.data) return []
 
     return apiData.administrators.data.map(admin => ({
@@ -131,13 +131,35 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
       organization_id: admin.attributes.organization_id,
       is_active: admin.attributes.is_active,
       is_account_owner: admin.attributes.is_account_owner,
-      status: admin.attributes.is_active ? 'active' : 'inactive',
+      status: admin.attributes.is_active ? 'active' : 'inactive'
     }))
   }
 
   const [data, setData] = useState(transformApiData(tableData))
   const [filteredData, setFilteredData] = useState(data)
-  const [globalFilter, setGlobalFilter] = useState('')
+  // const [globalFilter, setGlobalFilter] = useState('')
+  // const [searchQuery, setGlobalFilter] = useState('')
+
+  // Update data when tableData changes
+  useEffect(() => {
+    const transformedData = transformApiData(tableData)
+    setData(transformedData)
+    setFilteredData(transformedData)
+  }, [tableData])
+
+  // Update data when tableData changes
+  useEffect(() => {
+    const transformedData = transformApiData(tableData)
+    setData(transformedData)
+    setFilteredData(transformedData)
+  }, [tableData])
+
+  // Update data when tableData changes
+  useEffect(() => {
+    const transformedData = transformApiData(tableData)
+    setData(transformedData)
+    setFilteredData(transformedData)
+  }, [tableData])
 
   // Update data when tableData changes
   useEffect(() => {
@@ -269,7 +291,8 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
     },
     state: {
       rowSelection,
-      globalFilter
+      // globalFilter
+      searchQuery
     },
     initialState: {
       pagination: {
@@ -281,7 +304,7 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
     globalFilterFn: fuzzyFilter,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
-    onGlobalFilterChange: setGlobalFilter,
+    // onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -311,21 +334,26 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
         <TableFilters setData={setFilteredData} tableData={data} perPage={perPage} onPerPageChange={onPerPageChange} />
         <Divider />
         <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
-          {/* <Button
-            color='secondary'
-            variant='outlined'
-            startIcon={<i className='ri-upload-2-line text-xl' />}
-            className='max-sm:is-full'
-          >
-            Export
-          </Button> */}
-          <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
+          <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>            
             <DebouncedInput
-              value={globalFilter ?? ''}
-              onChange={value => setGlobalFilter(String(value))}
-              placeholder='Search Admin'
-              className='max-sm:is-full'
-            />
+                value={searchQuery ?? ''}
+                // onChange={value => setGlobalFilter(String(value))}
+                onChange={value => setSearchQuery(String(value))}
+                placeholder='Search Admin'
+                className='max-sm:is-full'
+              />
+              <Button
+                color='secondary'
+                variant='outlined'
+                className='max-sm:is-full'
+                onClick={() => setSearchQuery('')}
+                // sx={{ height: '45px', gap: 1.5 }}
+              >
+                Clear
+                <i className='ri-filter-line'></i>
+              </Button>
+          </div>
+          <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>            
             <Button variant='contained' onClick={() => setAddUserOpen(!addUserOpen)} className='max-sm:is-full'>
               Add New Admin
             </Button>
@@ -370,17 +398,15 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
               </tbody>
             ) : (
               <tbody>
-                {table
-                  .getRowModel()
-                  .rows.map(row => {
-                    return (
-                      <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
-                        {row.getVisibleCells().map(cell => (
-                          <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-                        ))}
-                      </tr>
-                    )
-                  })}
+                {table.getRowModel().rows.map(row => {
+                  return (
+                    <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
+                      {row.getVisibleCells().map(cell => (
+                        <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                      ))}
+                    </tr>
+                  )
+                })}
               </tbody>
             )}
           </table>

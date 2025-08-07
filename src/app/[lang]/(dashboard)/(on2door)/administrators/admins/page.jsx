@@ -12,16 +12,21 @@ import { getAdministratorsApi } from '@/app/api/on2door/actions'
 const UserListApp = () => {
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(10)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['administrators', page, perPage],
+    queryKey: ['administrators', page, perPage, searchQuery],
     queryFn: () => {
       const payload = {
         administrator_type: 'admin',
         page,
         per_page: perPage
       }
-
+      
+      if (searchQuery) {
+        payload['q[email_or_first_name_or_last_name_or_phone_number_cont]'] = searchQuery
+      }
+      
       return getAdministratorsApi(payload)
     }
   })
@@ -34,6 +39,11 @@ const UserListApp = () => {
     setPerPage(newPerPage)
     setPage(1)
   }
+
+  const handleSearchChange = (value) => {
+    setSearchQuery(value);
+    setPage(1);
+  };
 
   if (isLoading) {
     return (
@@ -57,7 +67,7 @@ const UserListApp = () => {
     )
   }
 
-  return <AdminList userData={data} page={page} perPage={perPage} onPageChange={handlePageChange} onPerPageChange={handlePerPageChange} />
+  return <AdminList userData={data} page={page} perPage={perPage} onPageChange={handlePageChange} onPerPageChange={handlePerPageChange} searchQuery={searchQuery} setSearchQuery={handleSearchChange} />
 }
 
 export default UserListApp

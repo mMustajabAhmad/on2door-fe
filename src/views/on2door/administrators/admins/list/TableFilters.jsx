@@ -37,7 +37,7 @@ const TableFilters = ({ setData, tableData, perPage, onPerPageChange }) => {
   return (
     <CardContent>
       <Grid container spacing={5}>
-        <Grid size={{ xs: 12, sm: 3 }}>
+        <Grid size={{ xs: 12, sm: 3.5 }}>
           <FormControl fullWidth>
             <InputLabel id='role-select'>Select Role</InputLabel>
             <Select
@@ -79,7 +79,7 @@ const TableFilters = ({ setData, tableData, perPage, onPerPageChange }) => {
             </Select>
           </FormControl>
         </Grid> */}
-        <Grid size={{ xs: 12, sm: 3 }}>
+        <Grid size={{ xs: 12, sm: 3.5 }}>
           <FormControl fullWidth>
             <InputLabel id='status-select'>Select Status</InputLabel>
             <Select
@@ -99,7 +99,7 @@ const TableFilters = ({ setData, tableData, perPage, onPerPageChange }) => {
           </FormControl>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 3 }}>
+        <Grid size={{ xs: 12, sm: 3.5 }}>
           <FormControl fullWidth>
             <InputLabel id='per-page-select'>Records per page</InputLabel>
             <Select
