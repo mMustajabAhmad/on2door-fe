@@ -19,3 +19,17 @@ export function logoutAdministratorApi() {
     .then(response => response.data)
 }
 
+// Administrators
+export function getAdministratorsApi(payload = {}) {
+  return client()
+    .get('/administrators/administrators', {
+      params: payload
+    })
+    .then(response => response.data)
+}
+
+export function deleteAdministratorApi(id) {
+  return client()
+    .delete(`/administrators/administrators/${id}`)
+    .then(response => response.data)
+}

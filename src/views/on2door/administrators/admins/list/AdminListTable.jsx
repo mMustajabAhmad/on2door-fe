@@ -22,7 +22,7 @@ import Chip from '@mui/material/Chip'
 import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
-import TablePagination from '@mui/material/TablePagination'
+// import TablePagination from '@mui/material/TablePagination'
 
 // Third-party Imports
 import classnames from 'classnames'
@@ -45,6 +45,7 @@ import TableFilters from './TableFilters'
 import AddUserDrawer from './AddAdminDrawer'
 import OptionMenu from '@core/components/option-menu'
 import CustomAvatar from '@core/components/mui/Avatar'
+import CustomPagination from './CustomPagination'
 
 // Util Imports
 import { getInitials } from '@/utils/getInitials'
@@ -89,24 +90,25 @@ const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...prop
 }
 
 // Vars
-const userRoleObj = {
-  admin: { icon: 'ri-vip-crown-line', color: 'error' },
-  author: { icon: 'ri-computer-line', color: 'warning' },
-  editor: { icon: 'ri-edit-box-line', color: 'info' },
-  maintainer: { icon: 'ri-pie-chart-2-line', color: 'success' },
-  subscriber: { icon: 'ri-user-3-line', color: 'primary' }
-}
+// const userRoleObj = {
+//   admin: { icon: 'ri-vip-crown-line', color: 'error' },
+//   owner: { icon: 'ri-crown-line', color: 'warning' },
+//   author: { icon: 'ri-computer-line', color: 'warning' },
+//   editor: { icon: 'ri-edit-box-line', color: 'info' },
+//   maintainer: { icon: 'ri-pie-chart-2-line', color: 'success' },
+//   subscriber: { icon: 'ri-user-3-line', color: 'primary' }
+// }
 
-const userStatusObj = {
-  active: 'success',
-  pending: 'warning',
-  inactive: 'secondary'
-}
+// const userStatusObj = {
+//   active: 'success',
+//   pending: 'warning',
+//   inactive: 'secondary'
+// }
 
 // Column Definitions
 const columnHelper = createColumnHelper()
 
-const UserListTable = ({ tableData }) => {
+const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange }) => {
   // const buttonProps = (children, color, variant) => ({
   //   children,
   //   color,
@@ -115,9 +117,34 @@ const UserListTable = ({ tableData }) => {
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [rowSelection, setRowSelection] = useState({})
-  const [data, setData] = useState(...[tableData])
+
+  // Transform API data to match expected format
+  const transformApiData = (apiData) => {
+    if (!apiData?.administrators?.data) return []
+
+    return apiData.administrators.data.map(admin => ({
+      id: admin.id,
+      fullName: `${admin.attributes.first_name} ${admin.attributes.last_name}`,
+      email: admin.attributes.email,
+      role: admin.attributes.role || 'admin',
+      phone_number: admin.attributes.phone_number,
+      organization_id: admin.attributes.organization_id,
+      is_active: admin.attributes.is_active,
+      is_account_owner: admin.attributes.is_account_owner,
+      status: admin.attributes.is_active ? 'active' : 'inactive',
+    }))
+  }
+
+  const [data, setData] = useState(transformApiData(tableData))
   const [filteredData, setFilteredData] = useState(data)
   const [globalFilter, setGlobalFilter] = useState('')
+
+  // Update data when tableData changes
+  useEffect(() => {
+    const transformedData = transformApiData(tableData)
+    setData(transformedData)
+    setFilteredData(transformedData)
+  }, [tableData])
 
   // Hooks
   const { lang: locale } = useParams()
@@ -147,10 +174,10 @@ const UserListTable = ({ tableData }) => {
         )
       },
       columnHelper.accessor('fullName', {
-        header: 'User',
+        header: 'Admin',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
-            {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })}
+            {/* {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })} */}
             <div className='flex flex-col'>
               <Typography className='font-medium' color='text.primary'>
                 {row.original.fullName}
@@ -166,47 +193,50 @@ const UserListTable = ({ tableData }) => {
       }),
       columnHelper.accessor('role', {
         header: 'Role',
-        cell: ({ row }) => (
-          <div className='flex items-center gap-2'>
-            <Icon
-              className={userRoleObj[row.original.role].icon}
-              sx={{ color: `var(--mui-palette-${userRoleObj[row.original.role].color}-main)`, fontSize: '1.375rem' }}
-            />
-            <Typography className='capitalize' color='text.primary'>
-              {row.original.role}
-            </Typography>
-          </div>
-        )
+        cell: ({ row }) => <Typography className='capitalize' color='text.primary'> {row.original.role} </Typography>
       }),
-      columnHelper.accessor('currentPlan', {
-        header: 'Plan',
+      columnHelper.accessor('phone_number', {
+        header: 'Phone',
+        cell: ({ row }) => <Typography color='text.primary'> {row.original.phone_number} </Typography>
+      }),
+      columnHelper.accessor('organization_id', {
+        header: 'Organization ID',
+        cell: ({ row }) => <Typography color='text.primary'> {row.original.organization_id} </Typography>
+      }),
+      columnHelper.accessor('is_account_owner', {
+        header: 'Account Owner',
         cell: ({ row }) => (
-          <Typography className='capitalize' color='text.primary'>
-            {row.original.currentPlan}
-          </Typography>
+          <Chip
+            variant='tonal'
+            label={row.original.is_account_owner ? 'Yes' : 'No'}
+            size='small'
+            color={row.original.is_account_owner ? 'success' : 'default'}
+          />
         )
       }),
       columnHelper.accessor('status', {
         header: 'Status',
-        cell: ({ row }) => (
-          <div className='flex items-center gap-3'>
-            <Chip
-              variant='tonal'
-              label={row.original.status}
-              size='small'
-              color={userStatusObj[row.original.status]}
-              className='capitalize'
-            />
-          </div>
-        )
+        cell: ({ row }) => {
+          return (
+            <div className='flex items-center gap-3'>
+              <Chip
+                variant='tonal'
+                label={row.original.status}
+                size='small'
+                color={row.original.status ? 'success' : 'default'}
+                className='capitalize'
+              />
+            </div>
+          )
+        }
       }),
       columnHelper.accessor('action', {
         header: 'Action',
         cell: ({ row }) => (
           <div className='flex items-center'>
-            <IconButton onClick={() => setData(data?.filter(product => product.id !== row.original.id))}>
+            {/* <IconButton onClick={() => setData(data?.filter(product => product.id !== row.original.id))}>
               <i className='ri-delete-bin-7-line text-textSecondary' />
-            </IconButton>
+            </IconButton> */}
             <IconButton>
               {/* <Link href={getLocalizedUrl(`/apps/user/view/${row.original.id}`, locale)} className='flex'> */}
               <Link href={getLocalizedUrl(`/administrators/admins/${row.original.id}`, locale)} className='flex'>
@@ -222,34 +252,6 @@ const UserListTable = ({ tableData }) => {
               dialog={EditUserInfo}
               dialogProps={{ data: data }}
             />
-
-            {/* <IconButton>
-              <Link href={getLocalizedUrl(`/apps/user/view/${row.original.id}`, locale)} className='flex'>
-                <i className='ri-edit-box-line text-textSecondary' />
-              </Link>
-            </IconButton>
-            <OpenDialogOnElementClick
-              element={Button}
-              elementProps={buttonProps('Edit', 'primary', 'contained')}
-              dialog={EditUserInfo}
-              dialogProps={{ data: data }}
-            /> */}
-            {/* <OptionMenu
-              iconButtonProps={{ size: 'medium' }}
-              iconClassName='text-textSecondary'
-              options={[
-                {
-                  text: 'Download',
-                  icon: 'ri-download-line',
-                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
-                },
-                {
-                  text: 'Edit',
-                  icon: 'ri-edit-box-line',
-                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
-                }
-              ]}
-            /> */}
           </div>
         ),
         enableSorting: false
@@ -288,25 +290,25 @@ const UserListTable = ({ tableData }) => {
     getFacetedMinMaxValues: getFacetedMinMaxValues()
   })
 
-  const getAvatar = params => {
-    const { avatar, fullName } = params
+  // const getAvatar = params => {
+  //   const { avatar, fullName } = params
 
-    if (avatar) {
-      return <CustomAvatar src={avatar} skin='light' size={34} />
-    } else {
-      return (
-        <CustomAvatar skin='light' size={34}>
-          {getInitials(fullName)}
-        </CustomAvatar>
-      )
-    }
-  }
+  //   if (avatar) {
+  //     return <CustomAvatar src={avatar} skin='light' size={34} />
+  //   } else {
+  //     return (
+  //       <CustomAvatar skin='light' size={34}>
+  //         {getInitials(fullName)}
+  //       </CustomAvatar>
+  //     )
+  //   }
+  // }
 
   return (
     <>
       <Card>
         <CardHeader title='Filters' />
-        <TableFilters setData={setFilteredData} tableData={data} />
+        <TableFilters setData={setFilteredData} tableData={data} perPage={perPage} onPerPageChange={onPerPageChange} />
         <Divider />
         <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
           {/* <Button
@@ -370,8 +372,7 @@ const UserListTable = ({ tableData }) => {
               <tbody>
                 {table
                   .getRowModel()
-                  .rows.slice(0, table.getState().pagination.pageSize)
-                  .map(row => {
+                  .rows.map(row => {
                     return (
                       <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
                         {row.getVisibleCells().map(cell => (
@@ -384,18 +385,17 @@ const UserListTable = ({ tableData }) => {
             )}
           </table>
         </div>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component='div'
-          className='border-bs'
-          count={table.getFilteredRowModel().rows.length}
-          rowsPerPage={table.getState().pagination.pageSize}
-          page={table.getState().pagination.pageIndex}
-          onPageChange={(_, page) => {
-            table.setPageIndex(page)
-          }}
-          onRowsPerPageChange={e => table.setPageSize(Number(e.target.value))}
-        />
+        <div className='flex justify-between items-center p-4 border-t'>
+          <div className='text-sm text-gray-600'>
+            Showing {((page - 1) * perPage) + 1} to {Math.min(page * perPage, tableData?.total_count)} of {tableData?.total_count} results
+          </div>
+          <CustomPagination
+            page={page}
+            perPage={perPage}
+            totalCount={tableData?.total_count || 0}
+            onPageChange={onPageChange}
+          />
+        </div>
       </Card>
       <AddUserDrawer
         open={addUserOpen}
