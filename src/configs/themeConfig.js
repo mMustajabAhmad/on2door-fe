@@ -16,9 +16,9 @@
  * Another way is to clear the cookie from the browser's Application/Storage tab and then reload the page.
  */
 const themeConfig = {
-  templateName: 'Materio',
+  templateName: 'on2door',
   // homePageUrl: '/dashboards/crm',
-  on2doorDashboardPageUrl: '/dashboards',
+  on2doorDashboardPageUrl: '/dashboard',
   settingsCookieName: 'materio-mui-next-demo-1',
   mode: 'system', // 'system', 'light', 'dark'
   skin: 'default', // 'default', 'bordered'

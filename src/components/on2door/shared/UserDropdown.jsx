@@ -2,6 +2,7 @@
 
 // React Imports
 import { useRef, useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 
 // Next Imports
 import { useParams, useRouter } from 'next/navigation'
@@ -19,15 +20,17 @@ import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
 
 // Third-party Imports
-import { signOut, useSession } from 'next-auth/react'
+// import { signOut, useSession } from 'next-auth/react'
 
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
 
 // Util Imports
 import { getLocalizedUrl } from '@/utils/i18n'
+import { logoutAdministratorApi } from '@/app/api/on2door/actions'
 
 // Styled component for badge content
 const BadgeContentSpan = styled('span')({
@@ -48,9 +51,11 @@ const UserDropdown = () => {
 
   // Hooks
   const router = useRouter()
-  const { data: session } = useSession()
+  // const { data: session } = useSession()
   const { settings } = useSettings()
   const { lang: locale } = useParams()
+
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}')
 
   const handleDropdownOpen = () => {
     !open ? setOpen(true) : setOpen(false)
@@ -68,17 +73,19 @@ const UserDropdown = () => {
     setOpen(false)
   }
 
-  const handleUserLogout = async () => {
-    try {
-      // Sign out from the app
-        await signOut({ callbackUrl: `/${locale}/dashboard` })
-    } catch (error) {
-      console.error(error)
+  const { mutate: logoutAdministrator, isPending } = useMutation({
+    mutationFn: logoutAdministratorApi,
 
-      // Show above error in a toast like following
-      // toastService.error((err as Error).message)
+    onSuccess: () => {
+      localStorage.removeItem('authToken')
+      localStorage.removeItem('currentUser')
+      router.replace(getLocalizedUrl('/login', locale))
+    },
+
+    onError: err => {
+      console.error('Logout failed:', err)
     }
-  }
+  })
 
   return (
     <>
@@ -91,8 +98,8 @@ const UserDropdown = () => {
       >
         <Avatar
           ref={anchorRef}
-          alt={session?.user?.name || ''}
-          src={session?.user?.image || ''}
+          alt={currentUser.name || 'User'}
+          src={currentUser.avatar || ''}
           onClick={handleDropdownOpen}
           className='cursor-pointer bs-[38px] is-[38px]'
         />
@@ -116,17 +123,20 @@ const UserDropdown = () => {
               <ClickAwayListener onClickAway={e => handleDropdownClose(e)}>
                 <MenuList>
                   <div className='flex items-center plb-2 pli-4 gap-2' tabIndex={-1}>
-                    <Avatar alt={session?.user?.name || ''} src={session?.user?.image || ''} />
+                    <Avatar alt={currentUser.name || 'User'} src={currentUser.avatar || ''} />
                     <div className='flex items-start flex-col'>
                       <Typography className='font-medium' color='text.primary'>
-                        {session?.user?.name || ''}
+                        {currentUser.first_name || 'User'}
                       </Typography>
-                      <Typography variant='caption'>{session?.user?.email || ''}</Typography>
+                      <Typography variant='caption'>{currentUser.email || 'user@example.com'}</Typography>
                     </div>
                   </div>
                   <Divider className='mlb-1' />
                   {/* <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, '/pages/user-profile')}> */}
-                  <MenuItem className='gap-3' onClick={e => handleDropdownClose(e, `/profiles/administrator/${session?.user?.id || '1'}`)}>
+                  <MenuItem
+                    className='gap-3'
+                    onClick={e => handleDropdownClose(e, `/profiles/administrator/${currentUser.id || '1'}`)}
+                  >
                     <i className='ri-user-3-line' />
                     <Typography color='text.primary'>My Profile</Typography>
                   </MenuItem>
@@ -149,11 +159,19 @@ const UserDropdown = () => {
                       variant='contained'
                       color='error'
                       size='small'
-                      endIcon={<i className='ri-logout-box-r-line' />}
-                      onClick={handleUserLogout}
+                      type='button'
+                      disabled={isPending}
+                      onClick={logoutAdministrator}
+                      endIcon={
+                        isPending ? (
+                          <CircularProgress size={20} sx={{ color: '#fff', ml: 2 }} />
+                        ) : (
+                          <i className='ri-logout-box-r-line' />
+                        )
+                      }
                       sx={{ '& .MuiButton-endIcon': { marginInlineStart: 1.5 } }}
                     >
-                      Logout
+                      {isPending ? 'Logging out...' : 'Logout'}
                     </Button>
                   </div>
                 </MenuList>

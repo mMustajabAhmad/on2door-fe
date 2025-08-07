@@ -7,7 +7,7 @@ import { useTheme } from '@mui/material/styles'
 
 // Third-party Imports
 import PerfectScrollbar from 'react-perfect-scrollbar'
-import { useSession } from 'next-auth/react'
+// import { useSession } from 'next-auth/react'
 
 // Component Imports
 import { Menu, SubMenu, MenuItem, MenuSection } from '@menu/vertical-menu'
@@ -34,16 +34,14 @@ const SideNav = ({ dictionary, scrollMenu }) => {
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
   const params = useParams()
-  const { data: session } = useSession()
+  // const { data: session } = useSession()
 
   // Vars
   const { isBreakpointReached, transitionDuration } = verticalNavOptions
   const { lang: locale } = params
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
 
-  // Get organization ID from session or use a default value
-  // You can modify this based on how you store organization data in your session
-  const organizationId = session?.user?.organizationId || '1'
+  const organizationId = '1' //localStorage
 
   return (
     // eslint-disable-next-line lines-around-comment
@@ -68,7 +66,9 @@ const SideNav = ({ dictionary, scrollMenu }) => {
         renderExpandedMenuItemIcon={{ icon: <i className='ri-circle-line' /> }}
         menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
       >
-        <MenuItem href={`/${locale}/dashboard`} icon={<i className='ri-home-smile-line' />}>{dictionary['navigation'].dashboards }</MenuItem>
+        <MenuItem href={`/${locale}/dashboard`} icon={<i className='ri-home-smile-line' />}>
+          {dictionary['navigation'].dashboards}
+        </MenuItem>
         {/* <SubMenu
           label={dictionary['navigation'].dashboards}
           icon={<i className='ri-home-smile-line' />}
@@ -98,32 +98,44 @@ const SideNav = ({ dictionary, scrollMenu }) => {
           </MenuItem>
         </SubMenu>
         <MenuSection label={dictionary['navigation'].appsPages}>
-          <MenuItem href={`/${locale}/administrators/admins`} icon={<i className='ri-admin-line' />}>{dictionary['on2door'].admins}</MenuItem>
+          <MenuItem href={`/${locale}/administrators/admins`} icon={<i className='ri-admin-line' />}>
+            {dictionary['on2door'].admins}
+          </MenuItem>
           {/* <SubMenu label={dictionary['on2door'].admins} icon={<i className='ri-user-line' />}>
             <MenuItem href={`/${locale}/apps/user/list`} icon={<i className='ri-user-line' />}>{dictionary['navigation'].list}</MenuItem>
             <MenuItem href={`/${locale}/apps/user/view`}>{dictionary['navigation'].view}</MenuItem>
           </SubMenu> */}
-          <MenuItem href={`/${locale}/administrators/dispatchers`} icon={<i className='ri-user-line' />}>{dictionary['on2door'].dispatchers}</MenuItem>
+          <MenuItem href={`/${locale}/administrators/dispatchers`} icon={<i className='ri-user-line' />}>
+            {dictionary['on2door'].dispatchers}
+          </MenuItem>
           {/* <SubMenu label={dictionary['on2door'].dispatchers} icon={<i className='ri-user-line' />}>
             <MenuItem href={`/${locale}/apps/user/list`}>{dictionary['navigation'].list}</MenuItem>
             <MenuItem href={`/${locale}/apps/user/view`}>{dictionary['navigation'].view}</MenuItem>
           </SubMenu> */}
-          <MenuItem href={`/${locale}/drivers`} icon={<i className='ri-steering-line' />}>{dictionary['on2door'].drivers}</MenuItem>
+          <MenuItem href={`/${locale}/drivers`} icon={<i className='ri-steering-line' />}>
+            {dictionary['on2door'].drivers}
+          </MenuItem>
           {/* <SubMenu label={dictionary['on2door'].drivers} icon={<i className='ri-user-line' />}>
             <MenuItem href={`/${locale}/apps/user/list`}>{dictionary['navigation'].list}</MenuItem>
             <MenuItem href={`/${locale}/apps/user/view`}>{dictionary['navigation'].view}</MenuItem>
           </SubMenu> */}
-          <MenuItem href={`/${locale}/hubs`} icon={<i className='ri-home-line' />}>{dictionary['on2door'].hubs}</MenuItem>
+          <MenuItem href={`/${locale}/hubs`} icon={<i className='ri-home-line' />}>
+            {dictionary['on2door'].hubs}
+          </MenuItem>
           {/* <SubMenu label={dictionary['on2door'].hubs} icon={<i className='ri-home-line' />}>
             <MenuItem href={`/${locale}/apps/user/list`}>{dictionary['navigation'].list}</MenuItem>
             <MenuItem href={`/${locale}/apps/user/view`}>{dictionary['navigation'].view}</MenuItem>
           </SubMenu> */}
-          <MenuItem href={`/${locale}/teams`} icon={<i className='ri-team-line' />}>{dictionary['on2door'].teams}</MenuItem>
+          <MenuItem href={`/${locale}/teams`} icon={<i className='ri-team-line' />}>
+            {dictionary['on2door'].teams}
+          </MenuItem>
           {/* <SubMenu label={dictionary['on2door'].teams} icon={<i className='ri-team-line' />}>
             <MenuItem href={`/${locale}/apps/user/list`}>{dictionary['navigation'].list}</MenuItem>
             <MenuItem href={`/${locale}/apps/user/view`}>{dictionary['navigation'].view}</MenuItem>
           </SubMenu> */}
-          <MenuItem href={`/${locale}/tasks`} icon={<i className='ri-task-line' />}>{dictionary['on2door'].tasks}</MenuItem>
+          <MenuItem href={`/${locale}/tasks`} icon={<i className='ri-task-line' />}>
+            {dictionary['on2door'].tasks}
+          </MenuItem>
           {/* <SubMenu label={dictionary['navigation'].orders}>
             <MenuItem href={`/${locale}/apps/ecommerce/orders/list`}>{dictionary['navigation'].list}</MenuItem>
             <MenuItem
@@ -136,7 +148,9 @@ const SideNav = ({ dictionary, scrollMenu }) => {
           </SubMenu> */}
           {/* <MenuItem href={`/${locale}/pages/on2door/user-profile`} icon={<i className='ri-info-card-line' />}>{dictionary['navigation'].userProfile}</MenuItem> */}
           {/* <MenuItem href={`/${locale}/pages/on2door/account-settings`} icon={<i className='ri-account-circle-line' />}>{dictionary['navigation'].accountSettings}</MenuItem> */}
-          <MenuItem href={`/${locale}/organizations/${organizationId}`} icon={<i className='ri-building-line' />}>{dictionary['on2door'].organization}</MenuItem>
+          <MenuItem href={`/${locale}/organizations/${organizationId}`} icon={<i className='ri-building-line' />}>
+            {dictionary['on2door'].organization}
+          </MenuItem>
           {/* <SubMenu label={dictionary['navigation'].pages} icon={<i className='ri-layout-left-line' />}>
             <MenuItem href={`/${locale}/pages/user-profile`}>{dictionary['navigation'].userProfile}</MenuItem>
             <MenuItem href={`/${locale}/pages/account-settings`}>{dictionary['navigation'].accountSettings}</MenuItem>
