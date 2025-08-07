@@ -147,27 +147,6 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
     setFilteredData(transformedData)
   }, [tableData])
 
-  // Update data when tableData changes
-  useEffect(() => {
-    const transformedData = transformApiData(tableData)
-    setData(transformedData)
-    setFilteredData(transformedData)
-  }, [tableData])
-
-  // Update data when tableData changes
-  useEffect(() => {
-    const transformedData = transformApiData(tableData)
-    setData(transformedData)
-    setFilteredData(transformedData)
-  }, [tableData])
-
-  // Update data when tableData changes
-  useEffect(() => {
-    const transformedData = transformApiData(tableData)
-    setData(transformedData)
-    setFilteredData(transformedData)
-  }, [tableData])
-
   // Hooks
   const { lang: locale } = useParams()
 
@@ -294,20 +273,21 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
       // globalFilter
       searchQuery
     },
-    initialState: {
-      pagination: {
-        pageSize: 10
-      }
-    },
+    // initialState: {
+    //   pagination: {
+    //     pageSize: 10
+    //   }
+    // },
     enableRowSelection: true, //enable row selection for all rows
     // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
+    enableRowSelection: true,
     globalFilterFn: fuzzyFilter,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     // onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    // getPaginationRowModel: getPaginationRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues()
