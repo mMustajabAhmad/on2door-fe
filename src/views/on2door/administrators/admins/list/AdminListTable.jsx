@@ -2,6 +2,7 @@
 
 // React Imports
 import { useEffect, useState, useMemo } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 // Next Imports
 import Link from 'next/link'
@@ -22,11 +23,15 @@ import Chip from '@mui/material/Chip'
 import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
 // import TablePagination from '@mui/material/TablePagination'
 
 // Third-party Imports
 import classnames from 'classnames'
 import { rankItem } from '@tanstack/match-sorter-utils'
+import { toast } from 'react-toastify'
 import {
   createColumnHelper,
   flexRender,
@@ -50,6 +55,9 @@ import CustomPagination from './CustomPagination'
 // Util Imports
 import { getInitials } from '@/utils/getInitials'
 import { getLocalizedUrl } from '@/utils/i18n'
+
+// API Imports
+import { deleteAdministratorApi } from '@/app/api/on2door/actions'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
@@ -117,6 +125,48 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [rowSelection, setRowSelection] = useState({})
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [adminToDelete, setAdminToDelete] = useState(null)
+  const [errorState, setErrorState] = useState(null)
+
+  // Hooks
+  const queryClient = useQueryClient()
+
+  // Delete mutation
+  const { mutate: deleteAdministrator, isPending } = useMutation({
+    mutationFn: deleteAdministratorApi,
+
+    onMutate: () => setErrorState(null),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['administrators'] })
+      setDeleteDialogOpen(false)
+      setAdminToDelete(null)
+      toast.success('Administrator deleted successfully!', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      })
+    },
+
+    onError: err => setErrorState(err)
+  })
+
+  const handleDeleteClick = (admin) => {
+    setAdminToDelete(admin)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = (confirmed) => {
+    if (confirmed && adminToDelete) {
+      deleteAdministrator(adminToDelete.id)
+    }
+    setDeleteDialogOpen(false)
+    setAdminToDelete(null)
+  }
 
   // Transform API data to match expected format
   const transformApiData = apiData => {
@@ -132,6 +182,7 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
       is_active: admin.attributes.is_active,
       is_account_owner: admin.attributes.is_account_owner,
       status: admin.attributes.is_active ? 'active' : 'inactive'
+      // username: admin.attributes.email.split('@')[0] // Use email prefix as username
     }))
   }
 
@@ -183,7 +234,7 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
               <Typography className='font-medium' color='text.primary'>
                 {row.original.fullName}
               </Typography>
-              <Typography variant='body2'>{row.original.username}</Typography>
+              {/* <Typography variant='body2'>{row.original.username}</Typography> */}
             </div>
           </div>
         )
@@ -235,9 +286,16 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
         header: 'Action',
         cell: ({ row }) => (
           <div className='flex items-center'>
-            {/* <IconButton onClick={() => setData(data?.filter(product => product.id !== row.original.id))}>
-              <i className='ri-delete-bin-7-line text-textSecondary' />
-            </IconButton> */}
+            <IconButton
+              onClick={() => handleDeleteClick(row.original)}
+              disabled={isPending}
+            >
+              {isPending ? (
+                <i className='ri-loader-4-line text-textSecondary animate-spin' />
+              ) : (
+                <i className='ri-delete-bin-7-line text-textSecondary' />
+              )}
+            </IconButton>
             <IconButton>
               {/* <Link href={getLocalizedUrl(`/apps/user/view/${row.original.id}`, locale)} className='flex'> */}
               <Link href={getLocalizedUrl(`/administrators/admins/${row.original.id}`, locale)} className='flex'>
@@ -251,7 +309,7 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
                 children: <i className='ri-edit-box-line text-textSecondary' />
               }}
               dialog={EditUserInfo}
-              dialogProps={{ data: data }}
+              dialogProps={{ data: data, currentAdmin: row.original }}
             />
           </div>
         ),
@@ -309,6 +367,34 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
 
   return (
     <>
+      {/* Custom Delete Confirmation Dialog */}
+      <Dialog fullWidth maxWidth='xs' open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+        <DialogContent className='flex items-center flex-col text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
+          <i className='ri-error-warning-line text-[88px] mbe-6 text-warning' />
+          <Typography variant='h4'>Are you sure?</Typography>
+          <Typography color='text.primary'>
+            You won't be able to revert this administrator!
+          </Typography>
+        </DialogContent>
+        <DialogActions className='justify-center pbs-0 sm:pbe-16 sm:pli-16'>
+          <Button
+            variant='contained'
+            color='error'
+            onClick={() => handleDeleteConfirm(true)}
+            disabled={isPending}
+          >
+            {isPending ? 'Deleting...' : 'Yes, Delete Administrator!'}
+          </Button>
+          <Button
+            variant='outlined'
+            color='secondary'
+            onClick={() => handleDeleteConfirm(false)}
+            disabled={isPending}
+          >
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Card>
         <CardHeader title='Filters' />
         <TableFilters setData={setFilteredData} tableData={data} perPage={perPage} onPerPageChange={onPerPageChange} />
