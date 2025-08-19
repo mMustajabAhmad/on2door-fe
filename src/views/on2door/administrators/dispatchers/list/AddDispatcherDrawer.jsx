@@ -1,77 +1,103 @@
+'use client'
+
 // React Imports
 import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
 import Button from '@mui/material/Button'
 import Drawer from '@mui/material/Drawer'
-import FormControl from '@mui/material/FormControl'
-import IconButton from '@mui/material/IconButton'
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
-import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
-import FormHelperText from '@mui/material/FormHelperText'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import CircularProgress from '@mui/material/CircularProgress'
+import Alert from '@mui/material/Alert'
 
 // Third-party Imports
 import { useForm, Controller } from 'react-hook-form'
+import { valibotResolver } from '@hookform/resolvers/valibot'
+import { object, string, email, pipe, nonEmpty } from 'valibot'
+import { toast } from 'react-toastify'
 
-// Vars
-const initialData = {
-  company: '',
-  country: '',
-  contact: ''
-}
+// API Imports
+import { createAdministratorInvitationApi } from '@/app/api/on2door/actions'
 
-const AddUserDrawer = props => {
-  // Props
-  const { open, handleClose, userData, setData } = props
+// Validation Schema
+const schema = object({
+  email: pipe(string(), nonEmpty('This field is required'), email('Please enter a valid email')),
+  first_name: pipe(string(), nonEmpty('This field is required')),
+  last_name: pipe(string(), nonEmpty('This field is required')),
+  phone_number: pipe(string(), nonEmpty('This field is required'))
+})
 
+const AddDispatcherDrawer = ({ open, handleClose }) => {
   // States
-  const [formData, setFormData] = useState(initialData)
+  const [errorState, setErrorState] = useState(null)
+  const queryClient = useQueryClient()
 
-  // Hooks
+  // Form hook
   const {
     control,
-    reset: resetForm,
     handleSubmit,
+    reset,
     formState: { errors }
   } = useForm({
+    resolver: valibotResolver(schema),
     defaultValues: {
-      fullName: '',
-      username: '',
       email: '',
-      role: '',
-      plan: '',
-      status: ''
+      first_name: '',
+      last_name: '',
+      phone_number: ''
     }
   })
 
+  // Create dispatcher mutation
+  const { mutate: createDispatcher, isPending } = useMutation({
+    mutationFn: createAdministratorInvitationApi,
+    onMutate: () => setErrorState(null),
+    onSuccess: () => {
+      toast.success('Dispatcher invitation sent successfully!', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      })
+
+      // Invalidate dispatcher queries to refresh the list
+      queryClient.invalidateQueries({
+        predicate: query => {
+          const queryKey = query.queryKey
+          return Array.isArray(queryKey) && (queryKey[0] === 'dispatcher' || queryKey[0] === 'dispatchers')
+        }
+      })
+
+      handleClose()
+      reset()
+    },
+    onError: err => setErrorState(err)
+  })
+
   const onSubmit = data => {
-    const newUser = {
-      id: (userData?.length && userData?.length + 1) || 1,
-      avatar: `/images/avatars/${Math.floor(Math.random() * 8) + 1}.png`,
-      fullName: data.fullName,
-      username: data.username,
+    const payload = {
       email: data.email,
-      role: data.role,
-      currentPlan: data.plan,
-      status: data.status,
-      company: formData.company,
-      country: formData.country,
-      contact: formData.contact
+      first_name: data.first_name,
+      last_name: data.last_name,
+      phone_number: data.phone_number,
+      role: 'dispatcher',
+      is_read_only: false,
+      is_active: false
     }
 
-    setData([...(userData ?? []), newUser])
-    handleClose()
-    setFormData(initialData)
-    resetForm({ fullName: '', username: '', email: '', role: '', plan: '', status: '' })
+    createDispatcher(payload)
   }
 
   const handleReset = () => {
     handleClose()
-    setFormData(initialData)
+    setErrorState(null)
+    reset()
   }
 
   return (
@@ -91,143 +117,86 @@ const AddUserDrawer = props => {
       </div>
       <Divider />
       <div className='p-5'>
-        <form onSubmit={handleSubmit(data => onSubmit(data))} className='flex flex-col gap-5'>
+        {errorState && (
+          <Alert severity='error' sx={{ mb: 2 }}>
+            {errorState?.response?.data?.error ||
+              errorState?.response?.data?.message ||
+              'Failed to create dispatcher. Please try again.'}
+          </Alert>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5'>
           <Controller
-            name='fullName'
+            name='first_name'
             control={control}
-            rules={{ required: true }}
             render={({ field }) => (
               <TextField
                 {...field}
                 fullWidth
-                label='Full Name'
-                placeholder='John Doe'
-                {...(errors.fullName && { error: true, helperText: 'This field is required.' })}
+                label='First Name'
+                placeholder='John'
+                error={Boolean(errors.first_name)}
+                helperText={errors.first_name?.message}
               />
             )}
           />
+
           <Controller
-            name='username'
+            name='last_name'
             control={control}
-            rules={{ required: true }}
             render={({ field }) => (
               <TextField
                 {...field}
                 fullWidth
-                label='Username'
-                placeholder='johndoe'
-                {...(errors.username && { error: true, helperText: 'This field is required.' })}
+                label='Last Name'
+                placeholder='Doe'
+                error={Boolean(errors.last_name)}
+                helperText={errors.last_name?.message}
               />
             )}
           />
+
           <Controller
             name='email'
             control={control}
-            rules={{ required: true }}
             render={({ field }) => (
               <TextField
                 {...field}
                 fullWidth
                 type='email'
                 label='Email'
-                placeholder='johndoe@gmail.com'
-                {...(errors.email && { error: true, helperText: 'This field is required.' })}
+                placeholder='john.doe@example.com'
+                error={Boolean(errors.email)}
+                helperText={errors.email?.message}
               />
             )}
           />
-          <FormControl fullWidth>
-            <InputLabel id='country' error={Boolean(errors.role)}>
-              Select Role
-            </InputLabel>
-            <Controller
-              name='role'
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <Select label='Select Role' {...field} error={Boolean(errors.role)}>
-                  <MenuItem value='admin'>Admin</MenuItem>
-                  <MenuItem value='author'>Author</MenuItem>
-                  <MenuItem value='editor'>Editor</MenuItem>
-                  <MenuItem value='maintainer'>Maintainer</MenuItem>
-                  <MenuItem value='subscriber'>Subscriber</MenuItem>
-                </Select>
-              )}
-            />
-            {errors.role && <FormHelperText error>This field is required.</FormHelperText>}
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel id='country' error={Boolean(errors.plan)}>
-              Select Plan
-            </InputLabel>
-            <Controller
-              name='plan'
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <Select label='Select Plan' {...field} error={Boolean(errors.plan)}>
-                  <MenuItem value='basic'>Basic</MenuItem>
-                  <MenuItem value='company'>Company</MenuItem>
-                  <MenuItem value='enterprise'>Enterprise</MenuItem>
-                  <MenuItem value='team'>Team</MenuItem>
-                </Select>
-              )}
-            />
-            {errors.plan && <FormHelperText error>This field is required.</FormHelperText>}
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel id='country' error={Boolean(errors.status)}>
-              Select Status
-            </InputLabel>
-            <Controller
-              name='status'
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <Select label='Select Status' {...field} error={Boolean(errors.status)}>
-                  <MenuItem value='pending'>Pending</MenuItem>
-                  <MenuItem value='active'>Active</MenuItem>
-                  <MenuItem value='inactive'>Inactive</MenuItem>
-                </Select>
-              )}
-            />
-            {errors.status && <FormHelperText error>This field is required.</FormHelperText>}
-          </FormControl>
-          <TextField
-            label='Company'
-            fullWidth
-            placeholder='Company PVT LTD'
-            value={formData.company}
-            onChange={e => setFormData({ ...formData, company: e.target.value })}
+
+          <Controller
+            name='phone_number'
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                label='Phone Number'
+                placeholder='+921234567890'
+                error={Boolean(errors.phone_number)}
+                helperText={errors.phone_number?.message}
+              />
+            )}
           />
-          <FormControl fullWidth>
-            <InputLabel id='country'>Select Country</InputLabel>
-            <Select
-              fullWidth
-              id='country'
-              value={formData.country}
-              onChange={e => setFormData({ ...formData, country: e.target.value })}
-              label='Select Country'
-              labelId='country'
-            >
-              <MenuItem value='India'>India</MenuItem>
-              <MenuItem value='USA'>USA</MenuItem>
-              <MenuItem value='Australia'>Australia</MenuItem>
-              <MenuItem value='Germany'>Germany</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            label='Contact'
-            type='number'
-            fullWidth
-            placeholder='(397) 294-5153'
-            value={formData.contact}
-            onChange={e => setFormData({ ...formData, contact: e.target.value })}
-          />
+
           <div className='flex items-center gap-4'>
-            <Button variant='contained' type='submit'>
-              Submit
+            <Button
+              variant='contained'
+              type='submit'
+              disabled={isPending}
+              startIcon={isPending ? <CircularProgress size={20} /> : null}
+            >
+              {isPending ? 'Creating...' : 'Create Dispatcher'}
             </Button>
-            <Button variant='outlined' color='error' type='reset' onClick={() => handleReset()}>
+            <Button variant='outlined' color='error' type='button' onClick={handleReset}>
               Cancel
             </Button>
           </div>
@@ -237,4 +206,4 @@ const AddUserDrawer = props => {
   )
 }
 
-export default AddUserDrawer
+export default AddDispatcherDrawer

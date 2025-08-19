@@ -59,3 +59,30 @@ export function deleteAdministratorApi(id) {
     .delete(`/administrators/administrators/${id}`)
     .then(response => response.data)
 }
+
+// Dispatchers
+export function getDispatchersApi(payload = {}) {
+  return client()
+    .get('/administrators/administrators', {
+      params: payload
+    })
+    .then(response => response.data)
+}
+
+export function getDispatcherByIdApi(id) {
+  return client()
+    .get(`/administrators/administrators/${id}`)
+    .then(response => response.data)
+}
+
+export function updateDispatcherApi(id, payload) {
+  return client()
+    .put(`/administrators/administrators/${id}`, payload)
+    .then(response => response.data)
+}
+
+export function deleteDispatcherApi(id) {
+  return client()
+    .delete(`/administrators/administrators/${id}`)
+    .then(response => response.data)
+}

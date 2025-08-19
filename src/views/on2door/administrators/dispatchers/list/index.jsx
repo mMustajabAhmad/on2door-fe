@@ -5,14 +5,22 @@ import Grid from '@mui/material/Grid2'
 import UserListTable from './DispatcherListTable'
 // import UserListCards from './AdminListCards'
 
-const UserList = ({ userData }) => {
+const UserList = ({ userData, page, perPage, onPageChange, onPerPageChange, searchQuery, setSearchQuery }) => {
   return (
     <Grid container spacing={6}>
       {/* <Grid size={{ xs: 12 }}>
         <UserListCards />
       </Grid> */}
       <Grid size={{ xs: 12 }}>
-        <UserListTable tableData={userData} />
+        <UserListTable
+          tableData={userData}
+          page={page}
+          perPage={perPage}
+          onPageChange={onPageChange}
+          onPerPageChange={onPerPageChange}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
       </Grid>
     </Grid>
   )
