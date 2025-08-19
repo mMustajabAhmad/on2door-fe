@@ -26,6 +26,7 @@ import { styled } from '@mui/material/styles'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
+import Alert from '@mui/material/Alert'
 // import TablePagination from '@mui/material/TablePagination'
 
 // Third-party Imports
@@ -155,12 +156,12 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
     onError: err => setErrorState(err)
   })
 
-  const handleDeleteClick = (admin) => {
+  const handleDeleteClick = admin => {
     setAdminToDelete(admin)
     setDeleteDialogOpen(true)
   }
 
-  const handleDeleteConfirm = (confirmed) => {
+  const handleDeleteConfirm = confirmed => {
     if (confirmed && adminToDelete) {
       deleteAdministrator(adminToDelete.id)
     }
@@ -245,7 +246,12 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
       }),
       columnHelper.accessor('role', {
         header: 'Role',
-        cell: ({ row }) => <Typography className='capitalize' color='text.primary'> {row.original.role} </Typography>
+        cell: ({ row }) => (
+          <Typography className='capitalize' color='text.primary'>
+            {' '}
+            {row.original.role}{' '}
+          </Typography>
+        )
       }),
       columnHelper.accessor('phone_number', {
         header: 'Phone',
@@ -254,17 +260,6 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
       columnHelper.accessor('organization_id', {
         header: 'Organization ID',
         cell: ({ row }) => <Typography color='text.primary'> {row.original.organization_id} </Typography>
-      }),
-      columnHelper.accessor('is_account_owner', {
-        header: 'Account Owner',
-        cell: ({ row }) => (
-          <Chip
-            variant='tonal'
-            label={row.original.is_account_owner ? 'Yes' : 'No'}
-            size='small'
-            color={row.original.is_account_owner ? 'success' : 'default'}
-          />
-        )
       }),
       columnHelper.accessor('status', {
         header: 'Status',
@@ -275,7 +270,7 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
                 variant='tonal'
                 label={row.original.status}
                 size='small'
-                color={row.original.status ? 'success' : 'default'}
+                color={row.original.status === 'active' ? 'success' : 'default'}
                 className='capitalize'
               />
             </div>
@@ -286,10 +281,7 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
         header: 'Action',
         cell: ({ row }) => (
           <div className='flex items-center'>
-            <IconButton
-              onClick={() => handleDeleteClick(row.original)}
-              disabled={isPending}
-            >
+            <IconButton onClick={() => handleDeleteClick(row.original)} disabled={isPending}>
               {isPending ? (
                 <i className='ri-loader-4-line text-textSecondary animate-spin' />
               ) : (
@@ -372,25 +364,13 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
         <DialogContent className='flex items-center flex-col text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
           <i className='ri-error-warning-line text-[88px] mbe-6 text-warning' />
           <Typography variant='h4'>Are you sure?</Typography>
-          <Typography color='text.primary'>
-            You won't be able to revert this administrator!
-          </Typography>
+          <Typography color='text.primary'>You won't be able to revert this administrator!</Typography>
         </DialogContent>
         <DialogActions className='justify-center pbs-0 sm:pbe-16 sm:pli-16'>
-          <Button
-            variant='contained'
-            color='error'
-            onClick={() => handleDeleteConfirm(true)}
-            disabled={isPending}
-          >
-            {isPending ? 'Deleting...' : 'Yes, Delete Administrator!'}
+          <Button variant='contained' color='error' onClick={() => handleDeleteConfirm(true)} disabled={isPending}>
+            {isPending ? 'Deleting...' : 'Yes, Delete Admin!'}
           </Button>
-          <Button
-            variant='outlined'
-            color='secondary'
-            onClick={() => handleDeleteConfirm(false)}
-            disabled={isPending}
-          >
+          <Button variant='outlined' color='secondary' onClick={() => handleDeleteConfirm(false)} disabled={isPending}>
             Cancel
           </Button>
         </DialogActions>
@@ -399,27 +379,37 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
         <CardHeader title='Filters' />
         <TableFilters setData={setFilteredData} tableData={data} perPage={perPage} onPerPageChange={onPerPageChange} />
         <Divider />
+
+        {/* Error display for delete operations */}
+        {errorState && (
+          <Alert severity='error' sx={{ mx: 5, mb: 2 }}>
+            {errorState?.response?.data?.error ||
+              errorState?.response?.data?.message ||
+              'Failed to delete administrator. Please try again.'}
+          </Alert>
+        )}
+
         <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
-          <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>            
+          <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
             <DebouncedInput
-                value={searchQuery ?? ''}
-                // onChange={value => setGlobalFilter(String(value))}
-                onChange={value => setSearchQuery(String(value))}
-                placeholder='Search Admin'
-                className='max-sm:is-full'
-              />
-              <Button
-                color='secondary'
-                variant='outlined'
-                className='max-sm:is-full'
-                onClick={() => setSearchQuery('')}
-                // sx={{ height: '45px', gap: 1.5 }}
-              >
-                Clear
-                <i className='ri-filter-line'></i>
-              </Button>
+              value={searchQuery ?? ''}
+              // onChange={value => setGlobalFilter(String(value))}
+              onChange={value => setSearchQuery(String(value))}
+              placeholder='Search Admin'
+              className='max-sm:is-full'
+            />
+            <Button
+              color='secondary'
+              variant='outlined'
+              className='max-sm:is-full'
+              onClick={() => setSearchQuery('')}
+              // sx={{ height: '45px', gap: 1.5 }}
+            >
+              Clear
+              <i className='ri-filter-line'></i>
+            </Button>
           </div>
-          <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>            
+          <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
             <Button variant='contained' onClick={() => setAddUserOpen(!addUserOpen)} className='max-sm:is-full'>
               Add New Admin
             </Button>
@@ -479,7 +469,8 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
         </div>
         <div className='flex justify-between items-center p-4 border-t'>
           <div className='text-sm text-gray-600'>
-            Showing {((page - 1) * perPage) + 1} to {Math.min(page * perPage, tableData?.total_count)} of {tableData?.total_count} results
+            Showing {(page - 1) * perPage + 1} to {Math.min(page * perPage, tableData?.total_count)} of{' '}
+            {tableData?.total_count} results
           </div>
           <CustomPagination
             page={page}
@@ -489,12 +480,7 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
           />
         </div>
       </Card>
-      <AddUserDrawer
-        open={addUserOpen}
-        handleClose={() => setAddUserOpen(!addUserOpen)}
-        userData={data}
-        setData={setData}
-      />
+      <AddUserDrawer open={addUserOpen} handleClose={()  => setAddUserOpen(!addUserOpen)} />
     </>
   )
 }

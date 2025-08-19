@@ -1,194 +1,282 @@
 'use client'
 
 // React Imports
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
 import Grid from '@mui/material/Grid2'
-import Dialog from '@mui/material/Dialog'
-import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import Alert from '@mui/material/Alert'
+import CircularProgress from '@mui/material/CircularProgress'
+import Box from '@mui/material/Box'
+import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
-import FormControl from '@mui/material/FormControl'
-import InputLabel from '@mui/material/InputLabel'
-import Select from '@mui/material/Select'
-import Chip from '@mui/material/Chip'
-import MenuItem from '@mui/material/MenuItem'
-import Typography from '@mui/material/Typography'
-import Switch from '@mui/material/Switch'
 import IconButton from '@mui/material/IconButton'
-import { FormControlLabel } from '@mui/material'
 
-// Vars
-const initialData = {
-  firstName: 'Oliver',
-  lastName: 'Queen',
-  userName: 'oliverQueen',
-  billingEmail: 'oliverQueen@gmail.com',
-  status: 'status',
-  taxId: 'Tax-8894',
-  contact: '+ 1 609 933 4422',
-  language: ['english'],
-  country: 'US',
-  useAsBillingAddress: true
-}
+// Third-party Imports
+import { Controller, useForm } from 'react-hook-form'
+import { valibotResolver } from '@hookform/resolvers/valibot'
+import { object, string, email, pipe, nonEmpty } from 'valibot'
+import { toast } from 'react-toastify'
 
-const status = ['Status', 'Active', 'Inactive', 'Suspended']
-const languages = ['English', 'Spanish', 'French', 'German', 'Hindi']
-const countries = ['Select Country', 'France', 'Russia', 'China', 'UK', 'US']
+// API Imports
+import {
+  getAdministratorByIdApi,
+  updateAdministratorApi,
+  getDispatcherByIdApi,
+  updateDispatcherApi
+} from '@/app/api/on2door/actions'
 
-const EditUserInfo = ({ open, setOpen, data }) => {
-  // States
-  const [userData, setUserData] = useState(data || initialData)
+const schema = object({
+  email: pipe(string(), nonEmpty('This field is required'), email('Please enter a valid email')),
+  first_name: pipe(string(), nonEmpty('This field is required')),
+  last_name: pipe(string(), nonEmpty('This field is required')),
+  phone_number: pipe(string(), nonEmpty('This field is required'))
+})
+
+const EditUserInfo = ({ open, setOpen, data, currentAdmin }) => {
+  const [errorState, setErrorState] = useState(null)
+  const queryClient = useQueryClient()
+
+  const isDispatcher = data?.dispatcher || data?.attributes?.role === 'dispatcher'
+  const apiFunctions = isDispatcher
+    ? { get: getDispatcherByIdApi, update: updateDispatcherApi }
+    : { get: getAdministratorByIdApi, update: updateAdministratorApi }
+
+  const userType = isDispatcher ? 'dispatcher' : 'administrator'
+  const queryKey = isDispatcher ? 'dispatcher' : 'administrator'
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm({
+    resolver: valibotResolver(schema),
+    defaultValues: {
+      email: '',
+      first_name: '',
+      last_name: '',
+      phone_number: ''
+    }
+  })
+
+  const { data: userData, refetch } = useQuery({
+    queryKey: [queryKey, currentAdmin?.id],
+    queryFn: () => apiFunctions.get(currentAdmin?.id),
+    enabled: !!currentAdmin?.id && open
+  })
+
+  const { mutate: updateUser, isPending } = useMutation({
+    mutationFn: ({ id, payload }) => apiFunctions.update(id, payload),
+
+    onMutate: () => {
+      setErrorState(null)
+    },
+
+    onSuccess: () => {
+      toast.success(`${userType.charAt(0).toUpperCase() + userType.slice(1)} updated successfully!`, {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      })
+
+      // console.log(`Invalidating queries for ${userType} ID:`, currentAdmin?.id)
+
+      // const activeQueries = queryClient.getQueryCache().getAll()
+      // console.log(
+      //   'Active queries:',
+      //   activeQueries.map(q => q.queryKey)
+      // )
+
+      // Invalidate all queries that start with the user type
+      queryClient.invalidateQueries({
+        predicate: query => {
+          const queryKey = query.queryKey
+          return (
+            Array.isArray(queryKey) &&
+            (queryKey[0] === queryKey ||
+              queryKey[0] === `${queryKey}s` ||
+              queryKey[0] === 'administrator' ||
+              queryKey[0] === 'administrators' ||
+              queryKey[0] === 'dispatcher' ||
+              queryKey[0] === 'dispatchers')
+          )
+        }
+      })
+
+      // invalidate the specific individual user query
+      queryClient.invalidateQueries({
+        queryKey: [queryKey, currentAdmin?.id]
+      })
+
+      // console.log('Queries invalidated using predicate')
+
+      setOpen(false)
+      reset()
+    },
+
+    onError: err => {
+      setErrorState(err)
+    }
+  })
+
+  useEffect(() => {
+    if (userData) {
+      const user =
+        userData?.administrator?.data?.attributes ||
+        userData?.dispatcher?.data?.attributes ||
+        userData?.attributes ||
+        userData ||
+        {}
+
+      reset({
+        email: user.email || '',
+        first_name: user.first_name || '',
+        last_name: user.last_name || '',
+        phone_number: user.phone_number || ''
+      })
+    }
+  }, [userData, reset])
+
+  const onSubmit = data => {
+    const payload = {
+      [userType]: {
+        email: data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        phone_number: data.phone_number
+      }
+    }
+
+    updateUser({ id: currentAdmin?.id, payload })
+  }
 
   const handleClose = () => {
     setOpen(false)
-    setUserData(data || initialData)
+    setErrorState(null)
+    reset()
   }
 
   return (
     <Dialog fullWidth open={open} onClose={handleClose} maxWidth='md' scroll='body' closeAfterTransition={false}>
       <DialogTitle variant='h4' className='flex gap-2 flex-col items-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
-        <div className='max-sm:is-[80%] max-sm:text-center'>Edit User Information</div>
+        <div className='max-sm:is-[80%] max-sm:text-center'>
+          Edit {userType.charAt(0).toUpperCase() + userType.slice(1)} Information
+        </div>
         <Typography component='span' className='flex flex-col text-center'>
-          Updating user details will receive a privacy audit.
+          Update {userType} details
         </Typography>
       </DialogTitle>
-      <form onSubmit={e => e.preventDefault()}>
-        <DialogContent className='overflow-visible pbs-0 sm:pli-16'>
-          <IconButton onClick={handleClose} className='absolute block-start-4 inline-end-4'>
-            <i className='ri-close-line text-textSecondary' />
-          </IconButton>
-          <Grid container spacing={5}>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label='First Name'
-                placeholder='John'
-                value={userData?.firstName}
-                onChange={e => setUserData({ ...userData, firstName: e.target.value })}
+
+      <DialogContent className='overflow-visible pbs-0 sm:pli-16'>
+        <IconButton onClick={handleClose} className='absolute block-start-4 inline-end-4'>
+          <i className='ri-close-line text-textSecondary' />
+        </IconButton>
+
+        {errorState && (
+          <Alert severity='error' sx={{ mb: 2 }}>
+            {errorState?.response?.data?.error ||
+              errorState?.response?.data?.message ||
+              'Update failed. Please try again.'}
+          </Alert>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Grid container spacing={5} paddingTop={4}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Controller
+                name='first_name'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='First Name'
+                    error={!!errors.first_name}
+                    helperText={errors.first_name?.message}
+                    disabled={isPending}
+                  />
+                )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label='Last Name'
-                placeholder='Doe'
-                value={userData?.lastName}
-                onChange={e => setUserData({ ...userData, lastName: e.target.value })}
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Controller
+                name='last_name'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='Last Name'
+                    error={!!errors.last_name}
+                    helperText={errors.last_name?.message}
+                    disabled={isPending}
+                  />
+                )}
               />
             </Grid>
-            <Grid size={{ xs: 12 }}>
-              <TextField
-                fullWidth
-                label='User Name'
-                placeholder='JohnDoe'
-                value={userData?.userName}
-                onChange={e => setUserData({ ...userData, userName: e.target.value })}
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Controller
+                name='email'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='Email'
+                    type='email'
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                    disabled={isPending}
+                  />
+                )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label='Billing Email'
-                placeholder='johnDoe@email.com'
-                value={userData?.billingEmail}
-                onChange={e => setUserData({ ...userData, billingEmail: e.target.value })}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <FormControl fullWidth>
-                <InputLabel>Status</InputLabel>
-                <Select
-                  label='Status'
-                  value={userData?.status}
-                  onChange={e => setUserData({ ...userData, status: e.target.value })}
-                >
-                  {status.map((status, index) => (
-                    <MenuItem key={index} value={status.toLowerCase().replace(/\s+/g, '-')}>
-                      {status}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label='Tax ID'
-                placeholder='Tax-7490'
-                value={userData?.taxId}
-                onChange={e => setUserData({ ...userData, taxId: e.target.value })}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label='Contact'
-                placeholder='+ 123 456 7890'
-                value={userData?.contact}
-                onChange={e => setUserData({ ...userData, contact: e.target.value })}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <FormControl fullWidth>
-                <InputLabel>Language</InputLabel>
-                <Select
-                  label='Language'
-                  multiple
-                  value={userData?.language?.map(lang => lang.toLowerCase().replace(/\s+/g, '-')) || []}
-                  onChange={e => setUserData({ ...userData, language: e.target.value })}
-                  renderValue={selected => (
-                    <div className='flex items-center gap-2 flex-wrap'>
-                      {selected.map(value => (
-                        <Chip key={value} label={value} className='capitalize' size='small' />
-                      ))}
-                    </div>
-                  )}
-                >
-                  {languages.map((language, index) => (
-                    <MenuItem key={index} value={language.toLowerCase().replace(/\s+/g, '-')}>
-                      {language}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <FormControl fullWidth>
-                <InputLabel>Country</InputLabel>
-                <Select
-                  label='Country'
-                  value={userData?.country?.toLowerCase().replace(/\s+/g, '-')}
-                  onChange={e => setUserData({ ...userData, country: e.target.value })}
-                >
-                  {countries.map((country, index) => (
-                    <MenuItem key={index} value={country.toLowerCase().replace(/\s+/g, '-')}>
-                      {country}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <FormControlLabel
-                control={<Switch defaultChecked={userData?.useAsBillingAddress} />}
-                label='Use as a billing address?'
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Controller
+                name='phone_number'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='Phone Number'
+                    error={!!errors.phone_number}
+                    helperText={errors.phone_number?.message}
+                    disabled={isPending}
+                  />
+                )}
               />
             </Grid>
           </Grid>
-        </DialogContent>
-        <DialogActions className='justify-center pbs-0 sm:pbe-16 sm:pli-16'>
-          <Button variant='contained' onClick={handleClose} type='submit'>
-            Submit
-          </Button>
-          <Button variant='outlined' color='secondary' type='reset' onClick={handleClose}>
-            Cancel
-          </Button>
-        </DialogActions>
-      </form>
+        </form>
+      </DialogContent>
+
+      <DialogActions className='justify-center pbs-0 sm:pbe-16 sm:pli-16'>
+        <Button
+          variant='contained'
+          onClick={handleSubmit(onSubmit)}
+          disabled={isPending}
+          startIcon={isPending ? <CircularProgress size={20} /> : null}
+        >
+          {isPending ? 'Updating...' : `Update ${userType.charAt(0).toUpperCase() + userType.slice(1)}`}
+        </Button>
+        <Button variant='outlined' color='secondary' onClick={handleClose} disabled={isPending}>
+          Cancel
+        </Button>
+      </DialogActions>
     </Dialog>
   )
 }
