@@ -82,20 +82,28 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...props }) => {
   // States
   const [value, setValue] = useState(initialValue)
+  const [isUserTyping, setIsUserTyping] = useState(false)
 
   useEffect(() => {
     setValue(initialValue)
   }, [initialValue])
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value)
-    }, debounce)
+    if (isUserTyping) {
+      const timeout = setTimeout(() => {
+        onChange(value)
+        setIsUserTyping(false)
+      }, debounce)
 
-    return () => clearTimeout(timeout)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
+      return () => clearTimeout(timeout)
+    }
+  }, [value, onChange, isUserTyping, debounce])
 
-  return <TextField {...props} value={value} onChange={e => setValue(e.target.value)} size='small' />
+  const handleInputChange = (e) => {
+    setValue(e.target.value)
+    setIsUserTyping(true)
+  }
+
+  return <TextField {...props} value={value} onChange={handleInputChange} size='small' />
 }
 
 // Vars
