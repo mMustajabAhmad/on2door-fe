@@ -77,26 +77,44 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...props }) => {
   // States
   const [value, setValue] = useState(initialValue)
+  const [isUserTyping, setIsUserTyping] = useState(false)
 
   useEffect(() => {
     setValue(initialValue)
   }, [initialValue])
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value)
-    }, debounce)
+    if (isUserTyping) {
+      const timeout = setTimeout(() => {
+        onChange(value)
+        setIsUserTyping(false)
+      }, debounce)
 
-    return () => clearTimeout(timeout)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
+      return () => clearTimeout(timeout)
+    }
+  }, [value, onChange, isUserTyping, debounce])
 
-  return <TextField {...props} value={value} onChange={e => setValue(e.target.value)} size='small' />
+  const handleInputChange = (e) => {
+    setValue(e.target.value)
+    setIsUserTyping(true)
+  }
+
+  return <TextField {...props} value={value} onChange={handleInputChange} size='small' />
 }
 
 // Column Definitions
 const columnHelper = createColumnHelper()
 
-const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange, searchQuery, setSearchQuery }) => {
+const UserListTable = ({
+  tableData,
+  page,
+  perPage,
+  onPageChange,
+  onPerPageChange,
+  searchQuery,
+  setSearchQuery,
+  status,
+  onStatusChange
+}) => {
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [rowSelection, setRowSelection] = useState({})
@@ -334,7 +352,14 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
       </Dialog>
       <Card>
         <CardHeader title='Filters' />
-        <TableFilters setData={setFilteredData} tableData={data} perPage={perPage} onPerPageChange={onPerPageChange} />
+        <TableFilters
+          setData={setFilteredData}
+          tableData={data}
+          perPage={perPage}
+          onPerPageChange={onPerPageChange}
+          status={status}
+          onStatusChange={onStatusChange}
+        />
         <Divider />
 
         {/* Error display for delete operations */}
@@ -419,14 +444,13 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
         </div>
         <div className='flex justify-between items-center p-4 border-t'>
           <div className='text-sm text-gray-600'>
-            {filteredData.length === 0
-              ? 'No results found'
-              : `Showing ${(page - 1) * perPage + 1} to ${Math.min(page * perPage, filteredData.length)} of ${filteredData.length} results`}
+            Showing {(page - 1) * perPage + 1} to {Math.min(page * perPage, tableData?.total_count)} of{' '}
+            {tableData?.total_count} results
           </div>
           <CustomPagination
             page={page}
             perPage={perPage}
-            totalCount={filteredData.length || 0}
+            totalCount={tableData?.total_count || 0}
             onPageChange={onPageChange}
           />
         </div>

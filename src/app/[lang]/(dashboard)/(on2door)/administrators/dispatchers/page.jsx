@@ -14,9 +14,10 @@ const DispatcherListApp = () => {
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(10)
   const [searchQuery, setSearchQuery] = useState('')
+  const [status, setStatus] = useState('')
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['dispatchers', page, perPage, searchQuery],
+    queryKey: ['dispatchers', page, perPage, searchQuery, status],
     queryFn: () => {
       const payload = {
         administrator_type: 'dispatcher',
@@ -28,11 +29,12 @@ const DispatcherListApp = () => {
         payload['q[email_or_first_name_or_last_name_or_phone_number_cont]'] = searchQuery
       }
 
+      if (status) {
+        payload['q[is_active_eq]'] = status === 'active' ? true : false
+      }
+
       return getDispatchersApi(payload)
-    },
-    keepPreviousData: true, // Keep old data while fetching new
-    staleTime: 5 * 60 * 1000, // Data stays fresh for 5 minutes
-    cacheTime: 10 * 60 * 1000 // Cache for 10 minutes
+    }
   })
 
   const handlePageChange = newPage => {
@@ -40,13 +42,18 @@ const DispatcherListApp = () => {
   }
 
   const handlePerPageChange = newPerPage => {
-    setPerPage(newPerPage)
     setPage(1)
+    setPerPage(newPerPage)
   }
 
   const handleSearchChange = value => {
-    setSearchQuery(value)
     setPage(1)
+    setSearchQuery(value)
+  }
+
+  const handleStatusChange = value => {
+    setPage(1)
+    setStatus(value)
   }
 
   if (isLoading) {
@@ -66,7 +73,6 @@ const DispatcherListApp = () => {
         <div className='text-center'>
           <i className='ri-error-warning-line text-6xl text-red-500 mb-4'></i>
           <h2 className='text-xl font-semibold mb-2'>Failed to load dispatchers</h2>
-          <p className='text-gray-600'>Please try again later</p>
         </div>
       </div>
     )
@@ -81,6 +87,8 @@ const DispatcherListApp = () => {
       onPerPageChange={handlePerPageChange}
       searchQuery={searchQuery}
       setSearchQuery={handleSearchChange}
+      status={status}
+      onStatusChange={handleStatusChange}
     />
   )
 }
