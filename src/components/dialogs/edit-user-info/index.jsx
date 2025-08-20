@@ -27,9 +27,7 @@ import { toast } from 'react-toastify'
 // API Imports
 import {
   getAdministratorByIdApi,
-  updateAdministratorApi,
-  getDispatcherByIdApi,
-  updateDispatcherApi
+  updateAdministratorApi
 } from '@/app/api/on2door/actions'
 
 const schema = object({
@@ -103,19 +101,15 @@ const EditUserInfo = ({ open, setOpen, data, currentAdmin }) => {
           const queryKey = query.queryKey
           return (
             Array.isArray(queryKey) &&
-            (queryKey[0] === queryKey ||
-              queryKey[0] === `${queryKey}s` ||
-              queryKey[0] === 'administrator' ||
-              queryKey[0] === 'administrators' ||
-              queryKey[0] === 'dispatcher' ||
-              queryKey[0] === 'dispatchers')
+            (queryKey[0] === userType ||
+              queryKey[0] === `${userType}s`)
           )
         }
       })
 
       // invalidate the specific individual user query
       queryClient.invalidateQueries({
-        queryKey: [queryKey, currentAdmin?.id]
+        queryKey: [userType, currentAdmin?.id]
       })
 
       // console.log('Queries invalidated using predicate')
