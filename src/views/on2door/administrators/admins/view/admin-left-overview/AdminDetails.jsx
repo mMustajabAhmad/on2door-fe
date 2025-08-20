@@ -36,15 +36,12 @@ const UserDetails = ({ userData }) => {
               </div>
               <div className='flex gap-2'>
                 <Chip
-                  label={admin.role || 'admin'}
+                  label={admin.role}
                   color={isOwner ? 'success' : 'primary'}
                   size='small'
                   variant='tonal'
                   className='capitalize'
                 />
-                {isOwner && (
-                  <Chip label='Owner' color='success' size='small' variant='tonal' className='font-semibold' />
-                )}
               </div>
             </div>
           </div>
