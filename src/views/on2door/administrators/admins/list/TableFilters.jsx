@@ -10,27 +10,26 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
 
-const TableFilters = ({ setData, tableData, perPage, onPerPageChange }) => {
-  // States
-  const [role, setRole] = useState('')
-  const [plan, setPlan] = useState('')
-  const [status, setStatus] = useState('')
+const TableFilters = ({ perPage, onPerPageChange, role, onRoleChange, status, onStatusChange }) => {
+  // Remove local state - use props from parent instead
+  // const [role, setRole] = useState('')
+  // const [plan, setPlan] = useState('')
+  // const [status, setStatus] = useState('')
 
-  useEffect(() => {
-    const filteredData = tableData?.filter(user => {
-      if (role && user.role !== role) return false
-      if (plan && user.currentPlan !== plan) return false
-      if (status && user.status !== status) return false
-
-      return true
-    })
-
-    setData(filteredData || [])
-  }, [role, plan, status, tableData, setData])
+  // Remove client-side filtering - API handles it now
+  // useEffect(() => {
+  //   const filteredData = tableData?.filter(user => {
+  //     if (role && user.role !== role) return false
+  //     if (plan && user.currentPlan !== plan) return false
+  //     if (status && user.status !== status) return false
+  //     return true
+  //   })
+  //   setData(filteredData || [])
+  // }, [role, plan, status, tableData, setData])
 
   const handleClearFilters = () => {
-    setRole('')
-    setStatus('')
+    onRoleChange('')
+    onStatusChange('')
     onPerPageChange(10)
   }
 
@@ -44,7 +43,7 @@ const TableFilters = ({ setData, tableData, perPage, onPerPageChange }) => {
               fullWidth
               id='select-role'
               value={role}
-              onChange={e => setRole(e.target.value)}
+              onChange={e => onRoleChange(e.target.value)}
               label='Select Role'
               labelId='role-select'
               inputProps={{ placeholder: 'Select Role' }}
@@ -87,7 +86,7 @@ const TableFilters = ({ setData, tableData, perPage, onPerPageChange }) => {
               id='select-status'
               label='Select Status'
               value={status}
-              onChange={e => setStatus(e.target.value)}
+              onChange={e => onStatusChange(e.target.value)}
               labelId='status-select'
               inputProps={{ placeholder: 'Select Status' }}
             >

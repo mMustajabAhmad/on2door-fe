@@ -125,7 +125,19 @@ const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...prop
 // Column Definitions
 const columnHelper = createColumnHelper()
 
-const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange, searchQuery, setSearchQuery }) => {
+const UserListTable = ({
+  tableData,
+  page,
+  perPage,
+  onPageChange,
+  onPerPageChange,
+  searchQuery,
+  setSearchQuery,
+  role,
+  onRoleChange,
+  status,
+  onStatusChange
+}) => {
   // const buttonProps = (children, color, variant) => ({
   //   children,
   //   color,
@@ -385,7 +397,16 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
       </Dialog>
       <Card>
         <CardHeader title='Filters' />
-        <TableFilters setData={setFilteredData} tableData={data} perPage={perPage} onPerPageChange={onPerPageChange} />
+        <TableFilters
+          setData={setFilteredData}
+          tableData={data}
+          perPage={perPage}
+          onPerPageChange={onPerPageChange}
+          role={role}
+          onRoleChange={onRoleChange}
+          status={status}
+          onStatusChange={onStatusChange}
+        />
         <Divider />
 
         {/* Error display for delete operations */}
@@ -488,9 +509,9 @@ const UserListTable = ({ tableData, page, perPage, onPageChange, onPerPageChange
           />
         </div>
       </Card>
-      <AddUserDrawer open={addUserOpen} handleClose={()  => setAddUserOpen(!addUserOpen)} />
+      <AddUserDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} />
     </>
   )
 }
-
+ 
 export default UserListTable

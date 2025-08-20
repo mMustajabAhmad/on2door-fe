@@ -13,9 +13,11 @@ const UserListApp = () => {
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(10)
   const [searchQuery, setSearchQuery] = useState('')
+  const [role, setRole] = useState('')
+  const [status, setStatus] = useState('')
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['administrators', page, perPage, searchQuery],
+    queryKey: ['administrators', page, perPage, searchQuery, role, status],
     queryFn: () => {
       const payload = {
         administrator_type: 'admin',
@@ -27,6 +29,14 @@ const UserListApp = () => {
         payload['q[email_or_first_name_or_last_name_or_phone_number_cont]'] = searchQuery
       }
 
+      if (role) {
+        payload['q[role_eq]'] = role
+      }
+
+      if (status) {
+        payload['q[is_active_eq]'] = status === 'active' ? true : false
+      }
+
       return getAdministratorsApi(payload)
     }
   })
@@ -36,13 +46,23 @@ const UserListApp = () => {
   }
 
   const handlePerPageChange = newPerPage => {
-    setPerPage(newPerPage)
     setPage(1)
+    setPerPage(newPerPage)
   }
 
   const handleSearchChange = value => {
-    setSearchQuery(value)
     setPage(1)
+    setSearchQuery(value)
+  }
+
+  const handleRoleChange = value => {
+    setPage(1)
+    setRole(value)
+  }
+
+  const handleStatusChange = value => {
+    setPage(1)
+    setStatus(value)
   }
 
   if (isLoading) {
@@ -76,8 +96,13 @@ const UserListApp = () => {
       onPerPageChange={handlePerPageChange}
       searchQuery={searchQuery}
       setSearchQuery={handleSearchChange}
+      role={role}
+      onRoleChange={handleRoleChange}
+      status={status}
+      onStatusChange={handleStatusChange}
     />
   )
 }
 
 export default UserListApp
+ 
