@@ -25,17 +25,14 @@ const UserListApp = () => {
         per_page: perPage
       }
 
-      if (searchQuery) {
-        payload['q[email_or_first_name_or_last_name_or_phone_number_cont]'] = searchQuery
-      }
+      if (searchQuery)
+         payload['q[email_or_first_name_or_last_name_or_phone_number_cont]'] = searchQuery
 
-      if (role) {
+      if (role)
         payload['q[role_eq]'] = role
-      }
 
-      if (status) {
+      if (status)
         payload['q[is_active_eq]'] = status === 'active' ? true : false
-      }
 
       return getAdministratorsApi(payload)
     }
@@ -105,4 +102,3 @@ const UserListApp = () => {
 }
 
 export default UserListApp
- 

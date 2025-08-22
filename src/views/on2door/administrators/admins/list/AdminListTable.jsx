@@ -2,15 +2,15 @@
 
 // React Imports
 import { useEffect, useState, useMemo } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 // Next Imports
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 //Component Imports
-import EditUserInfo from '@components/dialogs/edit-user-info'
-import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
+import EditUserInfo from '@components/on2door/dialogs/administrators/admins/update'
+import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
+import DeleteConfirmationDialog from '@components/on2door/dialogs/delete'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -23,16 +23,13 @@ import Chip from '@mui/material/Chip'
 import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
-import Dialog from '@mui/material/Dialog'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
-import Alert from '@mui/material/Alert'
+
 // import TablePagination from '@mui/material/TablePagination'
 
 // Third-party Imports
 import classnames from 'classnames'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import { toast } from 'react-toastify'
+
 import {
   createColumnHelper,
   flexRender,
@@ -56,9 +53,6 @@ import CustomPagination from './CustomPagination'
 // Util Imports
 import { getInitials } from '@/utils/getInitials'
 import { getLocalizedUrl } from '@/utils/i18n'
-
-// API Imports
-import { deleteAdministratorApi } from '@/app/api/on2door/actions'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
@@ -98,29 +92,13 @@ const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...prop
     }
   }, [value, onChange, isUserTyping, debounce])
 
-  const handleInputChange = (e) => {
+  const handleInputChange = e => {
     setValue(e.target.value)
     setIsUserTyping(true)
   }
 
   return <TextField {...props} value={value} onChange={handleInputChange} size='small' />
 }
-
-// Vars
-// const userRoleObj = {
-//   admin: { icon: 'ri-vip-crown-line', color: 'error' },
-//   owner: { icon: 'ri-crown-line', color: 'warning' },
-//   author: { icon: 'ri-computer-line', color: 'warning' },
-//   editor: { icon: 'ri-edit-box-line', color: 'info' },
-//   maintainer: { icon: 'ri-pie-chart-2-line', color: 'success' },
-//   subscriber: { icon: 'ri-user-3-line', color: 'primary' }
-// }
-
-// const userStatusObj = {
-//   active: 'success',
-//   pending: 'warning',
-//   inactive: 'secondary'
-// }
 
 // Column Definitions
 const columnHelper = createColumnHelper()
@@ -138,56 +116,9 @@ const UserListTable = ({
   status,
   onStatusChange
 }) => {
-  // const buttonProps = (children, color, variant) => ({
-  //   children,
-  //   color,
-  //   variant
-  // })
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [rowSelection, setRowSelection] = useState({})
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [adminToDelete, setAdminToDelete] = useState(null)
-  const [errorState, setErrorState] = useState(null)
-
-  // Hooks
-  const queryClient = useQueryClient()
-
-  // Delete mutation
-  const { mutate: deleteAdministrator, isPending } = useMutation({
-    mutationFn: deleteAdministratorApi,
-
-    onMutate: () => setErrorState(null),
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['administrators'] })
-      setDeleteDialogOpen(false)
-      setAdminToDelete(null)
-      toast.success('Administrator deleted successfully!', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true
-      })
-    },
-
-    onError: err => setErrorState(err)
-  })
-
-  const handleDeleteClick = admin => {
-    setAdminToDelete(admin)
-    setDeleteDialogOpen(true)
-  }
-
-  const handleDeleteConfirm = confirmed => {
-    if (confirmed && adminToDelete) {
-      deleteAdministrator(adminToDelete.id)
-    }
-    setDeleteDialogOpen(false)
-    setAdminToDelete(null)
-  }
 
   // Transform API data to match expected format
   const transformApiData = apiData => {
@@ -209,8 +140,6 @@ const UserListTable = ({
 
   const [data, setData] = useState(transformApiData(tableData))
   const [filteredData, setFilteredData] = useState(data)
-  // const [globalFilter, setGlobalFilter] = useState('')
-  // const [searchQuery, setGlobalFilter] = useState('')
 
   // Update data when tableData changes
   useEffect(() => {
@@ -219,7 +148,6 @@ const UserListTable = ({
     setFilteredData(transformedData)
   }, [tableData])
 
-  // Hooks
   const { lang: locale } = useParams()
 
   const columns = useMemo(
@@ -250,12 +178,10 @@ const UserListTable = ({
         header: 'Admin',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
-            {/* {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })} */}
             <div className='flex flex-col'>
               <Typography className='font-medium' color='text.primary'>
                 {row.original.fullName}
               </Typography>
-              {/* <Typography variant='body2'>{row.original.username}</Typography> */}
             </div>
           </div>
         )
@@ -301,15 +227,18 @@ const UserListTable = ({
         header: 'Action',
         cell: ({ row }) => (
           <div className='flex items-center'>
-            <IconButton onClick={() => handleDeleteClick(row.original)} disabled={isPending}>
-              {isPending ? (
-                <i className='ri-loader-4-line text-textSecondary animate-spin' />
-              ) : (
-                <i className='ri-delete-bin-7-line text-textSecondary' />
-              )}
-            </IconButton>
+            <OpenDialogOnElementClick
+              element={IconButton}
+              elementProps={{
+                children: <i className='ri-delete-bin-7-line text-textSecondary' />
+              }}
+              dialog={DeleteConfirmationDialog}
+              dialogProps={{
+                itemToDelete: row.original,
+                data: tableData
+              }}
+            />
             <IconButton>
-              {/* <Link href={getLocalizedUrl(`/apps/user/view/${row.original.id}`, locale)} className='flex'> */}
               <Link href={getLocalizedUrl(`/administrators/admins/${row.original.id}`, locale)} className='flex'>
                 <i className='ri-eye-line text-textSecondary' />
               </Link>
@@ -328,7 +257,6 @@ const UserListTable = ({
         enableSorting: false
       })
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [data, filteredData]
   )
 
@@ -340,14 +268,8 @@ const UserListTable = ({
     },
     state: {
       rowSelection,
-      // globalFilter
       searchQuery
     },
-    // initialState: {
-    //   pagination: {
-    //     pageSize: 10
-    //   }
-    // },
     enableRowSelection: true, //enable row selection for all rows
     // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
     enableRowSelection: true,
@@ -363,38 +285,8 @@ const UserListTable = ({
     getFacetedMinMaxValues: getFacetedMinMaxValues()
   })
 
-  // const getAvatar = params => {
-  //   const { avatar, fullName } = params
-
-  //   if (avatar) {
-  //     return <CustomAvatar src={avatar} skin='light' size={34} />
-  //   } else {
-  //     return (
-  //       <CustomAvatar skin='light' size={34}>
-  //         {getInitials(fullName)}
-  //       </CustomAvatar>
-  //     )
-  //   }
-  // }
-
   return (
     <>
-      {/* Custom Delete Confirmation Dialog */}
-      <Dialog fullWidth maxWidth='xs' open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-        <DialogContent className='flex items-center flex-col text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
-          <i className='ri-error-warning-line text-[88px] mbe-6 text-warning' />
-          <Typography variant='h4'>Are you sure?</Typography>
-          <Typography color='text.primary'>You won't be able to revert this administrator!</Typography>
-        </DialogContent>
-        <DialogActions className='justify-center pbs-0 sm:pbe-16 sm:pli-16'>
-          <Button variant='contained' color='error' onClick={() => handleDeleteConfirm(true)} disabled={isPending}>
-            {isPending ? 'Deleting...' : 'Yes, Delete Admin!'}
-          </Button>
-          <Button variant='outlined' color='secondary' onClick={() => handleDeleteConfirm(false)} disabled={isPending}>
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
       <Card>
         <CardHeader title='Filters' />
         <TableFilters
@@ -408,15 +300,6 @@ const UserListTable = ({
           onStatusChange={onStatusChange}
         />
         <Divider />
-
-        {/* Error display for delete operations */}
-        {errorState && (
-          <Alert severity='error' sx={{ mx: 5, mb: 2 }}>
-            {errorState?.response?.data?.error ||
-              errorState?.response?.data?.message ||
-              'Failed to delete administrator. Please try again.'}
-          </Alert>
-        )}
 
         <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
           <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
@@ -513,5 +396,5 @@ const UserListTable = ({
     </>
   )
 }
- 
+
 export default UserListTable

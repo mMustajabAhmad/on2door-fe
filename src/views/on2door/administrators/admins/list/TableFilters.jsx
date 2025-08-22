@@ -11,21 +11,6 @@ import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
 
 const TableFilters = ({ perPage, onPerPageChange, role, onRoleChange, status, onStatusChange }) => {
-  // Remove local state - use props from parent instead
-  // const [role, setRole] = useState('')
-  // const [plan, setPlan] = useState('')
-  // const [status, setStatus] = useState('')
-
-  // Remove client-side filtering - API handles it now
-  // useEffect(() => {
-  //   const filteredData = tableData?.filter(user => {
-  //     if (role && user.role !== role) return false
-  //     if (plan && user.currentPlan !== plan) return false
-  //     if (status && user.status !== status) return false
-  //     return true
-  //   })
-  //   setData(filteredData || [])
-  // }, [role, plan, status, tableData, setData])
 
   const handleClearFilters = () => {
     onRoleChange('')
@@ -51,33 +36,9 @@ const TableFilters = ({ perPage, onPerPageChange, role, onRoleChange, status, on
               <MenuItem value=''>Select Role</MenuItem>
               <MenuItem value='owner'>Owner</MenuItem>
               <MenuItem value='admin'>Admin</MenuItem>
-              {/* <MenuItem value='author'>Author</MenuItem>
-              <MenuItem value='editor'>Editor</MenuItem>
-              <MenuItem value='maintainer'>Maintainer</MenuItem>
-              <MenuItem value='subscriber'>Subscriber</MenuItem> */}
             </Select>
           </FormControl>
         </Grid>
-        {/* <Grid size={{ xs: 12, sm: 4 }}>
-          <FormControl fullWidth>
-            <InputLabel id='plan-select'>Select Plan</InputLabel>
-            <Select
-              fullWidth
-              id='select-plan'
-              value={plan}
-              onChange={e => setPlan(e.target.value)}
-              label='Select Plan'
-              labelId='plan-select'
-              inputProps={{ placeholder: 'Select Plan' }}
-            >
-              <MenuItem value=''>Select Plan</MenuItem>
-              <MenuItem value='basic'>Basic</MenuItem>
-              <MenuItem value='company'>Company</MenuItem>
-              <MenuItem value='enterprise'>Enterprise</MenuItem>
-              <MenuItem value='team'>Team</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid> */}
         <Grid size={{ xs: 12, sm: 3.5 }}>
           <FormControl fullWidth>
             <InputLabel id='status-select'>Select Status</InputLabel>
@@ -91,7 +52,6 @@ const TableFilters = ({ perPage, onPerPageChange, role, onRoleChange, status, on
               inputProps={{ placeholder: 'Select Status' }}
             >
               <MenuItem value=''>Select Status</MenuItem>
-              {/* <MenuItem value='pending'>Pending</MenuItem> */}
               <MenuItem value='active'>Active</MenuItem>
               <MenuItem value='inactive'>Inactive</MenuItem>
             </Select>

@@ -55,7 +55,9 @@ const AddAdminDrawer = ({ open, handleClose }) => {
   // Create admin mutation
   const { mutate: createAdmin, isPending } = useMutation({
     mutationFn: createAdministratorInvitationApi,
+
     onMutate: () => setErrorState(null),
+
     onSuccess: () => {
       toast.success('Admin invitation sent successfully!', {
         position: 'top-right',
