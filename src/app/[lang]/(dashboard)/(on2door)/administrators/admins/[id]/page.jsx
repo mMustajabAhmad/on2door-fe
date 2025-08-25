@@ -8,7 +8,7 @@ import { useParams } from 'next/navigation'
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-import AdminLeftOverview from '@/views/on2door/administrators/admins/view/admin-left-overview'
+import AdminOverview from '@/views/on2door/administrators/admins/view'
 
 // API Imports
 import { getAdministratorByIdApi } from '@/app/api/on2door/actions'
@@ -49,7 +49,7 @@ const AdminViewPage = () => {
   return (
     <Grid container spacing={6}>
       <Grid size={{ xs: 12 }}>
-        <AdminLeftOverview userData={userData} />
+        <AdminOverview userData={userData} />
       </Grid>
     </Grid>
   )

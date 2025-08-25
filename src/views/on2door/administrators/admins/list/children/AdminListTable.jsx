@@ -8,9 +8,10 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 //Component Imports
-import EditUserInfo from '@components/on2door/dialogs/administrators/admins/update'
 import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
-import DeleteConfirmationDialog from '@components/on2door/dialogs/delete'
+import CreateAdminDialog from '@components/on2door/dialogs/administrators/admins/create'
+import EditAdminDialog from '@components/on2door/dialogs/administrators/admins/update'
+import DeleteAdminDialog from '@/components/on2door/dialogs/administrators/delete'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -45,13 +46,9 @@ import {
 
 // Component Imports
 import TableFilters from './TableFilters'
-import AddUserDrawer from './AddAdminDrawer'
-import OptionMenu from '@core/components/option-menu'
-import CustomAvatar from '@core/components/mui/Avatar'
-import CustomPagination from './CustomPagination'
+import CustomPagination from '@components/on2door/shared/CustomPagination'
 
 // Util Imports
-import { getInitials } from '@/utils/getInitials'
 import { getLocalizedUrl } from '@/utils/i18n'
 
 // Style Imports
@@ -103,7 +100,7 @@ const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...prop
 // Column Definitions
 const columnHelper = createColumnHelper()
 
-const UserListTable = ({
+const AdminListTable = ({
   tableData,
   page,
   perPage,
@@ -232,7 +229,7 @@ const UserListTable = ({
               elementProps={{
                 children: <i className='ri-delete-bin-7-line text-textSecondary' />
               }}
-              dialog={DeleteConfirmationDialog}
+              dialog={DeleteAdminDialog}
               dialogProps={{
                 itemToDelete: row.original,
                 data: tableData
@@ -249,7 +246,7 @@ const UserListTable = ({
                 color: 'primary',
                 children: <i className='ri-edit-box-line text-textSecondary' />
               }}
-              dialog={EditUserInfo}
+              dialog={EditAdminDialog}
               dialogProps={{ data: data, currentAdmin: row.original }}
             />
           </div>
@@ -322,7 +319,7 @@ const UserListTable = ({
             </Button>
           </div>
           <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
-            <Button variant='contained' onClick={() => setAddUserOpen(!addUserOpen)} className='max-sm:is-full'>
+            <Button variant='contained' onClick={() => setAddUserOpen(true)} className='max-sm:is-full'>
               Add New Admin
             </Button>
           </div>
@@ -392,9 +389,9 @@ const UserListTable = ({
           />
         </div>
       </Card>
-      <AddUserDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} />
+      <CreateAdminDialog open={addUserOpen} setOpen={setAddUserOpen} />
     </>
   )
 }
 
-export default UserListTable
+export default AdminListTable

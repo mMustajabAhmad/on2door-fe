@@ -2,9 +2,9 @@
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-import UserListTable from './AdminListTable'
+import AdminListTable from './children/AdminListTable'
 
-const UserList = ({
+const AdminList = ({
   userData,
   page,
   perPage,
@@ -20,7 +20,7 @@ const UserList = ({
   return (
     <Grid container spacing={6}>
       <Grid size={{ xs: 12 }}>
-        <UserListTable
+        <AdminListTable
           tableData={userData}
           page={page}
           perPage={perPage}
@@ -38,4 +38,4 @@ const UserList = ({
   )
 }
 
-export default UserList
+export default AdminList

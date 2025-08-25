@@ -14,7 +14,7 @@ import CustomAvatar from '@core/components/mui/Avatar'
 // Util Imports
 import { getInitials } from '@/utils/getInitials'
 
-const UserDetails = ({ userData }) => {
+const AdminDetails = ({ userData }) => {
   // Extract data from API response structure
   const admin = userData?.administrator?.data?.attributes || userData?.attributes || userData || {}
 
@@ -125,4 +125,4 @@ const UserDetails = ({ userData }) => {
   )
 }
 
-export default UserDetails
+export default AdminDetails

@@ -18,7 +18,7 @@ import { toast } from 'react-toastify'
 // API Imports
 import { deleteAdministratorApi } from '@/app/api/on2door/actions'
 
-const DeleteConfirmationDialog = ({ open, setOpen, itemToDelete, data }) => {
+const DeleteAdminDialog = ({ open, setOpen, itemToDelete, data }) => {
   const [errorState, setErrorState] = useState(null)
   const queryClient = useQueryClient()
 
@@ -26,8 +26,8 @@ const DeleteConfirmationDialog = ({ open, setOpen, itemToDelete, data }) => {
 
   const apiFunctions = isDispatcher ? { delete: deleteDispatcherApi } : { delete: deleteAdministratorApi }
 
-  const userType = isDispatcher ? 'dispatcher' : 'administrator'
-  const queryKey = isDispatcher ? 'dispatchers' : 'administrators'
+  const userType = isDispatcher ? 'dispatcher' : 'admin'
+  const queryKey = isDispatcher ? 'dispatchers' : 'admin'
 
   const { mutate: deleteItem, isPending } = useMutation({
     mutationFn: apiFunctions.delete,
@@ -35,9 +35,6 @@ const DeleteConfirmationDialog = ({ open, setOpen, itemToDelete, data }) => {
     onMutate: () => setErrorState(null),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [queryKey] })
-
-      setOpen(false)
       toast.success(`${userType.charAt(0).toUpperCase() + userType.slice(1)} deleted successfully!`, {
         position: 'top-right',
         autoClose: 3000,
@@ -46,6 +43,8 @@ const DeleteConfirmationDialog = ({ open, setOpen, itemToDelete, data }) => {
         pauseOnHover: true,
         draggable: true
       })
+      queryClient.invalidateQueries({ queryKey: [queryKey] })
+      setOpen(false)
     },
 
     onError: err => setErrorState(err)
@@ -95,4 +94,4 @@ const DeleteConfirmationDialog = ({ open, setOpen, itemToDelete, data }) => {
   )
 }
 
-export default DeleteConfirmationDialog
+export default DeleteAdminDialog

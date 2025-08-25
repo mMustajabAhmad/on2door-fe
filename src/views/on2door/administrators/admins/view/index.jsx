@@ -2,16 +2,16 @@
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-import UserDetails from './AdminDetails'
+import AdminDetails from './children/AdminDetails'
 
-const UserLeftOverview = ({ userData }) => {
+const AdminOverview = ({ userData }) => {
   return (
     <Grid container spacing={6}>
       <Grid size={{ xs: 12 }}>
-        <UserDetails userData={userData} />
+        <AdminDetails userData={userData} />
       </Grid>
     </Grid>
   )
 }
 
-export default UserLeftOverview
+export default AdminOverview

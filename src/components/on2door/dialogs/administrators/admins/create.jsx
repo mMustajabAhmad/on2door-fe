@@ -1,8 +1,8 @@
 'use client'
 
 // React Imports
-import React, { useState, useEffect } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import React, { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
 import Grid from '@mui/material/Grid2'
@@ -25,7 +25,7 @@ import { object, string, email, pipe, nonEmpty } from 'valibot'
 import { toast } from 'react-toastify'
 
 // API Imports
-import { getAdministratorByIdApi, updateAdministratorApi } from '@/app/api/on2door/actions'
+import { createAdministratorInvitationApi } from '@/app/api/on2door/actions'
 
 const schema = object({
   email: pipe(string(), nonEmpty('This field is required'), email('Please enter a valid email')),
@@ -34,7 +34,7 @@ const schema = object({
   phone_number: pipe(string(), nonEmpty('This field is required'))
 })
 
-const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
+const CreateAdminDialog = ({ open, setOpen }) => {
   const [errorState, setErrorState] = useState(null)
   const queryClient = useQueryClient()
 
@@ -53,19 +53,13 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
     }
   })
 
-  const { data: userData, refetch } = useQuery({
-    queryKey: ['administrator', currentAdmin?.id],
-    queryFn: () => getAdministratorByIdApi(currentAdmin?.id),
-    enabled: !!currentAdmin?.id && open
-  })
-
-  const { mutate: updateUser, isPending } = useMutation({
-    mutationFn: ({ id, payload }) => updateAdministratorApi(id, payload),
+  const { mutate: createAdmin, isPending } = useMutation({
+    mutationFn: createAdministratorInvitationApi,
 
     onMutate: () => setErrorState(null),
 
     onSuccess: () => {
-      toast.success('Administrator updated successfully!', {
+      toast.success('Admin invitation sent successfully!', {
         position: 'top-right',
         autoClose: 3000,
         hideProgressBar: false,
@@ -73,15 +67,7 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
         pauseOnHover: true,
         draggable: true
       })
-      queryClient.invalidateQueries({
-        predicate: query => {
-          const queryKey = query.queryKey
-          return (
-            Array.isArray(queryKey) &&
-            (queryKey[0] === 'administrator' || queryKey[0] === 'administrators')
-          )
-        }
-      })
+      queryClient.invalidateQueries({ queryKey: ['administrators'] })
       setOpen(false)
       reset()
     },
@@ -89,30 +75,18 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
     onError: err => setErrorState(err)
   })
 
-  useEffect(() => {
-    if (userData) {
-      const user = userData?.administrator?.data?.attributes || {}
-
-      reset({
-        email: user.email || '',
-        first_name: user.first_name || '',
-        last_name: user.last_name || '',
-        phone_number: user.phone_number || ''
-      })
-    }
-  }, [userData, reset])
-
   const onSubmit = data => {
     const payload = {
-      administrator: {
-        email: data.email,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        phone_number: data.phone_number
-      }
+      email: data.email,
+      first_name: data.first_name,
+      last_name: data.last_name,
+      phone_number: data.phone_number,
+      role: 'admin',
+      is_read_only: false,
+      is_active: false
     }
 
-    updateUser({ id: currentAdmin?.id, payload })
+    createAdmin(payload)
   }
 
   const handleClose = () => {
@@ -124,9 +98,9 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
   return (
     <Dialog fullWidth open={open} onClose={handleClose} maxWidth='md' scroll='body' closeAfterTransition={false}>
       <DialogTitle variant='h4' className='flex gap-2 flex-col items-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
-        <div className='max-sm:is-[80%] max-sm:text-center'>Edit Administrator Information</div>
+        <div className='max-sm:is-[80%] max-sm:text-center'>Create New Admin</div>
         <Typography component='span' className='flex flex-col text-center'>
-          Update administrator details
+          Add a new admin to the organization
         </Typography>
       </DialogTitle>
 
@@ -139,7 +113,7 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
           <Alert severity='error' sx={{ mb: 2 }}>
             {errorState?.response?.data?.error ||
               errorState?.response?.data?.message ||
-              'Update failed. Please try again.'}
+              'Failed to send invitation. Please try again.'}
           </Alert>
         )}
 
@@ -154,6 +128,7 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
                     {...field}
                     fullWidth
                     label='First Name'
+                    placeholder='John'
                     error={!!errors.first_name}
                     helperText={errors.first_name?.message}
                     disabled={isPending}
@@ -171,6 +146,7 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
                     {...field}
                     fullWidth
                     label='Last Name'
+                    placeholder='Doe'
                     error={!!errors.last_name}
                     helperText={errors.last_name?.message}
                     disabled={isPending}
@@ -189,6 +165,7 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
                     fullWidth
                     label='Email'
                     type='email'
+                    placeholder='john.doe@example.com'
                     error={!!errors.email}
                     helperText={errors.email?.message}
                     disabled={isPending}
@@ -206,6 +183,7 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
                     {...field}
                     fullWidth
                     label='Phone Number'
+                    placeholder='+921234567890'
                     error={!!errors.phone_number}
                     helperText={errors.phone_number?.message}
                     disabled={isPending}
@@ -224,7 +202,7 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
           disabled={isPending}
           startIcon={isPending ? <CircularProgress size={20} /> : null}
         >
-          {isPending ? 'Updating...' : 'Update Admin'}
+          {isPending ? 'Sending...' : 'Send Invitation'}
         </Button>
         <Button variant='outlined' color='secondary' onClick={handleClose} disabled={isPending}>
           Cancel
@@ -234,4 +212,5 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
   )
 }
 
-export default EditAdminDialog
+export default CreateAdminDialog
+
