@@ -55,14 +55,17 @@ const AcceptInvitationPage = () => {
   // Accept invitation mutation
   const { mutate: acceptInvitation, isPending } = useMutation({
     mutationFn: acceptInvitationApi,
+
     onMutate: () => {
       setErrorState(null)
       setSuccess(false)
     },
+
     onSuccess: () => {
       setSuccess(true)
       setTimeout(() => router.replace(getLocalizedUrl('/login', locale)), 2000)
     },
+
     onError: err => setErrorState(err)
   })
 
