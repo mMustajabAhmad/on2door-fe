@@ -7,8 +7,8 @@ import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
 
 // Component Imports
-import EditUserInfo from '@components/dialogs/edit-user-info'
 import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
+import EditAdminDialog from '@components/on2door/dialogs/administrators/admins/update'
 import CustomAvatar from '@core/components/mui/Avatar'
 
 // Util Imports
@@ -110,7 +110,7 @@ const AdminDetails = ({ userData }) => {
             <OpenDialogOnElementClick
               element={Button}
               elementProps={{ children: 'Edit Admin', color: 'primary', variant: 'contained' }}
-              dialog={EditUserInfo}
+              dialog={EditAdminDialog}
               dialogProps={{
                 data: userData,
                 currentAdmin: {
