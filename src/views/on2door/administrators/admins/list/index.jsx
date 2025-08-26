@@ -2,20 +2,40 @@
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-import UserListTable from './AdminListTable'
-// import UserListCards from './AdminListCards'
+import AdminListTable from './children/AdminListTable'
 
-const UserList = ({ userData }) => {
+const AdminList = ({
+  userData,
+  page,
+  perPage,
+  onPageChange,
+  onPerPageChange,
+  searchQuery,
+  setSearchQuery,
+  role,
+  onRoleChange,
+  status,
+  onStatusChange
+}) => {
   return (
     <Grid container spacing={6}>
-      {/* <Grid size={{ xs: 12 }}>
-        <UserListCards />
-      </Grid> */}
       <Grid size={{ xs: 12 }}>
-        <UserListTable tableData={userData} />
+        <AdminListTable
+          tableData={userData}
+          page={page}
+          perPage={perPage}
+          onPageChange={onPageChange}
+          onPerPageChange={onPerPageChange}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          role={role}
+          onRoleChange={onRoleChange}
+          status={status}
+          onStatusChange={onStatusChange}
+        />
       </Grid>
     </Grid>
   )
 }
 
-export default UserList
+export default AdminList

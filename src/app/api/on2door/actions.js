@@ -19,3 +19,43 @@ export function logoutAdministratorApi() {
     .then(response => response.data)
 }
 
+// Invitations
+export function createAdministratorInvitationApi(payload) {
+  return client()
+    .post('/administrator/invitation', payload)
+    .then(response => response.data)
+}
+
+// Accept invitation
+export function acceptInvitationApi(payload) {
+  return client()
+    .put('/administrator/invitation', payload)
+    .then(response => response.data)
+}
+
+// Administrators
+export function getAdministratorsApi(payload = {}) {
+  return client()
+    .get('/administrators/administrators', {
+      params: payload
+    })
+    .then(response => response.data)
+}
+
+export function getAdministratorByIdApi(id) {
+  return client()
+    .get(`/administrators/administrators/${id}`)
+    .then(response => response.data)
+}
+
+export function updateAdministratorApi(id, payload) {
+  return client()
+    .put(`/administrators/administrators/${id}`, payload)
+    .then(response => response.data)
+}
+
+export function deleteAdministratorApi(id) {
+  return client()
+    .delete(`/administrators/administrators/${id}`)
+    .then(response => response.data)
+}
