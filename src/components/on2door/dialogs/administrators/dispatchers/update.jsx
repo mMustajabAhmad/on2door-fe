@@ -224,7 +224,7 @@ const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
           disabled={isPending}
           startIcon={isPending ? <CircularProgress size={20} /> : null}
         >
-          {isPending ? 'Updating...' : 'Update Admin'}
+          {isPending ? 'Updating...' : 'Update Dispatcher'}
         </Button>
         <Button variant='outlined' color='secondary' onClick={handleClose} disabled={isPending}>
           Cancel
