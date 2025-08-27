@@ -25,7 +25,7 @@ import { object, string, email, pipe, nonEmpty } from 'valibot'
 import { toast } from 'react-toastify'
 
 // API Imports
-import { getAdministratorByIdApi, updateAdministratorApi } from '@/app/api/on2door/actions'
+import { getDispatcherByIdApi, updateDispatcherApi } from '@/app/api/on2door/actions'
 
 const schema = object({
   email: pipe(string(), nonEmpty('This field is required'), email('Please enter a valid email')),
@@ -55,12 +55,12 @@ const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
 
   const { data: userData, refetch } = useQuery({
     queryKey: ['administrator', currentAdmin?.id],
-    queryFn: () => getAdministratorByIdApi(currentAdmin?.id),
+    queryFn: () => getDispatcherByIdApi(currentAdmin?.id),
     enabled: !!currentAdmin?.id && open
   })
 
   const { mutate: updateUser, isPending } = useMutation({
-    mutationFn: ({ id, payload }) => updateAdministratorApi(id, payload),
+    mutationFn: ({ id, payload }) => updateDispatcherApi(id, payload),
 
     onMutate: () => setErrorState(null),
 
