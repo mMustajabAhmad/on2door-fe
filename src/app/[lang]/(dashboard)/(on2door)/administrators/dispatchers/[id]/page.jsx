@@ -8,8 +8,8 @@ import { useParams } from 'next/navigation'
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-import DispatcherLeftOverview from '@/views/on2door/administrators/dispatchers/view/dispatcher-left-overview'
-import TeamsTab from '@/views/on2door/administrators/dispatchers/view/dispatcher-right/teams'
+import DispatcherOverview from '@/views/on2door/administrators/dispatchers/view'
+import TeamsTab from '@/views/on2door/administrators/dispatchers/view/children/DispatcherTeams'
 
 // API Imports
 import { getDispatcherByIdApi } from '@/app/api/on2door/actions'
@@ -53,7 +53,7 @@ const DispatcherViewPage = () => {
   return (
     <Grid container spacing={6}>
       <Grid size={{ xs: 12, lg: 6, md: 6 }}>
-        <DispatcherLeftOverview userData={userData} />
+        <DispatcherOverview userData={userData} />
       </Grid>
       <Grid size={{ xs: 12, lg: 6, md: 6 }}>
         <TeamsTab userData={userData} />

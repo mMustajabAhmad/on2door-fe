@@ -290,7 +290,7 @@ const DispatcherListTable = ({
               }}
             />
             <IconButton>
-              <Link href={getLocalizedUrl(`/administrators/admins/${row.original.id}`, locale)} className='flex'>
+              <Link href={getLocalizedUrl(`/administrators/dispatchers/${row.original.id}`, locale)} className='flex'>
                 <i className='ri-eye-line text-textSecondary' />
               </Link>
             </IconButton>
