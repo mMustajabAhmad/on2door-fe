@@ -65,7 +65,7 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
     onMutate: () => setErrorState(null),
 
     onSuccess: () => {
-      toast.success('Administrator updated successfully!', {
+      toast.success('Admin updated successfully!', {
         position: 'top-right',
         autoClose: 3000,
         hideProgressBar: false,

@@ -18,7 +18,7 @@ import { toast } from 'react-toastify'
 // API Imports
 import { deleteAdministratorApi } from '@/app/api/on2door/actions'
 
-const DeleteAdminDialog = ({ open, setOpen, itemToDelete, data }) => {
+const DeleteAdministratorDialog = ({ open, setOpen, itemToDelete, data }) => {
   const [errorState, setErrorState] = useState(null)
   const queryClient = useQueryClient()
 
@@ -94,4 +94,4 @@ const DeleteAdminDialog = ({ open, setOpen, itemToDelete, data }) => {
   )
 }
 
-export default DeleteAdminDialog
+export default DeleteAdministratorDialog
