@@ -7,8 +7,8 @@ import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
 
 // Component Imports
-import EditUserInfo from '@components/dialogs/edit-user-info'
 import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
+import EditDispatcherDialog from '@components/on2door/dialogs/administrators/dispatchers/update'
 import CustomAvatar from '@core/components/mui/Avatar'
 
 // Util Imports
@@ -142,7 +142,7 @@ const DispatcherLeftOverview = ({ userData }) => {
             <OpenDialogOnElementClick
               element={Button}
               elementProps={{ children: 'Edit Dispatcher', color: 'primary', variant: 'contained' }}
-              dialog={EditUserInfo}
+              dialog={EditDispatcherDialog}
               dialogProps={{
                 data: userData,
                 currentAdmin: {
