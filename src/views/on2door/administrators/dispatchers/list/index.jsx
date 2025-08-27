@@ -2,10 +2,9 @@
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-import UserListTable from './DispatcherListTable'
-// import UserListCards from './AdminListCards'
+import DispatcherListTable from './children/DispatcherListTable'
 
-const UserList = ({
+const DispatcherList = ({
   userData,
   page,
   perPage,
@@ -18,11 +17,8 @@ const UserList = ({
 }) => {
   return (
     <Grid container spacing={6}>
-      {/* <Grid size={{ xs: 12 }}>
-        <UserListCards />
-      </Grid> */}
       <Grid size={{ xs: 12 }}>
-        <UserListTable
+        <DispatcherListTable
           tableData={userData}
           page={page}
           perPage={perPage}
@@ -38,4 +34,4 @@ const UserList = ({
   )
 }
 
-export default UserList
+export default DispatcherList

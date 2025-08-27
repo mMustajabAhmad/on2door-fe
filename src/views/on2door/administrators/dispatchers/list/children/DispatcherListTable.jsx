@@ -2,15 +2,16 @@
 
 // React Imports
 import { useEffect, useState, useMemo } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 // Next Imports
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 //Component Imports
-import EditUserInfo from '@components/dialogs/edit-user-info'
-import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
+import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
+import CreateDipatcherDialog from '@components/on2door/dialogs/administrators/dispatchers/create'
+import EditDispatcherDialog from '@components/on2door/dialogs/administrators/dispatchers/update'
+import DeleteAdministratorDialog from '@/components/on2door/dialogs/administrators/delete'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -23,15 +24,13 @@ import Chip from '@mui/material/Chip'
 import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
-import Dialog from '@mui/material/Dialog'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
-import Alert from '@mui/material/Alert'
+
+
 
 // Third-party Imports
 import classnames from 'classnames'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import { toast } from 'react-toastify'
+// import { toast } from 'react-toastify'
 import {
   createColumnHelper,
   flexRender,
@@ -47,14 +46,14 @@ import {
 
 // Component Imports
 import TableFilters from './TableFilters'
-import AddUserDrawer from './AddDispatcherDrawer'
-import CustomPagination from './CustomPagination'
+// import AddUserDrawer from '../AddDispatcherDrawer'
+import CustomPagination from '@components/on2door/shared/CustomPagination'
 
 // Util Imports
 import { getLocalizedUrl } from '@/utils/i18n'
 
 // API Imports
-import { deleteDispatcherApi } from '@/app/api/on2door/actions'
+// import { deleteDispatcherApi } from '@/app/api/on2door/actions'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
@@ -93,7 +92,7 @@ const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...prop
     }
   }, [value, onChange, isUserTyping, debounce])
 
-  const handleInputChange = (e) => {
+  const handleInputChange = e => {
     setValue(e.target.value)
     setIsUserTyping(true)
   }
@@ -104,7 +103,7 @@ const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...prop
 // Column Definitions
 const columnHelper = createColumnHelper()
 
-const UserListTable = ({
+const DispatcherListTable = ({
   tableData,
   page,
   perPage,
@@ -118,48 +117,48 @@ const UserListTable = ({
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [rowSelection, setRowSelection] = useState({})
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [dispatcherToDelete, setDispatcherToDelete] = useState(null)
-  const [errorState, setErrorState] = useState(null)
+  // const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  // const [dispatcherToDelete, setDispatcherToDelete] = useState(null)
+  // const [errorState, setErrorState] = useState(null)
 
   // Hooks
-  const queryClient = useQueryClient()
+  // const queryClient = useQueryClient()
 
   // Delete mutation
-  const { mutate: deleteDispatcher, isPending } = useMutation({
-    mutationFn: deleteDispatcherApi,
+  // const { mutate: deleteDispatcher, isPending } = useMutation({
+  //   mutationFn: deleteDispatcherApi,
 
-    onMutate: () => setErrorState(null),
+  //   onMutate: () => setErrorState(null),
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['dispatchers'] })
-      setDeleteDialogOpen(false)
-      setDispatcherToDelete(null)
-      toast.success('Dispatcher deleted successfully!', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true
-      })
-    },
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ['dispatchers'] })
+  //     setDeleteDialogOpen(false)
+  //     setDispatcherToDelete(null)
+  //     toast.success('Dispatcher deleted successfully!', {
+  //       position: 'top-right',
+  //       autoClose: 3000,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true
+  //     })
+  //   },
 
-    onError: err => setErrorState(err)
-  })
+  //   onError: err => setErrorState(err)
+  // })
 
-  const handleDeleteClick = dispatcher => {
-    setDispatcherToDelete(dispatcher)
-    setDeleteDialogOpen(true)
-  }
+  // const handleDeleteClick = dispatcher => {
+  //   setDispatcherToDelete(dispatcher)
+  //   setDeleteDialogOpen(true)
+  // }
 
-  const handleDeleteConfirm = confirmed => {
-    if (confirmed && dispatcherToDelete) {
-      deleteDispatcher(dispatcherToDelete.id)
-    }
-    setDeleteDialogOpen(false)
-    setDispatcherToDelete(null)
-  }
+  // const handleDeleteConfirm = confirmed => {
+  //   if (confirmed && dispatcherToDelete) {
+  //     deleteDispatcher(dispatcherToDelete.id)
+  //   }
+  //   setDeleteDialogOpen(false)
+  //   setDispatcherToDelete(null)
+  // }
 
   const transformApiData = apiData => {
     if (!apiData?.administrators?.data) return []
@@ -186,18 +185,18 @@ const UserListTable = ({
     setFilteredData(transformedData)
   }, [tableData])
 
-  useEffect(() => {
-    if (!searchQuery || searchQuery.trim() === '') {
-      setFilteredData(data)
-    } else {
-      const filtered = data.filter(
-        dispatcher =>
-          dispatcher.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          dispatcher.email.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-      setFilteredData(filtered)
-    }
-  }, [searchQuery, data])
+  // useEffect(() => {
+  //   if (!searchQuery || searchQuery.trim() === '') {
+  //     setFilteredData(data)
+  //   } else {
+  //     const filtered = data.filter(
+  //       dispatcher =>
+  //         dispatcher.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //         dispatcher.email.toLowerCase().includes(searchQuery.toLowerCase())
+  //     )
+  //     setFilteredData(filtered)
+  //   }
+  // }, [searchQuery, data])
 
   // Hooks
   const { lang: locale } = useParams()
@@ -279,15 +278,19 @@ const UserListTable = ({
         header: 'Action',
         cell: ({ row }) => (
           <div className='flex items-center'>
-            <IconButton onClick={() => handleDeleteClick(row.original)} disabled={isPending}>
-              {isPending ? (
-                <i className='ri-loader-4-line text-textSecondary animate-spin' />
-              ) : (
-                <i className='ri-delete-bin-7-line text-textSecondary' />
-              )}
-            </IconButton>
+            <OpenDialogOnElementClick
+              element={IconButton}
+              elementProps={{
+                children: <i className='ri-delete-bin-7-line text-textSecondary' />
+              }}
+              dialog={DeleteAdministratorDialog}
+              dialogProps={{
+                itemToDelete: row.original,
+                data: tableData
+              }}
+            />
             <IconButton>
-              <Link href={getLocalizedUrl(`/administrators/dispatchers/${row.original.id}`, locale)} className='flex'>
+              <Link href={getLocalizedUrl(`/administrators/admins/${row.original.id}`, locale)} className='flex'>
                 <i className='ri-eye-line text-textSecondary' />
               </Link>
             </IconButton>
@@ -297,7 +300,7 @@ const UserListTable = ({
                 color: 'primary',
                 children: <i className='ri-edit-box-line text-textSecondary' />
               }}
-              dialog={EditUserInfo}
+              dialog={EditDispatcherDialog}
               dialogProps={{ data: data, currentAdmin: row.original }}
             />
           </div>
@@ -305,7 +308,6 @@ const UserListTable = ({
         enableSorting: false
       })
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [data, filteredData]
   )
 
@@ -334,7 +336,7 @@ const UserListTable = ({
 
   return (
     <>
-      {/* Custom Delete Confirmation Dialog */}
+      {/* Custom Delete Confirmation Dialog
       <Dialog fullWidth maxWidth='xs' open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogContent className='flex items-center flex-col text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
           <i className='ri-error-warning-line text-[88px] mbe-6 text-warning' />
@@ -349,7 +351,7 @@ const UserListTable = ({
             Cancel
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
       <Card>
         <CardHeader title='Filters' />
         <TableFilters
@@ -362,14 +364,14 @@ const UserListTable = ({
         />
         <Divider />
 
-        {/* Error display for delete operations */}
+        {/* Error display for delete operations
         {errorState && (
           <Alert severity='error' sx={{ mx: 5, mb: 2 }}>
             {errorState?.response?.data?.error ||
               errorState?.response?.data?.message ||
               'Failed to delete dispatcher. Please try again.'}
           </Alert>
-        )}
+        )} */}
 
         <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
           <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
@@ -455,9 +457,9 @@ const UserListTable = ({
           />
         </div>
       </Card>
-      <AddUserDrawer open={addUserOpen} handleClose={() => setAddUserOpen(!addUserOpen)} />
+      <CreateDipatcherDialog open={addUserOpen} setOpen={setAddUserOpen} />
     </>
   )
 }
 
-export default UserListTable
+export default DispatcherListTable
