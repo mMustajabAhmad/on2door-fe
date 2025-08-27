@@ -124,9 +124,9 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
   return (
     <Dialog fullWidth open={open} onClose={handleClose} maxWidth='md' scroll='body' closeAfterTransition={false}>
       <DialogTitle variant='h4' className='flex gap-2 flex-col items-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
-        <div className='max-sm:is-[80%] max-sm:text-center'>Edit Administrator Information</div>
+        <div className='max-sm:is-[80%] max-sm:text-center'>Edit Admin Information</div>
         <Typography component='span' className='flex flex-col text-center'>
-          Update administrator details
+          Update admin details
         </Typography>
       </DialogTitle>
 
