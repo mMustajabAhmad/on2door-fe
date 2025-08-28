@@ -27,7 +27,7 @@ const DeleteAdministratorDialog = ({ open, setOpen, itemToDelete, data }) => {
   const apiFunctions = isDispatcher ? { delete: deleteDispatcherApi } : { delete: deleteAdministratorApi }
 
   const userType = isDispatcher ? 'dispatcher' : 'admin'
-  const queryKey = isDispatcher ? 'dispatchers' : 'admin'
+  const queryKey = isDispatcher ? 'dispatchers' : 'administrators'
 
   const { mutate: deleteItem, isPending } = useMutation({
     mutationFn: apiFunctions.delete,
