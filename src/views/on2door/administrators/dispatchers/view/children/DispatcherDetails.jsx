@@ -14,11 +14,8 @@ import CustomAvatar from '@core/components/mui/Avatar'
 // Util Imports
 import { getInitials } from '@/utils/getInitials'
 
-const DispatcherLeftOverview = ({ userData }) => {
+const DispatcherDetails = ({ userData }) => {
   const dispatcher = userData?.administrator?.data?.attributes || {}
-
-  // console.log('Detail page userData:', userData)
-  // console.log('Extracted dispatcher:', dispatcher)
 
   const fullName = `${dispatcher.first_name || ''} ${dispatcher.last_name || ''}`.trim() || 'N/A'
   const isOwner = dispatcher.is_account_owner || false
@@ -157,4 +154,4 @@ const DispatcherLeftOverview = ({ userData }) => {
   )
 }
 
-export default DispatcherLeftOverview
+export default DispatcherDetails

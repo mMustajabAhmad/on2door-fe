@@ -17,11 +17,7 @@ import { getDispatcherByIdApi } from '@/app/api/on2door/actions'
 const DispatcherViewPage = () => {
   const { id } = useParams()
 
-  const {
-    data: userData,
-    isLoading,
-    error
-  } = useQuery({
+  const { data: userData, isLoading, error } = useQuery({
     queryKey: ['dispatcher', id],
     queryFn: () => getDispatcherByIdApi(id),
     enabled: !!id

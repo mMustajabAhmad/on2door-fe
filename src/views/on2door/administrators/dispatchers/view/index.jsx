@@ -2,13 +2,13 @@
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-import UserDetails from './children/DsipatcherDetails'
+import DispatcherDetails from './children/DispatcherDetails'
 
 const DispatcherOverview = ({ userData }) => {
   return (
     <Grid container spacing={6}>
       <Grid size={{ xs: 12 }}>
-        <UserDetails userData={userData} />
+        <DispatcherDetails userData={userData} />
       </Grid>
     </Grid>
   )
