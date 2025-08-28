@@ -34,11 +34,9 @@ export function acceptInvitationApi(payload) {
 }
 
 // Administrators
-export function getAdministratorsApi(payload = {}) {
+export function getAdministratorsApi(payload) {
   return client()
-    .get('/administrators/administrators', {
-      params: payload
-    })
+    .get('/administrators/administrators', { params: payload })
     .then(response => response.data)
 }
 
@@ -57,5 +55,37 @@ export function updateAdministratorApi(id, payload) {
 export function deleteAdministratorApi(id) {
   return client()
     .delete(`/administrators/administrators/${id}`)
+    .then(response => response.data)
+}
+
+// Dispatchers
+export function getDispatchersApi(payload) {
+  return client()
+    .get('/administrators/administrators', { params: payload })
+    .then(response => response.data)
+}
+
+export function getDispatcherByIdApi(id) {
+  return client()
+    .get(`/administrators/administrators/${id}`)
+    .then(response => response.data)
+}
+
+export function updateDispatcherApi(id, payload) {
+  return client()
+    .put(`/administrators/administrators/${id}`, payload)
+    .then(response => response.data)
+}
+
+export function deleteDispatcherApi(id) {
+  return client()
+    .delete(`/administrators/administrators/${id}`)
+    .then(response => response.data)
+}
+
+//Teams
+export function getTeamsApi() {
+  return client()
+    .get('/administrators/teams')
     .then(response => response.data)
 }

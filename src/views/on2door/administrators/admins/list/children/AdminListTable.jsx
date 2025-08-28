@@ -11,7 +11,7 @@ import { useParams } from 'next/navigation'
 import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
 import CreateAdminDialog from '@components/on2door/dialogs/administrators/admins/create'
 import EditAdminDialog from '@components/on2door/dialogs/administrators/admins/update'
-import DeleteAdminDialog from '@/components/on2door/dialogs/administrators/delete'
+import DeleteAdministratorDialog from '@/components/on2door/dialogs/administrators/delete'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -196,10 +196,10 @@ const AdminListTable = ({
           </Typography>
         )
       }),
-      columnHelper.accessor('phone_number', {
-        header: 'Phone',
-        cell: ({ row }) => <Typography color='text.primary'> {row.original.phone_number} </Typography>
-      }),
+      // columnHelper.accessor('phone_number', {
+      //   header: 'Phone',
+      //   cell: ({ row }) => <Typography color='text.primary'> {row.original.phone_number} </Typography>
+      // }),
       columnHelper.accessor('organization_id', {
         header: 'Organization ID',
         cell: ({ row }) => <Typography color='text.primary'> {row.original.organization_id} </Typography>
@@ -229,7 +229,7 @@ const AdminListTable = ({
               elementProps={{
                 children: <i className='ri-delete-bin-7-line text-textSecondary' />
               }}
-              dialog={DeleteAdminDialog}
+              dialog={DeleteAdministratorDialog}
               dialogProps={{
                 itemToDelete: row.original,
                 data: tableData

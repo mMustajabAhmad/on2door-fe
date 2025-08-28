@@ -1,0 +1,17 @@
+// MUI Imports
+import Grid from '@mui/material/Grid2'
+
+// Component Imports
+import DispatcherDetails from './children/DispatcherDetails'
+
+const DispatcherOverview = ({ userData }) => {
+  return (
+    <Grid container spacing={6}>
+      <Grid size={{ xs: 12 }}>
+        <DispatcherDetails userData={userData} />
+      </Grid>
+    </Grid>
+  )
+}
+
+export default DispatcherOverview

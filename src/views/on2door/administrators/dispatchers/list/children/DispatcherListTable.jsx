@@ -8,8 +8,10 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 //Component Imports
-import EditUserInfo from '@components/dialogs/edit-user-info'
-import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
+import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
+import CreateDipatcherDialog from '@components/on2door/dialogs/administrators/dispatchers/create'
+import EditDispatcherDialog from '@components/on2door/dialogs/administrators/dispatchers/update'
+import DeleteAdministratorDialog from '@/components/on2door/dialogs/administrators/delete'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -22,11 +24,11 @@ import Chip from '@mui/material/Chip'
 import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
-import TablePagination from '@mui/material/TablePagination'
 
 // Third-party Imports
 import classnames from 'classnames'
 import { rankItem } from '@tanstack/match-sorter-utils'
+// import { toast } from 'react-toastify'
 import {
   createColumnHelper,
   flexRender,
@@ -42,19 +44,13 @@ import {
 
 // Component Imports
 import TableFilters from './TableFilters'
-import AddUserDrawer from './AddDispatcherDrawer'
-import OptionMenu from '@core/components/option-menu'
-import CustomAvatar from '@core/components/mui/Avatar'
+import CustomPagination from '@components/on2door/shared/CustomPagination'
 
 // Util Imports
-import { getInitials } from '@/utils/getInitials'
 import { getLocalizedUrl } from '@/utils/i18n'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
-
-// Styled Components
-const Icon = styled('i')({})
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -72,52 +68,72 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...props }) => {
   // States
   const [value, setValue] = useState(initialValue)
+  const [isUserTyping, setIsUserTyping] = useState(false)
 
   useEffect(() => {
     setValue(initialValue)
   }, [initialValue])
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value)
-    }, debounce)
+    if (isUserTyping) {
+      const timeout = setTimeout(() => {
+        onChange(value)
+        setIsUserTyping(false)
+      }, debounce)
 
-    return () => clearTimeout(timeout)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
+      return () => clearTimeout(timeout)
+    }
+  }, [value, onChange, isUserTyping, debounce])
 
-  return <TextField {...props} value={value} onChange={e => setValue(e.target.value)} size='small' />
-}
+  const handleInputChange = e => {
+    setValue(e.target.value)
+    setIsUserTyping(true)
+  }
 
-// Vars
-const userRoleObj = {
-  admin: { icon: 'ri-vip-crown-line', color: 'error' },
-  author: { icon: 'ri-computer-line', color: 'warning' },
-  editor: { icon: 'ri-edit-box-line', color: 'info' },
-  maintainer: { icon: 'ri-pie-chart-2-line', color: 'success' },
-  subscriber: { icon: 'ri-user-3-line', color: 'primary' }
-}
-
-const userStatusObj = {
-  active: 'success',
-  pending: 'warning',
-  inactive: 'secondary'
+  return <TextField {...props} value={value} onChange={handleInputChange} size='small' />
 }
 
 // Column Definitions
 const columnHelper = createColumnHelper()
 
-const UserListTable = ({ tableData }) => {
-  // const buttonProps = (children, color, variant) => ({
-  //   children,
-  //   color,
-  //   variant
-  // })
+const DispatcherListTable = ({
+  tableData,
+  page,
+  perPage,
+  onPageChange,
+  onPerPageChange,
+  searchQuery,
+  setSearchQuery,
+  status,
+  onStatusChange
+}) => {
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [rowSelection, setRowSelection] = useState({})
-  const [data, setData] = useState(...[tableData])
+
+  const transformApiData = apiData => {
+    if (!apiData?.administrators?.data) return []
+
+    return apiData.administrators.data.map(dispatcher => ({
+      id: dispatcher.id,
+      fullName: `${dispatcher.attributes.first_name} ${dispatcher.attributes.last_name}`,
+      email: dispatcher.attributes.email,
+      role: dispatcher.attributes.role || 'dispatcher',
+      phone_number: dispatcher.attributes.phone_number,
+      organization_id: dispatcher.attributes.organization_id,
+      is_active: dispatcher.attributes.is_active,
+      is_account_owner: dispatcher.attributes.is_account_owner,
+      status: dispatcher.attributes.is_active ? 'active' : 'inactive'
+    }))
+  }
+
+  const [data, setData] = useState(transformApiData(tableData))
   const [filteredData, setFilteredData] = useState(data)
-  const [globalFilter, setGlobalFilter] = useState('')
+
+  useEffect(() => {
+    const transformedData = transformApiData(tableData)
+    setData(transformedData)
+    setFilteredData(transformedData)
+  }, [tableData])
 
   // Hooks
   const { lang: locale } = useParams()
@@ -147,15 +163,13 @@ const UserListTable = ({ tableData }) => {
         )
       },
       columnHelper.accessor('fullName', {
-        header: 'User',
+        header: 'Dispatcher',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
-            {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })}
             <div className='flex flex-col'>
               <Typography className='font-medium' color='text.primary'>
                 {row.original.fullName}
               </Typography>
-              <Typography variant='body2'>{row.original.username}</Typography>
             </div>
           </div>
         )
@@ -164,51 +178,42 @@ const UserListTable = ({ tableData }) => {
         header: 'Email',
         cell: ({ row }) => <Typography>{row.original.email}</Typography>
       }),
-      columnHelper.accessor('role', {
-        header: 'Role',
-        cell: ({ row }) => (
-          <div className='flex items-center gap-2'>
-            <Icon
-              className={userRoleObj[row.original.role].icon}
-              sx={{ color: `var(--mui-palette-${userRoleObj[row.original.role].color}-main)`, fontSize: '1.375rem' }}
-            />
-            <Typography className='capitalize' color='text.primary'>
-              {row.original.role}
-            </Typography>
-          </div>
-        )
-      }),
-      columnHelper.accessor('currentPlan', {
-        header: 'Plan',
-        cell: ({ row }) => (
-          <Typography className='capitalize' color='text.primary'>
-            {row.original.currentPlan}
-          </Typography>
-        )
+      columnHelper.accessor('organization_id', {
+        header: 'Organization ID',
+        cell: ({ row }) => <Typography color='text.primary'> {row.original.organization_id} </Typography>
       }),
       columnHelper.accessor('status', {
         header: 'Status',
-        cell: ({ row }) => (
-          <div className='flex items-center gap-3'>
-            <Chip
-              variant='tonal'
-              label={row.original.status}
-              size='small'
-              color={userStatusObj[row.original.status]}
-              className='capitalize'
-            />
-          </div>
-        )
+        cell: ({ row }) => {
+          return (
+            <div className='flex items-center gap-3'>
+              <Chip
+                variant='tonal'
+                label={row.original.status}
+                size='small'
+                color={row.original.status === 'active' ? 'success' : 'default'}
+                className='capitalize'
+              />
+            </div>
+          )
+        }
       }),
       columnHelper.accessor('action', {
         header: 'Action',
         cell: ({ row }) => (
           <div className='flex items-center'>
-            <IconButton onClick={() => setData(data?.filter(product => product.id !== row.original.id))}>
-              <i className='ri-delete-bin-7-line text-textSecondary' />
-            </IconButton>
+            <OpenDialogOnElementClick
+              element={IconButton}
+              elementProps={{
+                children: <i className='ri-delete-bin-7-line text-textSecondary' />
+              }}
+              dialog={DeleteAdministratorDialog}
+              dialogProps={{
+                itemToDelete: row.original,
+                data: tableData
+              }}
+            />
             <IconButton>
-              {/* <Link href={getLocalizedUrl(`/apps/user/view/${row.original.id}`, locale)} className='flex'> */}
               <Link href={getLocalizedUrl(`/administrators/dispatchers/${row.original.id}`, locale)} className='flex'>
                 <i className='ri-eye-line text-textSecondary' />
               </Link>
@@ -219,43 +224,14 @@ const UserListTable = ({ tableData }) => {
                 color: 'primary',
                 children: <i className='ri-edit-box-line text-textSecondary' />
               }}
-              dialog={EditUserInfo}
-              dialogProps={{ data: data }}
+              dialog={EditDispatcherDialog}
+              dialogProps={{ data: data, currentAdmin: row.original }}
             />
-
-            {/* <IconButton>
-              <Link href={getLocalizedUrl(`/apps/user/view/${row.original.id}`, locale)} className='flex'>
-                <i className='ri-edit-box-line text-textSecondary' />
-              </Link>
-            </IconButton>
-            <OpenDialogOnElementClick
-              element={Button}
-              elementProps={buttonProps('Edit', 'primary', 'contained')}
-              dialog={EditUserInfo}
-              dialogProps={{ data: data }}
-            /> */}
-            {/* <OptionMenu
-              iconButtonProps={{ size: 'medium' }}
-              iconClassName='text-textSecondary'
-              options={[
-                {
-                  text: 'Download',
-                  icon: 'ri-download-line',
-                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
-                },
-                {
-                  text: 'Edit',
-                  icon: 'ri-edit-box-line',
-                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
-                }
-              ]}
-            /> */}
           </div>
         ),
         enableSorting: false
       })
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [data, filteredData]
   )
 
@@ -267,63 +243,49 @@ const UserListTable = ({ tableData }) => {
     },
     state: {
       rowSelection,
-      globalFilter
+      globalFilter: searchQuery
     },
-    initialState: {
-      pagination: {
-        pageSize: 10
-      }
-    },
-    enableRowSelection: true, //enable row selection for all rows
-    // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
+    enableRowSelection: true,
     globalFilterFn: fuzzyFilter,
+    onGlobalFilterChange: setSearchQuery,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
-    onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedMinMaxValues: getFacetedMinMaxValues()
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    getPaginationRowModel: getPaginationRowModel()
   })
-
-  const getAvatar = params => {
-    const { avatar, fullName } = params
-
-    if (avatar) {
-      return <CustomAvatar src={avatar} skin='light' size={34} />
-    } else {
-      return (
-        <CustomAvatar skin='light' size={34}>
-          {getInitials(fullName)}
-        </CustomAvatar>
-      )
-    }
-  }
 
   return (
     <>
       <Card>
         <CardHeader title='Filters' />
-        <TableFilters setData={setFilteredData} tableData={data} />
+        <TableFilters
+          setData={setFilteredData}
+          tableData={data}
+          perPage={perPage}
+          onPerPageChange={onPerPageChange}
+          status={status}
+          onStatusChange={onStatusChange}
+        />
         <Divider />
+
         <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
-          {/* <Button
-            color='secondary'
-            variant='outlined'
-            startIcon={<i className='ri-upload-2-line text-xl' />}
-            className='max-sm:is-full'
-          >
-            Export
-          </Button> */}
           <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
             <DebouncedInput
-              value={globalFilter ?? ''}
-              onChange={value => setGlobalFilter(String(value))}
+              value={searchQuery ?? ''}
+              onChange={value => setSearchQuery(String(value))}
               placeholder='Search Dispatcher'
               className='max-sm:is-full'
             />
+            <Button color='secondary' variant='outlined' className='max-sm:is-full' onClick={() => setSearchQuery('')}>
+              Clear
+              <i className='ri-filter-line'></i>
+            </Button>
+          </div>
+          <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
             <Button variant='contained' onClick={() => setAddUserOpen(!addUserOpen)} className='max-sm:is-full'>
               Add New Dispatcher
             </Button>
@@ -368,43 +330,35 @@ const UserListTable = ({ tableData }) => {
               </tbody>
             ) : (
               <tbody>
-                {table
-                  .getRowModel()
-                  .rows.slice(0, table.getState().pagination.pageSize)
-                  .map(row => {
-                    return (
-                      <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
-                        {row.getVisibleCells().map(cell => (
-                          <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-                        ))}
-                      </tr>
-                    )
-                  })}
+                {table.getRowModel().rows.map(row => {
+                  return (
+                    <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
+                      {row.getVisibleCells().map(cell => (
+                        <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                      ))}
+                    </tr>
+                  )
+                })}
               </tbody>
             )}
           </table>
         </div>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component='div'
-          className='border-bs'
-          count={table.getFilteredRowModel().rows.length}
-          rowsPerPage={table.getState().pagination.pageSize}
-          page={table.getState().pagination.pageIndex}
-          onPageChange={(_, page) => {
-            table.setPageIndex(page)
-          }}
-          onRowsPerPageChange={e => table.setPageSize(Number(e.target.value))}
-        />
+        <div className='flex justify-between items-center p-4 border-t'>
+          <div className='text-sm text-gray-600'>
+            Showing {(page - 1) * perPage + 1} to {Math.min(page * perPage, tableData?.total_count)} of{' '}
+            {tableData?.total_count} results
+          </div>
+          <CustomPagination
+            page={page}
+            perPage={perPage}
+            totalCount={tableData?.total_count || 0}
+            onPageChange={onPageChange}
+          />
+        </div>
       </Card>
-      <AddUserDrawer
-        open={addUserOpen}
-        handleClose={() => setAddUserOpen(!addUserOpen)}
-        userData={data}
-        setData={setData}
-      />
+      <CreateDipatcherDialog open={addUserOpen} setOpen={setAddUserOpen} />
     </>
   )
 }
 
-export default UserListTable
+export default DispatcherListTable

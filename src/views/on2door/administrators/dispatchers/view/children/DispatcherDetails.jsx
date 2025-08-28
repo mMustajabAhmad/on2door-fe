@@ -7,35 +7,20 @@ import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
 
 // Component Imports
-import EditUserInfo from '@components/dialogs/edit-user-info'
-import ConfirmationDialog from '@components/dialogs/confirmation-dialog'
 import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
+import EditDispatcherDialog from '@components/on2door/dialogs/administrators/dispatchers/update'
 import CustomAvatar from '@core/components/mui/Avatar'
 
 // Util Imports
 import { getInitials } from '@/utils/getInitials'
 
-// Vars
-const userRoleObj = {
-  admin: { icon: 'ri-vip-crown-line', color: 'error' },
-  author: { icon: 'ri-computer-line', color: 'warning' },
-  editor: { icon: 'ri-edit-box-line', color: 'info' },
-  maintainer: { icon: 'ri-pie-chart-2-line', color: 'success' },
-  subscriber: { icon: 'ri-user-3-line', color: 'primary' }
-}
+const DispatcherDetails = ({ userData }) => {
+  const dispatcher = userData?.administrator?.data?.attributes || {}
 
-const userStatusObj = {
-  active: 'success',
-  pending: 'warning',
-  inactive: 'secondary'
-}
-
-const UserDetails = ({ userData }) => {
-  const buttonProps = (children, color, variant) => ({
-    children,
-    color,
-    variant
-  })
+  const fullName = `${dispatcher.first_name || ''} ${dispatcher.last_name || ''}`.trim() || 'N/A'
+  const isOwner = dispatcher.is_account_owner || false
+  const status = dispatcher.is_active ? 'active' : 'inactive'
+  const teamIds = dispatcher.team_ids || []
 
   return (
     <>
@@ -45,117 +30,122 @@ const UserDetails = ({ userData }) => {
             <div className='flex items-center justify-center flex-col gap-4'>
               <div className='flex flex-col items-center gap-4'>
                 <CustomAvatar
-                  alt='user-profile'
-                  src={userData.avatar}
+                  alt='dispatcher-profile'
+                  src={dispatcher.avatar}
                   variant='rounded'
                   size={120}
                   skin='light'
                 >
-                  {!userData.avatar && getInitials(userData.fullName)}
+                  {!dispatcher.avatar && getInitials(fullName)}
                 </CustomAvatar>
-                <Typography variant='h5'>{userData.fullName}</Typography>
+                <Typography variant='h5'>{fullName}</Typography>
               </div>
-              <Chip
-                label={userData.role}
-                color={userRoleObj[userData.role]?.color || 'primary'}
-                size='small'
-                variant='tonal'
-                className='capitalize'
-              />
+              <div className='flex gap-2'>
+                <Chip
+                  label={dispatcher.role || 'dispatcher'}
+                  color={isOwner ? 'success' : 'primary'}
+                  size='small'
+                  variant='tonal'
+                  className='capitalize'
+                />
+                {isOwner && (
+                  <Chip label='Owner' color='success' size='small' variant='tonal' className='font-semibold' />
+                )}
+              </div>
             </div>
+
+            {/* Teams and Status Info */}
             <div className='flex items-center justify-around flex-wrap gap-4'>
+              <div className='flex items-center gap-4'>
+                <CustomAvatar variant='rounded' color='primary' skin='light'>
+                  <i className='ri-team-line' />
+                </CustomAvatar>
+                <div>
+                  <Typography variant='h5'>{teamIds.length}</Typography>
+                  <Typography>Teams</Typography>
+                </div>
+              </div>
               <div className='flex items-center gap-4'>
                 <CustomAvatar variant='rounded' color='primary' skin='light'>
                   <i className='ri-check-line' />
                 </CustomAvatar>
                 <div>
-                  <Typography variant='h5'>1.23k</Typography>
-                  <Typography>Task Done</Typography>
-                </div>
-              </div>
-              <div className='flex items-center gap-4'>
-                <CustomAvatar variant='rounded' color='primary' skin='light'>
-                  <i className='ri-star-smile-line' />
-                </CustomAvatar>
-                <div>
-                  <Typography variant='h5'>568</Typography>
-                  <Typography>Project Done</Typography>
+                  <Typography variant='h5'>{dispatcher.is_active ? 'Active' : 'Inactive'}</Typography>
+                  <Typography>Status</Typography>
                 </div>
               </div>
             </div>
           </div>
+
           <div>
-            <Typography variant='h5'>Details</Typography>
+            <Typography variant='h5'>Dispatcher Details</Typography>
             <Divider className='mlb-4' />
-            <div className='flex flex-col gap-2'>
-              <div className='flex items-center flex-wrap gap-x-1.5'>
-                <Typography className='font-medium' color='text.primary'>
-                  Username:
-                </Typography>
-                <Typography>@{userData.username}</Typography>
-              </div>
+            <div className='flex flex-col gap-3'>
               <div className='flex items-center flex-wrap gap-x-1.5'>
                 <Typography className='font-medium' color='text.primary'>
                   Email:
                 </Typography>
-                <Typography>{userData.email}</Typography>
+                <Typography>{dispatcher.email || 'N/A'}</Typography>
               </div>
+
+              <div className='flex items-center flex-wrap gap-x-1.5'>
+                <Typography className='font-medium' color='text.primary'>
+                  Phone:
+                </Typography>
+                <Typography>{dispatcher.phone_number || 'N/A'}</Typography>
+              </div>
+
               <div className='flex items-center flex-wrap gap-x-1.5'>
                 <Typography className='font-medium' color='text.primary'>
                   Status:
                 </Typography>
                 <Chip
-                  label={userData.status}
-                  color={userStatusObj[userData.status]}
+                  label={status}
+                  color={status === 'active' ? 'success' : 'default'}
                   size='small'
                   variant='tonal'
                   className='capitalize'
                 />
               </div>
+
               <div className='flex items-center flex-wrap gap-x-1.5'>
                 <Typography className='font-medium' color='text.primary'>
                   Role:
                 </Typography>
-                <Typography color='text.primary' className='capitalize'>{userData.role}</Typography>
+                <Typography color='text.primary' className='capitalize'>
+                  {dispatcher.role || 'dispatcher'}
+                </Typography>
               </div>
+
               <div className='flex items-center flex-wrap gap-x-1.5'>
                 <Typography className='font-medium' color='text.primary'>
-                  Company:
+                  Organization ID:
                 </Typography>
-                <Typography color='text.primary'>{userData.company}</Typography>
+                <Typography color='text.primary'>{dispatcher.organization_id || 'N/A'}</Typography>
               </div>
+
               <div className='flex items-center flex-wrap gap-x-1.5'>
                 <Typography className='font-medium' color='text.primary'>
-                  Contact:
+                  Teams:
                 </Typography>
-                <Typography color='text.primary'>{userData.contact}</Typography>
-              </div>
-              <div className='flex items-center flex-wrap gap-x-1.5'>
-                <Typography className='font-medium' color='text.primary'>
-                  Country:
+                <Typography color='text.primary'>
+                  {teamIds.length > 0 ? teamIds.join(', ') : 'No teams assigned'}
                 </Typography>
-                <Typography color='text.primary'>{userData.country}</Typography>
-              </div>
-              <div className='flex items-center flex-wrap gap-x-1.5'>
-                <Typography className='font-medium' color='text.primary'>
-                  Current Plan:
-                </Typography>
-                <Typography color='text.primary' className='capitalize'>{userData.currentPlan}</Typography>
               </div>
             </div>
           </div>
+
           <div className='flex gap-4 justify-center'>
             <OpenDialogOnElementClick
               element={Button}
-              elementProps={buttonProps('Edit', 'primary', 'contained')}
-              dialog={EditUserInfo}
-              dialogProps={{ data: userData }}
-            />
-            <OpenDialogOnElementClick
-              element={Button}
-              elementProps={buttonProps('Suspend', 'error', 'outlined')}
-              dialog={ConfirmationDialog}
-              dialogProps={{ type: 'suspend-account' }}
+              elementProps={{ children: 'Edit Dispatcher', color: 'primary', variant: 'contained' }}
+              dialog={EditDispatcherDialog}
+              dialogProps={{
+                data: userData,
+                currentAdmin: {
+                  id: dispatcher.id
+                }
+              }}
             />
           </div>
         </CardContent>
@@ -164,4 +154,4 @@ const UserDetails = ({ userData }) => {
   )
 }
 
-export default UserDetails
+export default DispatcherDetails

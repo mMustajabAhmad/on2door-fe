@@ -9,7 +9,7 @@ import AdminList from '@views/on2door/administrators/admins/list'
 // API Imports
 import { getAdministratorsApi } from '@/app/api/on2door/actions'
 
-const UserListApp = () => {
+const AdminListApp = () => {
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(10)
   const [searchQuery, setSearchQuery] = useState('')
@@ -101,4 +101,4 @@ const UserListApp = () => {
   )
 }
 
-export default UserListApp
+export default AdminListApp
