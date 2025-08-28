@@ -17,21 +17,28 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import IconButton from '@mui/material/IconButton'
+import FormControl from '@mui/material/FormControl'
+import InputLabel from '@mui/material/InputLabel'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import Chip from '@mui/material/Chip'
+import OutlinedInput from '@mui/material/OutlinedInput'
 
 // Third-party Imports
 import { Controller, useForm } from 'react-hook-form'
 import { valibotResolver } from '@hookform/resolvers/valibot'
-import { object, string, email, pipe, nonEmpty } from 'valibot'
+import { object, string, email, pipe, nonEmpty, array } from 'valibot'
 import { toast } from 'react-toastify'
 
 // API Imports
-import { getDispatcherByIdApi, updateDispatcherApi } from '@/app/api/on2door/actions'
+import { getDispatcherByIdApi, updateDispatcherApi, getTeamsApi } from '@/app/api/on2door/actions'
 
 const schema = object({
   email: pipe(string(), nonEmpty('This field is required'), email('Please enter a valid email')),
   first_name: pipe(string(), nonEmpty('This field is required')),
   last_name: pipe(string(), nonEmpty('This field is required')),
-  phone_number: pipe(string(), nonEmpty('This field is required'))
+  phone_number: pipe(string(), nonEmpty('This field is required')),
+  team_ids: array(string())
 })
 
 const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
@@ -49,19 +56,26 @@ const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
       email: '',
       first_name: '',
       last_name: '',
-      phone_number: ''
+      phone_number: '',
+      team_ids: []
     }
   })
 
-  const { data: userData, refetch } = useQuery({
-    queryKey: ['administrator', currentAdmin?.id],
+  const { data: userData } = useQuery({
+    queryKey: ['dispatcher', currentAdmin?.id],
     queryFn: () => getDispatcherByIdApi(currentAdmin?.id),
     enabled: !!currentAdmin?.id && open
   })
 
+  const { data: teamsData } = useQuery({
+    queryKey: ['teams'],
+    queryFn: () => getTeamsApi(),
+    enabled: open
+  })
+  const teams = teamsData?.teams?.data || []
+
   const { mutate: updateUser, isPending } = useMutation({
     mutationFn: ({ id, payload }) => updateDispatcherApi(id, payload),
-
     onMutate: () => setErrorState(null),
 
     onSuccess: () => {
@@ -78,7 +92,7 @@ const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
           const queryKey = query.queryKey
           return (
             Array.isArray(queryKey) &&
-            (queryKey[0] === 'administrator' || queryKey[0] === 'administrators')
+            (queryKey[0] === 'dispatcher' || queryKey[0] === 'dispatchers')
           )
         }
       })
@@ -97,7 +111,8 @@ const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
         email: user.email || '',
         first_name: user.first_name || '',
         last_name: user.last_name || '',
-        phone_number: user.phone_number || ''
+        phone_number: user.phone_number || '',
+        team_ids: user.team_ids?.map(id => id.toString()) || []
       })
     }
   }, [userData, reset])
@@ -108,7 +123,8 @@ const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
         email: data.email,
         first_name: data.first_name,
         last_name: data.last_name,
-        phone_number: data.phone_number
+        phone_number: data.phone_number,
+        team_ids: data.team_ids?.map(id => parseInt(id)) || []
       }
     }
 
@@ -213,6 +229,48 @@ const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
                 )}
               />
             </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <Typography variant='h6' className='mb-3'>
+                Team Assignments
+              </Typography>
+              <Controller
+                name='team_ids'
+                control={control}
+                render={({ field }) => (
+                  <FormControl fullWidth disabled={isPending}>
+                    <InputLabel>Select Teams</InputLabel>
+                    <Select
+                      multiple
+                      value={field.value || []}
+                      onChange={e => field.onChange(e.target.value)}
+                      input={<OutlinedInput label='Select Teams' />}
+                      renderValue={selected => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {selected.map((value, index) => {
+                            const team = teams.find(t => t.id.toString() === value)
+                            return (
+                              <Chip 
+                                key={`${value}-${index}`} 
+                                label={team ? team.attributes.name : `Team ${value}`} 
+                                size='small' 
+                              />
+                            )
+                          })}
+                        </Box>
+                      )}
+                    >
+                      {teams.map(team => (
+                        <MenuItem key={team.id} value={team.id.toString()}>
+                          {team.attributes.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+              />
+            </Grid>
+
           </Grid>
         </form>
       </DialogContent>
