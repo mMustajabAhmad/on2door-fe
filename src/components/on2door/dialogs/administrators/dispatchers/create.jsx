@@ -2,7 +2,7 @@
 
 // React Imports
 import React, { useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
 import Grid from '@mui/material/Grid2'
@@ -17,21 +17,28 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import IconButton from '@mui/material/IconButton'
+import FormControl from '@mui/material/FormControl'
+import InputLabel from '@mui/material/InputLabel'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import Chip from '@mui/material/Chip'
+import OutlinedInput from '@mui/material/OutlinedInput'
 
 // Third-party Imports
 import { Controller, useForm } from 'react-hook-form'
 import { valibotResolver } from '@hookform/resolvers/valibot'
-import { object, string, email, pipe, nonEmpty } from 'valibot'
+import { object, string, email, pipe, nonEmpty, optional, array } from 'valibot'
 import { toast } from 'react-toastify'
 
 // API Imports
-import { createAdministratorInvitationApi } from '@/app/api/on2door/actions'
+import { createAdministratorInvitationApi, getTeamsApi } from '@/app/api/on2door/actions'
 
 const schema = object({
   email: pipe(string(), nonEmpty('This field is required'), email('Please enter a valid email')),
   first_name: pipe(string(), nonEmpty('This field is required')),
   last_name: pipe(string(), nonEmpty('This field is required')),
-  phone_number: pipe(string(), nonEmpty('This field is required'))
+  phone_number: pipe(string(), nonEmpty('This field is required')),
+  team_ids: optional(array(string()))
 })
 
 const CreateDispatcherDialog = ({ open, setOpen }) => {
@@ -49,9 +56,17 @@ const CreateDispatcherDialog = ({ open, setOpen }) => {
       email: '',
       first_name: '',
       last_name: '',
-      phone_number: ''
+      phone_number: '',
+      team_ids: []
     }
   })
+
+  // Fetch teams for dropdown
+  const { data: teamsData } = useQuery({
+    queryKey: ['teams'],
+    queryFn: () => getTeamsApi()
+  })
+  const teams = teamsData?.teams?.data || []
 
   const { mutate: createAdmin, isPending } = useMutation({
     mutationFn: createAdministratorInvitationApi,
@@ -67,7 +82,7 @@ const CreateDispatcherDialog = ({ open, setOpen }) => {
         pauseOnHover: true,
         draggable: true
       })
-      queryClient.invalidateQueries({ queryKey: ['administrators'] })
+      queryClient.invalidateQueries({ queryKey: ['dispatchers'] })
       setOpen(false)
       reset()
     },
@@ -81,9 +96,10 @@ const CreateDispatcherDialog = ({ open, setOpen }) => {
       first_name: data.first_name,
       last_name: data.last_name,
       phone_number: data.phone_number,
-      role: 'admin',
+      role: 'dispatcher',
       is_read_only: false,
-      is_active: false
+      is_active: false,
+      team_ids: data.team_ids?.map(id => parseInt(id)) || []
     }
 
     createAdmin(payload)
@@ -188,6 +204,40 @@ const CreateDispatcherDialog = ({ open, setOpen }) => {
                     helperText={errors.phone_number?.message}
                     disabled={isPending}
                   />
+                )}
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <Controller
+                name='team_ids'
+                control={control}
+                render={({ field }) => (
+                  <FormControl fullWidth disabled={isPending}>
+                    <InputLabel>Select Teams</InputLabel>
+                    <Select
+                      multiple
+                      value={field.value || []}
+                      onChange={e => field.onChange(e.target.value)}
+                      input={<OutlinedInput label='Select Teams' />}
+                      renderValue={selected => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {selected.map(value => {
+                            const team = teams.find(t => t.id.toString() === value)
+                            return (
+                              <Chip key={value} label={team ? team.attributes.name : `Team ${value}`} size='small' />
+                            )
+                          })}
+                        </Box>
+                      )}
+                    >
+                      {teams.map(team => (
+                        <MenuItem key={team.id} value={team.id.toString()}>
+                          {team.attributes.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 )}
               />
             </Grid>

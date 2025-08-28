@@ -82,3 +82,10 @@ export function deleteDispatcherApi(id) {
     .delete(`/administrators/administrators/${id}`)
     .then(response => response.data)
 }
+
+//Teams
+export function getTeamsApi() {
+  return client()
+    .get('/administrators/teams')
+    .then(response => response.data)
+}
