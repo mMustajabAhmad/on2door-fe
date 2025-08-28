@@ -25,8 +25,6 @@ import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 
-
-
 // Third-party Imports
 import classnames from 'classnames'
 import { rankItem } from '@tanstack/match-sorter-utils'
@@ -46,19 +44,13 @@ import {
 
 // Component Imports
 import TableFilters from './TableFilters'
-// import AddUserDrawer from '../AddDispatcherDrawer'
 import CustomPagination from '@components/on2door/shared/CustomPagination'
 
 // Util Imports
 import { getLocalizedUrl } from '@/utils/i18n'
 
-// API Imports
-// import { deleteDispatcherApi } from '@/app/api/on2door/actions'
-
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
-
-// Styled Components
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -117,48 +109,6 @@ const DispatcherListTable = ({
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [rowSelection, setRowSelection] = useState({})
-  // const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  // const [dispatcherToDelete, setDispatcherToDelete] = useState(null)
-  // const [errorState, setErrorState] = useState(null)
-
-  // Hooks
-  // const queryClient = useQueryClient()
-
-  // Delete mutation
-  // const { mutate: deleteDispatcher, isPending } = useMutation({
-  //   mutationFn: deleteDispatcherApi,
-
-  //   onMutate: () => setErrorState(null),
-
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ['dispatchers'] })
-  //     setDeleteDialogOpen(false)
-  //     setDispatcherToDelete(null)
-  //     toast.success('Dispatcher deleted successfully!', {
-  //       position: 'top-right',
-  //       autoClose: 3000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true
-  //     })
-  //   },
-
-  //   onError: err => setErrorState(err)
-  // })
-
-  // const handleDeleteClick = dispatcher => {
-  //   setDispatcherToDelete(dispatcher)
-  //   setDeleteDialogOpen(true)
-  // }
-
-  // const handleDeleteConfirm = confirmed => {
-  //   if (confirmed && dispatcherToDelete) {
-  //     deleteDispatcher(dispatcherToDelete.id)
-  //   }
-  //   setDeleteDialogOpen(false)
-  //   setDispatcherToDelete(null)
-  // }
 
   const transformApiData = apiData => {
     if (!apiData?.administrators?.data) return []
@@ -184,19 +134,6 @@ const DispatcherListTable = ({
     setData(transformedData)
     setFilteredData(transformedData)
   }, [tableData])
-
-  // useEffect(() => {
-  //   if (!searchQuery || searchQuery.trim() === '') {
-  //     setFilteredData(data)
-  //   } else {
-  //     const filtered = data.filter(
-  //       dispatcher =>
-  //         dispatcher.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //         dispatcher.email.toLowerCase().includes(searchQuery.toLowerCase())
-  //     )
-  //     setFilteredData(filtered)
-  //   }
-  // }, [searchQuery, data])
 
   // Hooks
   const { lang: locale } = useParams()
@@ -241,19 +178,6 @@ const DispatcherListTable = ({
         header: 'Email',
         cell: ({ row }) => <Typography>{row.original.email}</Typography>
       }),
-      columnHelper.accessor('role', {
-        header: 'Role',
-        cell: ({ row }) => (
-          <Typography className='capitalize' color='text.primary'>
-            {' '}
-            {row.original.role}{' '}
-          </Typography>
-        )
-      }),
-      // columnHelper.accessor('phone_number', {
-      //   header: 'Phone',
-      //   cell: ({ row }) => <Typography color='text.primary'> {row.original.phone_number} </Typography>
-      // }),
       columnHelper.accessor('organization_id', {
         header: 'Organization ID',
         cell: ({ row }) => <Typography color='text.primary'> {row.original.organization_id} </Typography>
@@ -336,22 +260,6 @@ const DispatcherListTable = ({
 
   return (
     <>
-      {/* Custom Delete Confirmation Dialog
-      <Dialog fullWidth maxWidth='xs' open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-        <DialogContent className='flex items-center flex-col text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
-          <i className='ri-error-warning-line text-[88px] mbe-6 text-warning' />
-          <Typography variant='h4'>Are you sure?</Typography>
-          <Typography color='text.primary'>You won't be able to revert this dispatcher!</Typography>
-        </DialogContent>
-        <DialogActions className='justify-center pbs-0 sm:pbe-16 sm:pli-16'>
-          <Button variant='contained' color='error' onClick={() => handleDeleteConfirm(true)} disabled={isPending}>
-            {isPending ? 'Deleting...' : 'Yes, Delete Dispatcher!'}
-          </Button>
-          <Button variant='outlined' color='secondary' onClick={() => handleDeleteConfirm(false)} disabled={isPending}>
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog> */}
       <Card>
         <CardHeader title='Filters' />
         <TableFilters
@@ -363,15 +271,6 @@ const DispatcherListTable = ({
           onStatusChange={onStatusChange}
         />
         <Divider />
-
-        {/* Error display for delete operations
-        {errorState && (
-          <Alert severity='error' sx={{ mx: 5, mb: 2 }}>
-            {errorState?.response?.data?.error ||
-              errorState?.response?.data?.message ||
-              'Failed to delete dispatcher. Please try again.'}
-          </Alert>
-        )} */}
 
         <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
           <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
