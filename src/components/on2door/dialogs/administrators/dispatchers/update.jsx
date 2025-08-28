@@ -250,10 +250,10 @@ const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
                           {selected.map((value, index) => {
                             const team = teams.find(t => t.id.toString() === value)
                             return (
-                              <Chip 
-                                key={`${value}-${index}`} 
-                                label={team ? team.attributes.name : `Team ${value}`} 
-                                size='small' 
+                              <Chip
+                                key={`${value}-${index}`}
+                                label={team ? team.attributes.name : `Team ${value}`}
+                                size='small'
                               />
                             )
                           })}
