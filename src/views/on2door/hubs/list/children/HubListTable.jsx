@@ -8,9 +8,9 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 // Component Imports
-import EditHubDialog from '@/components/on2door/dialogs/hubs/update'
-import DeleteHubDialog from '@/components/on2door/dialogs/hubs/delete'
-import CreateHubDialog from '@/components/on2door/dialogs/hubs/create'
+import EditHubDialog from '@/components/on2door/dialogs/hub/update'
+import DeleteHubDialog from '@/components/on2door/dialogs/hub/delete'
+import CreateHubDialog from '@/components/on2door/dialogs/hub/create'
 import OpenDialogOnElementClick from '@/components/on2door/dialogs/OpenDialogOnElementClick'
 
 // MUI Imports

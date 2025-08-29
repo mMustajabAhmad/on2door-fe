@@ -47,12 +47,7 @@ const EditHubDialog = ({ open, setOpen, currentHub }) => {
   const [errorState, setErrorState] = useState(null)
   const queryClient = useQueryClient()
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors }
-  } = useForm({
+  const { control, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: valibotResolver(schema),
     defaultValues: {
       name: '',
@@ -75,7 +70,6 @@ const EditHubDialog = ({ open, setOpen, currentHub }) => {
     queryKey: ['teams'],
     queryFn: () => getTeamsApi()
   })
-
   const teams = teamsData?.teams?.data || []
 
   const { mutate: updateHub, isPending } = useMutation({
@@ -106,7 +100,6 @@ const EditHubDialog = ({ open, setOpen, currentHub }) => {
   })
 
   useEffect(() => {
-    // Use currentHub data if available, otherwise use API data
    if (hubData) {
       const hub = hubData?.data?.attributes || {}
       const address = hub.address || {}

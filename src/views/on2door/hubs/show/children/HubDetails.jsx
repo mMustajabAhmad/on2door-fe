@@ -8,13 +8,13 @@ import Button from '@mui/material/Button'
 
 // Component Imports
 import OpenDialogOnElementClick from '@/components/on2door/dialogs/OpenDialogOnElementClick'
-import EditHubInfo from '@/components/on2door/dialogs/hubs/update'
+import EditHubInfo from '@/components/on2door/dialogs/hub/update'
 import CustomAvatar from '@core/components/mui/Avatar'
 
 // Util Imports
 import { getInitials } from '@/utils/getInitials'
 
-const HubLeftOverview = ({ userData }) => {
+const HubDetails = ({ userData }) => {
   const hub = userData?.data?.attributes || {}
   const address = hub.address || {}
   const hubName = hub.name || 'N/A'
@@ -121,4 +121,4 @@ const HubLeftOverview = ({ userData }) => {
   )
 }
 
-export default HubLeftOverview
+export default HubDetails

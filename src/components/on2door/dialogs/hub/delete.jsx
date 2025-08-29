@@ -19,16 +19,14 @@ import { deleteHubApi } from '@/app/api/on2door/actions'
 // Third-party Imports
 import { toast } from 'react-toastify'
 
-const DeleteConfirmationDialog = ({ open, setOpen, itemToDelete, data }) => {
+const DeleteConfirmationDialog = ({ open, setOpen, itemToDelete }) => {
   const [isPending, setIsPending] = useState(false)
   const queryClient = useQueryClient()
 
   const { mutate: deleteHub } = useMutation({
     mutationFn: deleteHubApi,
 
-    onMutate: () => {
-      setIsPending(true)
-    },
+    onMutate: () => { setIsPending(true) }, 
 
     onSuccess: () => {
       toast.success('Hub deleted successfully!', {
@@ -60,17 +58,8 @@ const DeleteConfirmationDialog = ({ open, setOpen, itemToDelete, data }) => {
     }
   })
 
-  const handleDelete = () => {
-    if (itemToDelete?.id) {
-      deleteHub(itemToDelete.id)
-    }
-  }
-
-  const handleClose = () => {
-    if (!isPending) {
-      setOpen(false)
-    }
-  }
+  const handleDelete = () => itemToDelete?.id && deleteHub(itemToDelete.id)
+  const handleClose = () => !isPending && setOpen(false)
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth='sm' fullWidth closeAfterTransition={false}>
@@ -78,6 +67,7 @@ const DeleteConfirmationDialog = ({ open, setOpen, itemToDelete, data }) => {
         <i className='ri-error-warning-line text-[88px] mbe-6 text-warning' />
         <div className='text-xl font-semibold'>Are you sure?</div>
       </DialogTitle>
+
       <DialogContent className='text-center'>
         <Typography>Do you really want to delete this hub?</Typography>
         {itemToDelete?.name && (
@@ -86,6 +76,7 @@ const DeleteConfirmationDialog = ({ open, setOpen, itemToDelete, data }) => {
           </Typography>
         )}
       </DialogContent>
+
       <DialogActions className='justify-center gap-3 pbs-0 sm:pbe-16 sm:pli-16'>
         <Button
           variant='contained'

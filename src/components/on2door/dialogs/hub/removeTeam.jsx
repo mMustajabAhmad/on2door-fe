@@ -56,9 +56,7 @@ const RemoveTeamDialog = ({ open, setOpen, hubData, teamId }) => {
     const updatedTeamIds = currentTeamIds.filter(id => id !== teamId)
     
     const payload = {
-      hub: {
-        team_ids: updatedTeamIds
-      }
+      hub: { team_ids: updatedTeamIds } 
     }
 
     removeTeam({ id: hubData?.data?.id, payload })
@@ -68,6 +66,7 @@ const RemoveTeamDialog = ({ open, setOpen, hubData, teamId }) => {
     setOpen(false)
     setErrorState(null)
   }
+
   return (
     <Dialog 
       open={open} 

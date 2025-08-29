@@ -47,12 +47,7 @@ const CreateHubDialog = ({ open, setOpen }) => {
   const [errorState, setErrorState] = useState(null)
   const queryClient = useQueryClient()
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors }
-  } = useForm({
+  const { control, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: valibotResolver(schema),
     defaultValues: {
       name: '',

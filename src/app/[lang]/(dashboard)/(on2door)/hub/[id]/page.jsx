@@ -8,7 +8,7 @@ import { useParams } from 'next/navigation'
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-import HubOverview from '@/views/on2door/hubs/view'
+import HubOverview from '@/views/on2door/hubs/show'
 
 // API Imports
 import { getHubApi } from '@/app/api/on2door/actions'
@@ -16,11 +16,7 @@ import { getHubApi } from '@/app/api/on2door/actions'
 const HubViewPage = () => {
   const { id } = useParams()
 
-  const {
-    data: userData,
-    isLoading,
-    error
-  } = useQuery({
+  const { data: userData, isLoading, error } = useQuery({
     queryKey: ['hub', id],
     queryFn: () => getHubApi(id),
     enabled: !!id

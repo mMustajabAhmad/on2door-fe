@@ -1,4 +1,3 @@
-// src/views/on2door/hubs/view/children/hub-right/teams/index.jsx
 'use client'
 
 // React Imports
@@ -22,23 +21,18 @@ import Paper from '@mui/material/Paper'
 // Component Imports
 import CustomAvatar from '@core/components/mui/Avatar'
 import OpenDialogOnElementClick from '@/components/on2door/dialogs/OpenDialogOnElementClick'
-import EditHubDialog from '@/components/on2door/dialogs/hubs/update'
-import RemoveTeamDialog from '@/components/on2door/dialogs/hubs/removeTeam'
+import EditHubDialog from '@/components/on2door/dialogs/hub/update'
+import RemoveTeamDialog from '@/components/on2door/dialogs/hub/removeTeam'
 
-const TeamsTab = ({ userData }) => {
+const HubTeams = ({ userData }) => {
   const [removeTeamDialog, setRemoveTeamDialog] = useState({ open: false, teamId: null })
-  
+
   const hub = userData?.data?.attributes || {}
   const address = hub.address_attributes || hub.address || {}
   const teamIds = hub.team_ids || []
 
-  const handleRemoveTeam = (teamId) => {
-    setRemoveTeamDialog({ open: true, teamId })
-  }
-
-  const handleCloseRemoveDialog = () => {
-    setRemoveTeamDialog({ open: false, teamId: null })
-  }
+  const handleRemoveTeam = teamId => setRemoveTeamDialog({ open: true, teamId })
+  const handleCloseRemoveDialog = () => setRemoveTeamDialog({ open: false, teamId: null })
 
   if (teamIds.length === 0) {
     return (
@@ -55,10 +49,10 @@ const TeamsTab = ({ userData }) => {
           </Typography>
           <OpenDialogOnElementClick
             element={Button}
-            elementProps={{ 
-              children: 'Assign to Team', 
-              variant: 'outlined', 
-              color: 'primary' 
+            elementProps={{
+              children: 'Assign to Team',
+              variant: 'outlined',
+              color: 'primary'
             }}
             dialog={EditHubDialog}
             dialogProps={{
@@ -89,9 +83,9 @@ const TeamsTab = ({ userData }) => {
                 <Typography variant='h5'>Teams</Typography>
                 <OpenDialogOnElementClick
                   element={Button}
-                  elementProps={{ 
-                    children: 'Add to Team', 
-                    variant: 'contained', 
+                  elementProps={{
+                    children: 'Add to Team',
+                    variant: 'contained',
                     color: 'primary',
                     startIcon: <i className='ri-add-line' />
                   }}
@@ -142,9 +136,9 @@ const TeamsTab = ({ userData }) => {
                             <Button size='small' variant='outlined' color='primary'>
                               View
                             </Button>
-                            <Button 
-                              size='small' 
-                              variant='outlined' 
+                            <Button
+                              size='small'
+                              variant='outlined'
                               color='error'
                               onClick={() => handleRemoveTeam(teamId)}
                             >
@@ -173,4 +167,4 @@ const TeamsTab = ({ userData }) => {
   )
 }
 
-export default TeamsTab
+export default HubTeams
