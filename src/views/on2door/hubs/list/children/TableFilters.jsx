@@ -1,8 +1,3 @@
-'use client'
-
-// React Imports
-import { useState, useEffect } from 'react'
-
 // MUI Imports
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
@@ -12,23 +7,11 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
 
-const TableFilters = ({
-  perPage,
-  onPerPageChange,
-  city,
-  onCityChange,
-  state,
-  onStateChange,
-  country,
-  onCountryChange,
-  hasTeams,
-  onHasTeamsChange
-}) => {
+const TableFilters = ({ perPage, onPerPageChange, city, onCityChange, state, onStateChange }) => {
+
   const handleClearFilters = () => {
     onCityChange('')
     onStateChange('')
-    onCountryChange('')
-    onHasTeamsChange('')
     onPerPageChange(10)
   }
 
@@ -51,9 +34,11 @@ const TableFilters = ({
               <MenuItem value='Karachi'>Karachi</MenuItem>
               <MenuItem value='Lahore'>Lahore</MenuItem>
               <MenuItem value='Islamabad'>Islamabad</MenuItem>
+              <MenuItem value='Faisalabad'>Faisalabad</MenuItem>
             </Select>
           </FormControl>
         </Grid>
+
         <Grid size={{ xs: 12, sm: 3.5 }}>
           <FormControl fullWidth>
             <InputLabel id='state-select'>Select State</InputLabel>

@@ -17,32 +17,15 @@ const HubsPage = () => {
   const [city, setCity] = useState('')
   const [state, setState] = useState('')
   const [country, setCountry] = useState('')
-  const [hasTeams, setHasTeams] = useState('')
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['hubs', page, perPage, searchQuery, city, state, country, hasTeams],
+    queryKey: ['hubs', page, perPage, searchQuery, city, state, country],
     queryFn: () => {
-      const payload = {
-        page,
-        per_page: perPage
-      }
+      const payload = { page, per_page: perPage }
 
-      if (searchQuery)
-        payload['q[name_cont]'] = searchQuery
-
-      if (city)
-        payload['q[city_eq]'] = city
-
-      if (state)
-        payload['q[state_eq]'] = state
-
-      if (country)
-        payload['q[country_eq]'] = country
-
-      if (hasTeams === 'yes')
-        payload['q[has_teams_eq]'] = true
-      else if (hasTeams === 'no')
-        payload['q[has_teams_eq]'] = false
+      if (searchQuery) payload['q[name_cont]'] = searchQuery
+      if (city) payload['q[address_city_eq]'] = city
+      if (state) payload['q[address_state_eq]'] = state
 
       return getHubsApi(payload)
     }
@@ -75,11 +58,6 @@ const HubsPage = () => {
   const handleCountryChange = value => {
     setPage(1)
     setCountry(value)
-  }
-
-  const handleHasTeamsChange = value => {
-    setPage(1)
-    setHasTeams(value)
   }
 
   if (isLoading) {
@@ -120,8 +98,6 @@ const HubsPage = () => {
       onStateChange={handleStateChange}
       country={country}
       onCountryChange={handleCountryChange}
-      hasTeams={hasTeams}
-      onHasTeamsChange={handleHasTeamsChange}
     />
   )
 }
