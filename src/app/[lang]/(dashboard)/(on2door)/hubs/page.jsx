@@ -31,9 +31,7 @@ const HubsPage = () => {
     }
   })
 
-  const handlePageChange = newPage => {
-    setPage(newPage)
-  }
+  const handlePageChange = newPage => setPage(newPage)
 
   const handlePerPageChange = newPerPage => {
     setPage(1)
