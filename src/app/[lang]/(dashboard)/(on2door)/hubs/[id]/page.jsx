@@ -1,61 +1,57 @@
-// Next Imports
-import dynamic from 'next/dynamic'
-import { notFound } from 'next/navigation'
+'use client'
+
+// React Imports
+import { useQuery } from '@tanstack/react-query'
+import { useParams } from 'next/navigation'
 
 // MUI Imports
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-// import UserLeftOverview from '@views/apps/user/view/user-left-overview'
-// import UserRight from '@views/apps/user/view/user-right'
+import HubOverview from '@/views/on2door/hubs/show'
 
-import HubLeftOverview from '@/views/on2door/hubs/view/hub-left-overview'
-import HubRight from '@/views/on2door/hubs/view/hub-right'
+// API Imports
+import { getHubApi } from '@/app/api/on2door/actions'
 
-// Data Imports
-import { getPricingData, getHubById } from '@/app/server/actions'
+const HubViewPage = () => {
+  const { id } = useParams()
 
-// const OverViewTab = dynamic(() => import('@views/apps/user/view/user-right/overview'))
-// const SecurityTab = dynamic(() => import('@views/apps/user/view/user-right/security'))
-// const BillingPlans = dynamic(() => import('@views/apps/user/view/user-right/billing-plans'))
-// const NotificationsTab = dynamic(() => import('@views/apps/user/view/user-right/notifications'))
-// const ConnectionsTab = dynamic(() => import('@views/apps/user/view/user-right/connections'))
+  const { data: hubData, isLoading, error } = useQuery({
+    queryKey: ['hub', id],
+    queryFn: () => getHubApi(id),
+    enabled: !!id
+  })
 
-const OverViewTab = dynamic(() => import('@/views/on2door/hubs/view/hub-right/overview'))
-const SecurityTab = dynamic(() => import('@/views/on2door/hubs/view/hub-right/security'))
-const BillingPlans = dynamic(() => import('@/views/on2door/hubs/view/hub-right/billing-plans'))
-const NotificationsTab = dynamic(() => import('@/views/on2door/hubs/view/hub-right/notifications'))
-const ConnectionsTab = dynamic(() => import('@/views/on2door/hubs/view/hub-right/connections'))
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='text-center'>
+          <i className='ri-loader-4-line text-6xl text-blue-500 mb-4 animate-spin'></i>
+          <h2 className='text-xl font-semibold mb-2'>Loading Hub...</h2>
+        </div>
+      </div>
+    )
+  }
 
-// Vars
-const tabContentList = (data, userData) => ({
-  overview: <OverViewTab userData={userData} />,
-  security: <SecurityTab userData={userData} />,
-  'billing-plans': <BillingPlans data={data} userData={userData} />,
-  notifications: <NotificationsTab userData={userData} />,
-  connections: <ConnectionsTab userData={userData} />
-})
-
-const UserViewPage = async ({ params }) => {
-  // Get user data by ID
-  const { id } = await params
-  const userData = await getHubById(id)
-
-  if (!userData) notFound()
-
-  // Get pricing data for billing plans
-  const data = await getPricingData()
+  if (error || !hubData) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='text-center'>
+          <i className='ri-error-warning-line text-6xl text-red-500 mb-4'></i>
+          <h2 className='text-xl font-semibold mb-2'>Failed to load hub</h2>
+          <p className='text-gray-600'>Please try again later</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <Grid container spacing={6}>
-      <Grid size={{ xs: 12, lg: 4, md: 5 }}>
-        <HubLeftOverview userData={userData} />
-      </Grid>
-      <Grid size={{ xs: 12, lg: 8, md: 7 }}>
-        <HubRight tabContentList={tabContentList(data, userData)} />
+      <Grid size={{ xs: 12 }}>
+        <HubOverview hubData={hubData} />
       </Grid>
     </Grid>
   )
 }
 
-export default UserViewPage
+export default HubViewPage

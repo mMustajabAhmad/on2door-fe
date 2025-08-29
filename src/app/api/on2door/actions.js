@@ -89,3 +89,34 @@ export function getTeamsApi() {
     .get('/administrators/teams')
     .then(response => response.data)
 }
+
+// Hubs
+export function getHubsApi(payload) {
+  return client()
+    .get('/administrators/hubs', { params: payload })
+    .then(response => response.data)
+}
+
+export function getHubApi(id) {
+  return client()
+    .get(`/administrators/hubs/${id}`)
+    .then(response => response.data)
+}
+
+export function createHubApi(payload) {
+  return client()
+    .post('/administrators/hubs', payload)
+    .then(response => response.data)
+}
+
+export function updateHubApi(id, payload) {
+  return client()
+    .put(`/administrators/hubs/${id}`, payload)
+    .then(response => response.data)
+}
+
+export function destroyHubApi(id) {
+  return client()
+    .delete(`/administrators/hubs/${id}`)
+    .then(response => response.data)
+}

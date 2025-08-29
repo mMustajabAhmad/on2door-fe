@@ -97,10 +97,10 @@ const CreateAdminDialog = ({ open, setOpen }) => {
 
   return (
     <Dialog fullWidth open={open} onClose={handleClose} maxWidth='md' scroll='body' closeAfterTransition={false}>
-      <DialogTitle variant='h4' className='flex gap-2 flex-col items-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
-        <div className='max-sm:is-[80%] max-sm:text-center'>Create New Admin</div>
+      <DialogTitle className='flex gap-2 flex-col items-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
+        <div className='max-sm:is-[80%] max-sm:text-center text-xl font-semibold'>Create New Administrator</div>
         <Typography component='span' className='flex flex-col text-center'>
-          Add a new admin to the organization
+          Add administrator details
         </Typography>
       </DialogTitle>
 
@@ -213,4 +213,3 @@ const CreateAdminDialog = ({ open, setOpen }) => {
 }
 
 export default CreateAdminDialog
-

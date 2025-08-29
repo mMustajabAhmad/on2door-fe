@@ -76,10 +76,7 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
       queryClient.invalidateQueries({
         predicate: query => {
           const queryKey = query.queryKey
-          return (
-            Array.isArray(queryKey) &&
-            (queryKey[0] === 'administrator' || queryKey[0] === 'administrators')
-          )
+          return Array.isArray(queryKey) && (queryKey[0] === 'administrator' || queryKey[0] === 'administrators')
         }
       })
       setOpen(false)

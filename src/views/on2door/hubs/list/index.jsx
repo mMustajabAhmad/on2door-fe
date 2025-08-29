@@ -2,20 +2,48 @@
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-import UserListTable from './HubListTable'
-// import UserListCards from './AdminListCards'
+import HubListTable from './children/HubListTable'
 
-const UserList = ({ userData }) => {
+const HubList = ({
+  hubData,
+  page,
+  perPage,
+  onPageChange,
+  onPerPageChange,
+  searchQuery,
+  setSearchQuery,
+  city,
+  onCityChange,
+  state,
+  onStateChange,
+  country,
+  onCountryChange,
+  hasTeams,
+  onHasTeamsChange
+}) => {
   return (
     <Grid container spacing={6}>
-      {/* <Grid size={{ xs: 12 }}>
-        <UserListCards />
-      </Grid> */}
       <Grid size={{ xs: 12 }}>
-        <UserListTable tableData={userData} />
+        <HubListTable
+          tableData={hubData}
+          page={page}
+          perPage={perPage}
+          onPageChange={onPageChange}
+          onPerPageChange={onPerPageChange}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          city={city}
+          onCityChange={onCityChange}
+          state={state}
+          onStateChange={onStateChange}
+          country={country}
+          onCountryChange={onCountryChange}
+          hasTeams={hasTeams}
+          onHasTeamsChange={onHasTeamsChange}
+        />
       </Grid>
     </Grid>
   )
 }
 
-export default UserList
+export default HubList
