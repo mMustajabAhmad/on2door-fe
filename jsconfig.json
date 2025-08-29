@@ -50,7 +50,7 @@
     "tailwind.config.js",
     "**/*.js",
     "**/*.jsx"
-  ],
+, "src/components/on2door/dialogs/hubs"  ],
   "exclude": [
     "node_modules"
   ]

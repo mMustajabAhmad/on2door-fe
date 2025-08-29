@@ -26,7 +26,7 @@ const AdminListApp = () => {
       }
 
       if (searchQuery)
-         payload['q[email_or_first_name_or_last_name_or_phone_number_cont]'] = searchQuery
+        payload['q[email_or_first_name_or_last_name_or_phone_number_cont]'] = searchQuery
 
       if (role)
         payload['q[role_eq]'] = role
