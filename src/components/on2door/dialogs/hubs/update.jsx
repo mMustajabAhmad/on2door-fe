@@ -31,7 +31,7 @@ import { object, string, pipe, nonEmpty, optional, array } from 'valibot'
 import { toast } from 'react-toastify'
 
 // API Imports
-import { getHubByIdApi, updateHubApi, getTeamsApi } from '@/app/api/on2door/actions'
+import { getHubApi, updateHubApi, getTeamsApi } from '@/app/api/on2door/actions'
 
 const schema = object({
   name: pipe(string(), nonEmpty('Hub name is required')),
@@ -65,9 +65,9 @@ const EditHubDialog = ({ open, setOpen, currentHub }) => {
     }
   })
 
-  const { data: hubData, refetch } = useQuery({
+  const { data: hubData } = useQuery({
     queryKey: ['hub', currentHub?.id],
-    queryFn: () => getHubByIdApi(currentHub?.id),
+    queryFn: () => getHubApi(currentHub?.id),
     enabled: !!currentHub?.id && open
   })
 

@@ -11,7 +11,7 @@ import Grid from '@mui/material/Grid2'
 import HubOverview from '@/views/on2door/hubs/view'
 
 // API Imports
-import { getHubByIdApi } from '@/app/api/on2door/actions'
+import { getHubApi } from '@/app/api/on2door/actions'
 
 const HubViewPage = () => {
   const { id } = useParams()
@@ -22,7 +22,7 @@ const HubViewPage = () => {
     error
   } = useQuery({
     queryKey: ['hub', id],
-    queryFn: () => getHubByIdApi(id),
+    queryFn: () => getHubApi(id),
     enabled: !!id
   })
 

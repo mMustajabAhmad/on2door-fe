@@ -97,7 +97,7 @@ export function getHubsApi(payload) {
     .then(response => response.data)
 }
 
-export function getHubByIdApi(id) {
+export function getHubApi(id) {
   return client()
     .get(`/administrators/hubs/${id}`)
     .then(response => response.data)
