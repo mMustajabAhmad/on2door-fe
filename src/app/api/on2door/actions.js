@@ -115,7 +115,7 @@ export function updateHubApi(id, payload) {
     .then(response => response.data)
 }
 
-export function deleteHubApi(id) {
+export function destroyHubApi(id) {
   return client()
     .delete(`/administrators/hubs/${id}`)
     .then(response => response.data)

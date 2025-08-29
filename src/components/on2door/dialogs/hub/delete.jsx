@@ -14,17 +14,17 @@ import Typography from '@mui/material/Typography'
 import CircularProgress from '@mui/material/CircularProgress'
 
 // API Imports
-import { deleteHubApi } from '@/app/api/on2door/actions'
+import { destroyHubApi } from '@/app/api/on2door/actions'
 
 // Third-party Imports
 import { toast } from 'react-toastify'
 
-const DeleteConfirmationDialog = ({ open, setOpen, itemToDelete }) => {
+const DeleteHubDialog = ({ open, setOpen, itemToDelete }) => {
   const [isPending, setIsPending] = useState(false)
   const queryClient = useQueryClient()
 
   const { mutate: deleteHub } = useMutation({
-    mutationFn: deleteHubApi,
+    mutationFn: destroyHubApi,
 
     onMutate: () => { setIsPending(true) }, 
 
@@ -95,4 +95,4 @@ const DeleteConfirmationDialog = ({ open, setOpen, itemToDelete }) => {
   )
 }
 
-export default DeleteConfirmationDialog
+export default DeleteHubDialog
