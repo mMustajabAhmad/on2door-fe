@@ -16,7 +16,7 @@ import { getHubApi } from '@/app/api/on2door/actions'
 const HubViewPage = () => {
   const { id } = useParams()
 
-  const { data: userData, isLoading, error } = useQuery({
+  const { data: hubData, isLoading, error } = useQuery({
     queryKey: ['hub', id],
     queryFn: () => getHubApi(id),
     enabled: !!id
@@ -33,7 +33,7 @@ const HubViewPage = () => {
     )
   }
 
-  if (error || !userData) {
+  if (error || !hubData) {
     return (
       <div className='flex items-center justify-center min-h-[400px]'>
         <div className='text-center'>
@@ -48,7 +48,7 @@ const HubViewPage = () => {
   return (
     <Grid container spacing={6}>
       <Grid size={{ xs: 12 }}>
-        <HubOverview userData={userData} />
+        <HubOverview hubData={hubData} />
       </Grid>
     </Grid>
   )

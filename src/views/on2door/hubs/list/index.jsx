@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid2'
 import HubListTable from './children/HubListTable'
 
 const HubList = ({
-  userData,
+  hubData,
   page,
   perPage,
   onPageChange,
@@ -25,7 +25,7 @@ const HubList = ({
     <Grid container spacing={6}>
       <Grid size={{ xs: 12 }}>
         <HubListTable
-          tableData={userData}
+          tableData={hubData}
           page={page}
           perPage={perPage}
           onPageChange={onPageChange}

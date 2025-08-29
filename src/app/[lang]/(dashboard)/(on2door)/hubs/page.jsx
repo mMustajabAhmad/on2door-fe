@@ -85,7 +85,7 @@ const HubsPage = () => {
 
   return (
     <HubList
-      userData={data}
+      hubData={data}
       page={page}
       perPage={perPage}
       onPageChange={handlePageChange}

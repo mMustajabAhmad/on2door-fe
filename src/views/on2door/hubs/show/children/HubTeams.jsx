@@ -24,10 +24,10 @@ import OpenDialogOnElementClick from '@/components/on2door/dialogs/OpenDialogOnE
 import EditHubDialog from '@/components/on2door/dialogs/hub/update'
 import RemoveTeamDialog from '@/components/on2door/dialogs/hub/removeTeam'
 
-const HubTeams = ({ userData }) => {
+const HubTeams = ({ hubData }) => {
   const [removeTeamDialog, setRemoveTeamDialog] = useState({ open: false, teamId: null })
 
-  const hub = userData?.data?.attributes || {}
+  const hub = hubData?.data?.attributes || {}
   const address = hub.address_attributes || hub.address || {}
   const teamIds = hub.team_ids || []
 
@@ -57,7 +57,7 @@ const HubTeams = ({ userData }) => {
             dialog={EditHubDialog}
             dialogProps={{
               currentHub: {
-                id: userData?.data?.id,
+                id: hubData?.data?.id,
                 name: hub.name,
                 street: address.street,
                 city: address.city,
@@ -92,7 +92,7 @@ const HubTeams = ({ userData }) => {
                   dialog={EditHubDialog}
                   dialogProps={{
                     currentHub: {
-                      id: userData?.data?.id,
+                      id: hubData?.data?.id,
                       name: hub.name,
                       street: address.street,
                       city: address.city,
@@ -160,7 +160,7 @@ const HubTeams = ({ userData }) => {
       <RemoveTeamDialog
         open={removeTeamDialog.open}
         setOpen={handleCloseRemoveDialog}
-        hubData={userData}
+        hubData={hubData}
         teamId={removeTeamDialog.teamId}
       />
     </>

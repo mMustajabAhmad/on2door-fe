@@ -14,8 +14,8 @@ import CustomAvatar from '@core/components/mui/Avatar'
 // Util Imports
 import { getInitials } from '@/utils/getInitials'
 
-const HubDetails = ({ userData }) => {
-  const hub = userData?.data?.attributes || {}
+const HubDetails = ({ hubData }) => {
+  const hub = hubData?.data?.attributes || {}
   const address = hub.address || {}
   const hubName = hub.name || 'N/A'
 
@@ -103,7 +103,7 @@ const HubDetails = ({ userData }) => {
               dialog={EditHubInfo}
               dialogProps={{
                 currentHub: {
-                  id: userData?.data?.id,
+                  id: hubData?.data?.id,
                   name: hub.name,
                   street: address.street,
                   city: address.city,
