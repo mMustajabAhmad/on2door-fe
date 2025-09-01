@@ -8,7 +8,7 @@ import { useParams } from 'next/navigation'
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-import AdminOverview from '@/views/on2door/administrators/admins/view'
+import AdminOverview from '@/views/on2door/administrators/admins/show'
 
 // API Imports
 import { getAdministratorByIdApi } from '@/app/api/on2door/actions'
