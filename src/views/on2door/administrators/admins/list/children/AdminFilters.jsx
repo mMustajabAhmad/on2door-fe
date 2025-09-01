@@ -1,6 +1,3 @@
-// React Imports
-import { useState, useEffect } from 'react'
-
 // MUI Imports
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
@@ -10,7 +7,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
 
-const TableFilters = ({ perPage, onPerPageChange, role, onRoleChange, status, onStatusChange }) => {
+const AdminFilters = ({ perPage, onPerPageChange, role, onRoleChange, status, onStatusChange }) => {
 
   const handleClearFilters = () => {
     onRoleChange('')
@@ -93,4 +90,4 @@ const TableFilters = ({ perPage, onPerPageChange, role, onRoleChange, status, on
   )
 }
 
-export default TableFilters
+export default AdminFilters
