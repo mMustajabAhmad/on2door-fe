@@ -10,7 +10,7 @@ import DispatcherList from '@views/on2door/administrators/dispatchers/list'
 // API Imports
 import { getDispatchersApi } from '@/app/api/on2door/actions'
 
-const DispatcherListApp = () => {
+const DispatcherListPage = () => {
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(10)
   const [searchQuery, setSearchQuery] = useState('')
@@ -19,27 +19,16 @@ const DispatcherListApp = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['dispatchers', page, perPage, searchQuery, status],
     queryFn: () => {
-      const payload = {
-        administrator_type: 'dispatcher',
-        page,
-        per_page: perPage
-      }
+      const payload = { administrator_type: 'dispatcher', page, per_page: perPage }
 
-      if (searchQuery) {
-        payload['q[email_or_first_name_or_last_name_or_phone_number_cont]'] = searchQuery
-      }
-
-      if (status) {
-        payload['q[is_active_eq]'] = status === 'active' ? true : false
-      }
+      if (searchQuery) payload['q[email_or_first_name_or_last_name_or_phone_number_cont]'] = searchQuery 
+      if (status) payload['q[is_active_eq]'] = status === 'active' ? true : false
 
       return getDispatchersApi(payload)
     }
   })
 
-  const handlePageChange = newPage => {
-    setPage(newPage)
-  }
+  const handlePageChange = newPage => setPage(newPage)
 
   const handlePerPageChange = newPerPage => {
     setPage(1)
@@ -93,4 +82,4 @@ const DispatcherListApp = () => {
   )
 }
 
-export default DispatcherListApp
+export default DispatcherListPage

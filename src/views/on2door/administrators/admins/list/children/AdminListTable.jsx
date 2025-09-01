@@ -67,7 +67,7 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
   return itemRank.passed
 }
 
-const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...props }) => {
+const DebouncedInput = ({ value: initialValue, onChange, debounce = 3000, ...props }) => {
   // States
   const [value, setValue] = useState(initialValue)
   const [isUserTyping, setIsUserTyping] = useState(false)
