@@ -21,16 +21,14 @@ import Paper from '@mui/material/Paper'
 // Component Imports
 import CustomAvatar from '@core/components/mui/Avatar'
 import OpenDialogOnElementClick from '@/components/on2door/dialogs/OpenDialogOnElementClick'
-import EditHubDialog from '@/components/on2door/dialogs/hub/update'
-import RemoveTeamDialog from '@/components/on2door/dialogs/hub/removeTeam'
+import EditDispatcherDialog from '@/components/on2door/dialogs/administrators/dispatcher/update'
+import RemoveTeamDialog from '@/components/on2door/dialogs/administrators/dispatcher/removeTeam'
 
-const HubTeams = ({ hubData }) => {
+const DispatcherTeams = ({ dispatcherData }) => {
+  const dispatcher = dispatcherData?.administrator?.data?.attributes || {}
+  const teamIds = dispatcher.team_ids || []
+
   const [removeTeamDialog, setRemoveTeamDialog] = useState({ open: false, teamId: null })
-
-  const hub = hubData?.data?.attributes || {}
-  const address = hub.address_attributes || hub.address || {}
-  const teamIds = hub.team_ids || []
-
   const handleRemoveTeam = teamId => setRemoveTeamDialog({ open: true, teamId })
   const handleCloseRemoveDialog = () => setRemoveTeamDialog({ open: false, teamId: null })
 
@@ -45,7 +43,7 @@ const HubTeams = ({ hubData }) => {
             No Teams Assigned
           </Typography>
           <Typography variant='body2' color='text.secondary' className='text-center'>
-            This hub is not currently assigned to any teams.
+            This dispatcher is not currently assigned to any teams.
           </Typography>
           <OpenDialogOnElementClick
             element={Button}
@@ -54,11 +52,11 @@ const HubTeams = ({ hubData }) => {
               variant: 'outlined',
               color: 'primary'
             }}
-            dialog={EditHubDialog}
+            dialog={EditDispatcherDialog}
             dialogProps={{
-              data: hubData,
-              currentHub: {
-                id: hubData?.data?.id
+              data: dispatcherData,
+              currentDispatcher: {
+                id: dispatcher.id
               }
             }}
           />
@@ -76,22 +74,22 @@ const HubTeams = ({ hubData }) => {
               <Box className='flex items-center justify-between mb-6'>
                 <Typography variant='h5'>Teams</Typography>
                 <OpenDialogOnElementClick
-                  element={Button}
-                  elementProps={{
-                    children: 'Add to Team',
-                    variant: 'contained',
-                    color: 'primary',
-                    startIcon: <i className='ri-add-line' />
-                  }}
-                  dialog={EditHubDialog}
-                  dialogProps={{
-                    data: hubData,
-                    currentHub: {
-                      id: hubData?.data?.id
+                    element={Button}
+                    elementProps={{
+                      children: 'Add to Team',
+                      variant: 'contained',
+                      color: 'primary',
+                      startIcon: <i className='ri-add-line' />
+                    }}
+                    dialog={EditDispatcherDialog}
+                    dialogProps={{
+                    data: dispatcherData,
+                    currentDispatcher: {
+                      id: dispatcher.id
                     }
                   }}
-                />
-              </Box>
+                  />
+                </Box>
 
               <TableContainer component={Paper} variant='outlined'>
                 <Table>
@@ -144,15 +142,14 @@ const HubTeams = ({ hubData }) => {
         </Grid>
       </Grid>
 
-      {/* Remove Team Dialog */}
       <RemoveTeamDialog
-        open={removeTeamDialog.open}
-        setOpen={handleCloseRemoveDialog}
-        hubData={hubData}
-        teamId={removeTeamDialog.teamId}
-      />
+          open={removeTeamDialog.open}
+          setOpen={handleCloseRemoveDialog}
+          dispatcherData={dispatcherData}
+          teamId={removeTeamDialog.teamId}
+        />
     </>
   )
 }
 
-export default HubTeams
+export default DispatcherTeams

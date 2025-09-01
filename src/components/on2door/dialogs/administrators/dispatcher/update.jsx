@@ -31,7 +31,7 @@ import { object, string, email, pipe, nonEmpty, array } from 'valibot'
 import { toast } from 'react-toastify'
 
 // API Imports
-import { getDispatcherByIdApi, updateDispatcherApi, getTeamsApi } from '@/app/api/on2door/actions'
+import { getDispatcherApi, updateDispatcherApi, getTeamsApi } from '@/app/api/on2door/actions'
 
 const schema = object({
   email: pipe(string(), nonEmpty('This field is required'), email('Please enter a valid email')),
@@ -41,7 +41,7 @@ const schema = object({
   team_ids: array(string())
 })
 
-const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
+const EditDispatcherDialog = ({ open, setOpen, currentDispatcher }) => {
   const [errorState, setErrorState] = useState(null)
   const queryClient = useQueryClient()
 
@@ -62,9 +62,9 @@ const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
   })
 
   const { data: userData } = useQuery({
-    queryKey: ['dispatcher', currentAdmin?.id],
-    queryFn: () => getDispatcherByIdApi(currentAdmin?.id),
-    enabled: !!currentAdmin?.id && open
+    queryKey: ['dispatcher', currentDispatcher?.id],
+    queryFn: () => getDispatcherApi(currentDispatcher?.id),
+    enabled: !!currentDispatcher?.id && open
   })
 
   const { data: teamsData } = useQuery({
@@ -128,7 +128,7 @@ const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
       }
     }
 
-    updateUser({ id: currentAdmin?.id, payload })
+    updateUser({ id: currentDispatcher?.id, payload })
   }
 
   const handleClose = () => {

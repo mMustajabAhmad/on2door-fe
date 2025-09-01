@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid2'
 import AdminListTable from './children/AdminListTable'
 
 const AdminList = ({
-  userData,
+  adminData,
   page,
   perPage,
   onPageChange,
@@ -21,7 +21,7 @@ const AdminList = ({
     <Grid container spacing={6}>
       <Grid size={{ xs: 12 }}>
         <AdminListTable
-          tableData={userData}
+          tableData={adminData}
           page={page}
           perPage={perPage}
           onPageChange={onPageChange}

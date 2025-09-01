@@ -40,7 +40,7 @@ import {
 } from '@tanstack/react-table'
 
 // Component Imports
-import TableFilters from './TableFilters'
+import HubFilters from './HubFilters'
 import CustomPagination from '@/components/on2door/shared/CustomPagination'
 
 // Util Imports
@@ -235,7 +235,7 @@ const HubListTable = ({
     <>
       <Card>
         <CardHeader title='Filters' />
-        <TableFilters
+        <HubFilters
           perPage={perPage}
           onPerPageChange={onPerPageChange}
           city={city}

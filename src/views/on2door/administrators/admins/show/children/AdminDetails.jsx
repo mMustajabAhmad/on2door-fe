@@ -8,7 +8,7 @@ import Button from '@mui/material/Button'
 
 // Component Imports
 import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
-import EditAdminDialog from '@components/on2door/dialogs/administrators/admins/update'
+import EditAdminDialog from '@/components/on2door/dialogs/administrators/admin/update'
 import CustomAvatar from '@core/components/mui/Avatar'
 
 // Util Imports

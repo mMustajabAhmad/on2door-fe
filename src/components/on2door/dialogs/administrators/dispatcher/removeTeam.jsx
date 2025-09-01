@@ -16,18 +16,18 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 
 // API Imports
-import { updateHubApi } from '@/app/api/on2door/actions'
+import { updateDispatcherApi } from '@/app/api/on2door/actions'
 import { toast } from 'react-toastify'
 
-const RemoveTeamDialog = ({ open, setOpen, hubData, teamId }) => {
+const RemoveTeamDialog = ({ open, setOpen, dispatcherData, teamId }) => {
   const [errorState, setErrorState] = useState(null)
   const queryClient = useQueryClient()
 
-  const hub = hubData?.data?.attributes || {}
-  const currentTeamIds = hub.team_ids || []
+  const dispatcher = dispatcherData?.administrator?.data?.attributes || {}
+  const currentTeamIds = dispatcher.team_ids || []
 
   const { mutate: removeTeam, isPending } = useMutation({
-    mutationFn: ({ id, payload }) => updateHubApi(id, payload),
+    mutationFn: ({ id, payload }) => updateDispatcherApi(id, payload),
 
     onMutate: () => setErrorState(null),
 
@@ -43,7 +43,7 @@ const RemoveTeamDialog = ({ open, setOpen, hubData, teamId }) => {
       queryClient.invalidateQueries({
         predicate: query => {
           const queryKey = query.queryKey
-          return Array.isArray(queryKey) && (queryKey[0] === 'hub' || queryKey[0] === 'hubs')
+          return Array.isArray(queryKey) && (queryKey[0] === 'dispatcher' || queryKey[0] === 'dispatchers')
         }
       })
       setOpen(false)
@@ -56,10 +56,10 @@ const RemoveTeamDialog = ({ open, setOpen, hubData, teamId }) => {
     const updatedTeamIds = currentTeamIds.filter(id => id !== teamId)
     
     const payload = {
-      hub: { team_ids: updatedTeamIds } 
+      administrator: { team_ids: updatedTeamIds } 
     }
 
-    removeTeam({ id: hubData?.data?.id, payload })
+    removeTeam({ id: dispatcher.id, payload })
   }
 
   const handleClose = () => {
@@ -91,11 +91,10 @@ const RemoveTeamDialog = ({ open, setOpen, hubData, teamId }) => {
           </Alert>
         )}
 
-        <Box className='flex flex-col items-center gap-4 py-4'>
+        <Box className='flex flex-col items-center gap-4 py-4'>          
           <Box className='text-center'>
-            <Typography variant='body2' color='text.secondary'>
-              This team will be removed from hub "{hub.name}". 
-              The team will no longer be associated with this hub.
+            <Typography variant='h6' color='text.primary'>
+              This team will be removed from dispatcher {dispatcher.first_name} {dispatcher.last_name}. 
             </Typography>
           </Box>
         </Box>

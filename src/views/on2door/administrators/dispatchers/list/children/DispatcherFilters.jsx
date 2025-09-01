@@ -10,7 +10,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
 
-const TableFilters = ({ perPage, onPerPageChange, status, onStatusChange }) => {
+const DispatcherFilters = ({ perPage, onPerPageChange, status, onStatusChange }) => {
   
   const handleClearFilters = () => {
     onStatusChange('')
@@ -74,4 +74,4 @@ const TableFilters = ({ perPage, onPerPageChange, status, onStatusChange }) => {
   )
 }
 
-export default TableFilters
+export default DispatcherFilters

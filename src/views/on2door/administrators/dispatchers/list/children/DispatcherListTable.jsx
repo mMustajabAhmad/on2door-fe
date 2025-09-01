@@ -9,8 +9,8 @@ import { useParams } from 'next/navigation'
 
 //Component Imports
 import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
-import CreateDipatcherDialog from '@components/on2door/dialogs/administrators/dispatchers/create'
-import EditDispatcherDialog from '@components/on2door/dialogs/administrators/dispatchers/update'
+import CreateDipatcherDialog from '@/components/on2door/dialogs/administrators/dispatcher/create'
+import EditDispatcherDialog from '@/components/on2door/dialogs/administrators/dispatcher/update'
 import DeleteAdministratorDialog from '@/components/on2door/dialogs/administrators/delete'
 
 // MUI Imports
@@ -23,12 +23,10 @@ import Typography from '@mui/material/Typography'
 import Chip from '@mui/material/Chip'
 import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
-import { styled } from '@mui/material/styles'
 
 // Third-party Imports
 import classnames from 'classnames'
 import { rankItem } from '@tanstack/match-sorter-utils'
-// import { toast } from 'react-toastify'
 import {
   createColumnHelper,
   flexRender,
@@ -43,7 +41,7 @@ import {
 } from '@tanstack/react-table'
 
 // Component Imports
-import TableFilters from './TableFilters'
+import DispatcherFilters from './DispatcherFilters'
 import CustomPagination from '@components/on2door/shared/CustomPagination'
 
 // Util Imports
@@ -65,7 +63,7 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
   return itemRank.passed
 }
 
-const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...props }) => {
+const DebouncedInput = ({ value: initialValue, onChange, debounce = 3000, ...props }) => {
   // States
   const [value, setValue] = useState(initialValue)
   const [isUserTyping, setIsUserTyping] = useState(false)
@@ -262,7 +260,7 @@ const DispatcherListTable = ({
     <>
       <Card>
         <CardHeader title='Filters' />
-        <TableFilters
+        <DispatcherFilters
           setData={setFilteredData}
           tableData={data}
           perPage={perPage}

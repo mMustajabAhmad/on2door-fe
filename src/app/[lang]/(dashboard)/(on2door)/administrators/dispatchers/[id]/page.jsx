@@ -8,18 +8,18 @@ import { useParams } from 'next/navigation'
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-import DispatcherOverview from '@/views/on2door/administrators/dispatchers/view'
-import TeamsTab from '@/views/on2door/administrators/dispatchers/view/children/DispatcherTeams'
+import DispatcherOverview from '@/views/on2door/administrators/dispatchers/show'
+import DispatcherTeams from '@/views/on2door/administrators/dispatchers/show/children/DispatcherTeams'
 
 // API Imports
-import { getDispatcherByIdApi } from '@/app/api/on2door/actions'
+import { getDispatcherApi } from '@/app/api/on2door/actions'
 
 const DispatcherViewPage = () => {
   const { id } = useParams()
 
-  const { data: userData, isLoading, error } = useQuery({
+  const { data: dispatcherData, isLoading, error } = useQuery({
     queryKey: ['dispatcher', id],
-    queryFn: () => getDispatcherByIdApi(id),
+    queryFn: () => getDispatcherApi(id),
     enabled: !!id
   })
 
@@ -34,7 +34,7 @@ const DispatcherViewPage = () => {
     )
   }
 
-  if (error || !userData) {
+  if (error || !dispatcherData) {
     return (
       <div className='flex items-center justify-center min-h-[400px]'>
         <div className='text-center'>
@@ -49,10 +49,10 @@ const DispatcherViewPage = () => {
   return (
     <Grid container spacing={6}>
       <Grid size={{ xs: 12, lg: 6, md: 6 }}>
-        <DispatcherOverview userData={userData} />
+        <DispatcherOverview dispatcherData={dispatcherData} />
       </Grid>
       <Grid size={{ xs: 12, lg: 6, md: 6 }}>
-        <TeamsTab userData={userData} />
+        <DispatcherTeams dispatcherData={dispatcherData} />
       </Grid>
     </Grid>
   )

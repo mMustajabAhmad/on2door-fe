@@ -7,11 +7,11 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
 
-const TableFilters = ({ perPage, onPerPageChange, city, onCityChange, state, onStateChange }) => {
+const AdminFilters = ({ perPage, onPerPageChange, role, onRoleChange, status, onStatusChange }) => {
 
   const handleClearFilters = () => {
-    onCityChange('')
-    onStateChange('')
+    onRoleChange('')
+    onStatusChange('')
     onPerPageChange(10)
   }
 
@@ -20,41 +20,37 @@ const TableFilters = ({ perPage, onPerPageChange, city, onCityChange, state, onS
       <Grid container spacing={5}>
         <Grid size={{ xs: 12, sm: 3.5 }}>
           <FormControl fullWidth>
-            <InputLabel id='city-select'>Select City</InputLabel>
+            <InputLabel id='role-select'>Select Role</InputLabel>
             <Select
               fullWidth
-              id='select-city'
-              value={city}
-              onChange={e => onCityChange(e.target.value)}
-              label='Select City'
-              labelId='city-select'
-              inputProps={{ placeholder: 'Select City' }}
+              id='select-role'
+              value={role}
+              onChange={e => onRoleChange(e.target.value)}
+              label='Select Role'
+              labelId='role-select'
+              inputProps={{ placeholder: 'Select Role' }}
             >
-              <MenuItem value=''>Select City</MenuItem>
-              <MenuItem value='Karachi'>Karachi</MenuItem>
-              <MenuItem value='Lahore'>Lahore</MenuItem>
-              <MenuItem value='Islamabad'>Islamabad</MenuItem>
-              <MenuItem value='Faisalabad'>Faisalabad</MenuItem>
+              <MenuItem value=''>Select Role</MenuItem>
+              <MenuItem value='owner'>Owner</MenuItem>
+              <MenuItem value='admin'>Admin</MenuItem>
             </Select>
           </FormControl>
         </Grid>
-
         <Grid size={{ xs: 12, sm: 3.5 }}>
           <FormControl fullWidth>
-            <InputLabel id='state-select'>Select State</InputLabel>
+            <InputLabel id='status-select'>Select Status</InputLabel>
             <Select
               fullWidth
-              id='select-state'
-              label='Select State'
-              value={state}
-              onChange={e => onStateChange(e.target.value)}
-              labelId='state-select'
-              inputProps={{ placeholder: 'Select State' }}
+              id='select-status'
+              label='Select Status'
+              value={status}
+              onChange={e => onStatusChange(e.target.value)}
+              labelId='status-select'
+              inputProps={{ placeholder: 'Select Status' }}
             >
-              <MenuItem value=''>Select State</MenuItem>
-              <MenuItem value='Sindh'>Sindh</MenuItem>
-              <MenuItem value='Punjab'>Punjab</MenuItem>
-              <MenuItem value='KPK'>KPK</MenuItem>
+              <MenuItem value=''>Select Status</MenuItem>
+              <MenuItem value='active'>Active</MenuItem>
+              <MenuItem value='inactive'>Inactive</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -94,4 +90,4 @@ const TableFilters = ({ perPage, onPerPageChange, city, onCityChange, state, onS
   )
 }
 
-export default TableFilters
+export default AdminFilters

@@ -9,8 +9,8 @@ import { useParams } from 'next/navigation'
 
 //Component Imports
 import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
-import CreateAdminDialog from '@components/on2door/dialogs/administrators/admins/create'
-import EditAdminDialog from '@components/on2door/dialogs/administrators/admins/update'
+import CreateAdminDialog from '@/components/on2door/dialogs/administrators/admin/create'
+import EditAdminDialog from '@/components/on2door/dialogs/administrators/admin/update'
 import DeleteAdministratorDialog from '@/components/on2door/dialogs/administrators/delete'
 
 // MUI Imports
@@ -25,8 +25,6 @@ import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 
-// import TablePagination from '@mui/material/TablePagination'
-
 // Third-party Imports
 import classnames from 'classnames'
 import { rankItem } from '@tanstack/match-sorter-utils'
@@ -40,12 +38,11 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFacetedMinMaxValues,
-  getPaginationRowModel,
   getSortedRowModel
 } from '@tanstack/react-table'
 
 // Component Imports
-import TableFilters from './TableFilters'
+import AdminFilters from './AdminFilters'
 import CustomPagination from '@components/on2door/shared/CustomPagination'
 
 // Util Imports
@@ -70,7 +67,7 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
   return itemRank.passed
 }
 
-const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...props }) => {
+const DebouncedInput = ({ value: initialValue, onChange, debounce = 3000, ...props }) => {
   // States
   const [value, setValue] = useState(initialValue)
   const [isUserTyping, setIsUserTyping] = useState(false)
@@ -131,7 +128,6 @@ const AdminListTable = ({
       is_active: admin.attributes.is_active,
       is_account_owner: admin.attributes.is_account_owner,
       status: admin.attributes.is_active ? 'active' : 'inactive'
-      // username: admin.attributes.email.split('@')[0] // Use email prefix as username
     }))
   }
 
@@ -273,10 +269,8 @@ const AdminListTable = ({
     globalFilterFn: fuzzyFilter,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
-    // onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    // getPaginationRowModel: getPaginationRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues()
@@ -286,7 +280,7 @@ const AdminListTable = ({
     <>
       <Card>
         <CardHeader title='Filters' />
-        <TableFilters
+        <AdminFilters
           setData={setFilteredData}
           tableData={data}
           perPage={perPage}
