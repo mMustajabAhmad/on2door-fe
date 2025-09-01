@@ -56,15 +56,9 @@ const HubTeams = ({ hubData }) => {
             }}
             dialog={EditHubDialog}
             dialogProps={{
+              data: hubData,
               currentHub: {
-                id: hubData?.data?.id,
-                name: hub.name,
-                street: address.street,
-                city: address.city,
-                state: address.state,
-                postal_code: address.postal_code,
-                country: address.country,
-                team_ids: hub.team_ids
+                id: hubData?.data?.id
               }
             }}
           />
@@ -91,15 +85,9 @@ const HubTeams = ({ hubData }) => {
                   }}
                   dialog={EditHubDialog}
                   dialogProps={{
+                    data: hubData,
                     currentHub: {
-                      id: hubData?.data?.id,
-                      name: hub.name,
-                      street: address.street,
-                      city: address.city,
-                      state: address.state,
-                      postal_code: address.postal_code,
-                      country: address.country,
-                      team_ids: hub.team_ids
+                      id: hubData?.data?.id
                     }
                   }}
                 />

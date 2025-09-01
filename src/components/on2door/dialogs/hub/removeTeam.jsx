@@ -76,6 +76,7 @@ const RemoveTeamDialog = ({ open, setOpen, hubData, teamId }) => {
       closeAfterTransition={false}
     >
       <DialogTitle className='flex gap-2 flex-col items-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
+        <i className='ri-error-warning-line text-[88px] mbe-6 text-warning' />
         <div className='max-sm:is-[80%] max-sm:text-center text-xl font-semibold text-red-500'>
           Remove Team {teamId}
         </div>
@@ -91,8 +92,6 @@ const RemoveTeamDialog = ({ open, setOpen, hubData, teamId }) => {
         )}
 
         <Box className='flex flex-col items-center gap-4 py-4'>
-          <i className='ri-error-warning-line text-[88px] mbe-6 text-warning' />
-          
           <Box className='text-center'>
             <Typography variant='body2' color='text.secondary'>
               This team will be removed from hub "{hub.name}". 
