@@ -8,7 +8,7 @@ import Button from '@mui/material/Button'
 
 // Component Imports
 import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
-import EditDispatcherDialog from '@components/on2door/dialogs/administrators/dispatchers/update'
+import EditDispatcherDialog from '@/components/on2door/dialogs/administrators/dispatcher/update'
 import CustomAvatar from '@core/components/mui/Avatar'
 
 // Util Imports

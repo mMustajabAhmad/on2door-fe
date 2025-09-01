@@ -9,8 +9,8 @@ import { useParams } from 'next/navigation'
 
 //Component Imports
 import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
-import CreateDipatcherDialog from '@components/on2door/dialogs/administrators/dispatchers/create'
-import EditDispatcherDialog from '@components/on2door/dialogs/administrators/dispatchers/update'
+import CreateDipatcherDialog from '@/components/on2door/dialogs/administrators/dispatcher/create'
+import EditDispatcherDialog from '@/components/on2door/dialogs/administrators/dispatcher/update'
 import DeleteAdministratorDialog from '@/components/on2door/dialogs/administrators/delete'
 
 // MUI Imports
