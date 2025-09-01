@@ -22,7 +22,12 @@ const AdminListPage = () => {
       const payload = { administrator_type: 'admin', page, per_page: perPage  }
 
       if (searchQuery) payload['q[email_or_first_name_or_last_name_or_phone_number_cont]'] = searchQuery
-      if (role) payload['q[role_eq]'] = role
+
+      if (role) {
+        if (role === 'owner') payload['q[is_account_owner_eq]'] = true
+        else if (role === 'admin') payload['q[is_account_owner_eq]'] = false
+      }
+
       if (status) payload['q[is_active_eq]'] = status === 'active' ? true : false
 
       return getAdministratorsApi(payload)
