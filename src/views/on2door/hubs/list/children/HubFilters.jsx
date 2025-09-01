@@ -7,7 +7,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
 
-const TableFilters = ({ perPage, onPerPageChange, city, onCityChange, state, onStateChange }) => {
+const HubFilters = ({ perPage, onPerPageChange, city, onCityChange, state, onStateChange }) => {
 
   const handleClearFilters = () => {
     onCityChange('')
@@ -94,4 +94,4 @@ const TableFilters = ({ perPage, onPerPageChange, city, onCityChange, state, onS
   )
 }
 
-export default TableFilters
+export default HubFilters

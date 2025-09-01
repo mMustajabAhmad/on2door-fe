@@ -10,7 +10,7 @@ import HubList from '@/views/on2door/hubs/list'
 // API Imports
 import { getHubsApi } from '@/app/api/on2door/actions'
 
-const HubsPage = () => {
+const HubListPage = () => {
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(10)
   const [searchQuery, setSearchQuery] = useState('')
@@ -100,4 +100,4 @@ const HubsPage = () => {
   )
 }
 
-export default HubsPage
+export default HubListPage
