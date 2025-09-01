@@ -11,7 +11,7 @@ import Grid from '@mui/material/Grid2'
 import AdminOverview from '@/views/on2door/administrators/admins/show'
 
 // API Imports
-import { getAdministratorByIdApi } from '@/app/api/on2door/actions'
+import { getAdminApi } from '@/app/api/on2door/actions'
 
 const AdminViewPage = () => {
   const { id } = useParams()
@@ -19,7 +19,7 @@ const AdminViewPage = () => {
   const {
     data: userData, isLoading, error } = useQuery({
     queryKey: ['administrator', id],
-    queryFn: () => getAdministratorByIdApi(id),
+    queryFn: () => getAdminApi(id),
     enabled: !!id
   })
 

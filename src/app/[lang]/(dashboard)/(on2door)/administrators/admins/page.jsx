@@ -7,7 +7,7 @@ import { useState } from 'react'
 import AdminList from '@views/on2door/administrators/admins/list'
 
 // API Imports
-import { getAdministratorsApi } from '@/app/api/on2door/actions'
+import { getAdminsApi } from '@/app/api/on2door/actions'
 
 const AdminListPage = () => {
   const [page, setPage] = useState(1)
@@ -30,7 +30,7 @@ const AdminListPage = () => {
 
       if (status) payload['q[is_active_eq]'] = status === 'active' ? true : false
 
-      return getAdministratorsApi(payload)
+      return getAdminsApi(payload)
     }
   })
 

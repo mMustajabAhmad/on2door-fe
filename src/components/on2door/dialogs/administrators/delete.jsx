@@ -16,7 +16,7 @@ import Alert from '@mui/material/Alert'
 import { toast } from 'react-toastify'
 
 // API Imports
-import { deleteAdministratorApi, deleteDispatcherApi } from '@/app/api/on2door/actions'
+import { destroyAdminApi, destroyDispatcherApi } from '@/app/api/on2door/actions'
 
 const DeleteAdministratorDialog = ({ open, setOpen, itemToDelete, data }) => {
   const [errorState, setErrorState] = useState(null)
@@ -24,7 +24,7 @@ const DeleteAdministratorDialog = ({ open, setOpen, itemToDelete, data }) => {
 
   const isDispatcher = (itemToDelete?.role === 'dispatcher')
 
-  const apiFunctions = isDispatcher ? { delete: deleteDispatcherApi } : { delete: deleteAdministratorApi }
+  const apiFunctions = isDispatcher ? { delete: destroyDispatcherApi } : { delete: destroyAdminApi }
 
   const userType = isDispatcher ? 'dispatcher' : 'admin'
   const queryKey = isDispatcher ? 'dispatchers' : 'administrators'

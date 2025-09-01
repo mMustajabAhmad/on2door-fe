@@ -12,14 +12,14 @@ import DispatcherOverview from '@/views/on2door/administrators/dispatchers/show'
 import DispatcherTeams from '@/views/on2door/administrators/dispatchers/show/children/DispatcherTeams'
 
 // API Imports
-import { getDispatcherByIdApi } from '@/app/api/on2door/actions'
+import { getDispatcherApi } from '@/app/api/on2door/actions'
 
 const DispatcherViewPage = () => {
   const { id } = useParams()
 
   const { data: dispatcherData, isLoading, error } = useQuery({
     queryKey: ['dispatcher', id],
-    queryFn: () => getDispatcherByIdApi(id),
+    queryFn: () => getDispatcherApi(id),
     enabled: !!id
   })
 

@@ -33,26 +33,26 @@ export function acceptInvitationApi(payload) {
     .then(response => response.data)
 }
 
-// Administrators
-export function getAdministratorsApi(payload) {
+// Adminis
+export function getAdminsApi(payload) {
   return client()
     .get('/administrators/administrators', { params: payload })
     .then(response => response.data)
 }
 
-export function getAdministratorByIdApi(id) {
+export function getAdminApi(id) {
   return client()
     .get(`/administrators/administrators/${id}`)
     .then(response => response.data)
 }
 
-export function updateAdministratorApi(id, payload) {
+export function updateAdminApi(id, payload) {
   return client()
     .put(`/administrators/administrators/${id}`, payload)
     .then(response => response.data)
 }
 
-export function deleteAdministratorApi(id) {
+export function destroyAdminApi(id) {
   return client()
     .delete(`/administrators/administrators/${id}`)
     .then(response => response.data)
@@ -65,7 +65,7 @@ export function getDispatchersApi(payload) {
     .then(response => response.data)
 }
 
-export function getDispatcherByIdApi(id) {
+export function getDispatcherApi(id) {
   return client()
     .get(`/administrators/administrators/${id}`)
     .then(response => response.data)
@@ -77,7 +77,7 @@ export function updateDispatcherApi(id, payload) {
     .then(response => response.data)
 }
 
-export function deleteDispatcherApi(id) {
+export function destroyDispatcherApi(id) {
   return client()
     .delete(`/administrators/administrators/${id}`)
     .then(response => response.data)

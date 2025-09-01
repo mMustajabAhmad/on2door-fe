@@ -31,7 +31,7 @@ import { object, string, email, pipe, nonEmpty, array } from 'valibot'
 import { toast } from 'react-toastify'
 
 // API Imports
-import { getDispatcherByIdApi, updateDispatcherApi, getTeamsApi } from '@/app/api/on2door/actions'
+import { getDispatcherApi, updateDispatcherApi, getTeamsApi } from '@/app/api/on2door/actions'
 
 const schema = object({
   email: pipe(string(), nonEmpty('This field is required'), email('Please enter a valid email')),
@@ -63,7 +63,7 @@ const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
 
   const { data: userData } = useQuery({
     queryKey: ['dispatcher', currentAdmin?.id],
-    queryFn: () => getDispatcherByIdApi(currentAdmin?.id),
+    queryFn: () => getDispatcherApi(currentAdmin?.id),
     enabled: !!currentAdmin?.id && open
   })
 
