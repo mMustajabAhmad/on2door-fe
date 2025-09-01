@@ -14,8 +14,8 @@ import CustomAvatar from '@core/components/mui/Avatar'
 // Util Imports
 import { getInitials } from '@/utils/getInitials'
 
-const DispatcherDetails = ({ userData }) => {
-  const dispatcher = userData?.administrator?.data?.attributes || {}
+const DispatcherDetails = ({ dispatcherData }) => {
+  const dispatcher = dispatcherData?.administrator?.data?.attributes || {}
 
   const fullName = `${dispatcher.first_name || ''} ${dispatcher.last_name || ''}`.trim() || 'N/A'
   const isOwner = dispatcher.is_account_owner || false
@@ -141,7 +141,7 @@ const DispatcherDetails = ({ userData }) => {
               elementProps={{ children: 'Edit Dispatcher', color: 'primary', variant: 'contained' }}
               dialog={EditDispatcherDialog}
               dialogProps={{
-                data: userData,
+                data: dispatcherData,
                 currentAdmin: {
                   id: dispatcher.id
                 }

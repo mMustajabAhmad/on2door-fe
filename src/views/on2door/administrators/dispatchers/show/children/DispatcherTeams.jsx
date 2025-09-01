@@ -1,8 +1,5 @@
 'use client'
 
-// React Imports
-import { useState } from 'react'
-
 // MUI Imports
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -21,8 +18,8 @@ import Paper from '@mui/material/Paper'
 // Component Imports
 import CustomAvatar from '@core/components/mui/Avatar'
 
-const TeamsTab = ({ userData }) => {
-  const dispatcher = userData?.administrator?.data?.attributes || {}
+const DispatcherTeams = ({ dispatcherData }) => {
+  const dispatcher = dispatcherData?.administrator?.data?.attributes || {}
   const teamIds = dispatcher.team_ids || []
 
   if (teamIds.length === 0) {
@@ -106,4 +103,4 @@ const TeamsTab = ({ userData }) => {
   )
 }
 
-export default TeamsTab
+export default DispatcherTeams
