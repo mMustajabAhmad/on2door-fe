@@ -33,7 +33,7 @@ export function acceptInvitationApi(payload) {
     .then(response => response.data)
 }
 
-// Adminis
+// Admins
 export function getAdminsApi(payload) {
   return client()
     .get('/administrators/administrators', { params: payload })

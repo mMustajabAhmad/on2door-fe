@@ -80,7 +80,7 @@ const AdminListPage = () => {
 
   return (
     <AdminList
-      userData={data}
+      adminData={data}
       page={page}
       perPage={perPage}
       onPageChange={handlePageChange}

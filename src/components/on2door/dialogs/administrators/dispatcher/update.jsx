@@ -41,7 +41,7 @@ const schema = object({
   team_ids: array(string())
 })
 
-const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
+const EditDispatcherDialog = ({ open, setOpen, currentDispatcher }) => {
   const [errorState, setErrorState] = useState(null)
   const queryClient = useQueryClient()
 
@@ -62,9 +62,9 @@ const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
   })
 
   const { data: userData } = useQuery({
-    queryKey: ['dispatcher', currentAdmin?.id],
-    queryFn: () => getDispatcherApi(currentAdmin?.id),
-    enabled: !!currentAdmin?.id && open
+    queryKey: ['dispatcher', currentDispatcher?.id],
+    queryFn: () => getDispatcherApi(currentDispatcher?.id),
+    enabled: !!currentDispatcher?.id && open
   })
 
   const { data: teamsData } = useQuery({
@@ -128,7 +128,7 @@ const EditDispatcherDialog = ({ open, setOpen, currentAdmin }) => {
       }
     }
 
-    updateUser({ id: currentAdmin?.id, payload })
+    updateUser({ id: currentDispatcher?.id, payload })
   }
 
   const handleClose = () => {

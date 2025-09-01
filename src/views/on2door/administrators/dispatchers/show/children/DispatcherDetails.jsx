@@ -142,7 +142,7 @@ const DispatcherDetails = ({ dispatcherData }) => {
               dialog={EditDispatcherDialog}
               dialogProps={{
                 data: dispatcherData,
-                currentAdmin: {
+                currentDispatcher: {
                   id: dispatcher.id
                 }
               }}
