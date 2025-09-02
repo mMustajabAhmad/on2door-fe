@@ -31,7 +31,7 @@ import { object, string, email, pipe, nonEmpty, optional, array } from 'valibot'
 import { toast } from 'react-toastify'
 
 // API Imports
-import { createDriverInvitationApi, getTeamsApi } from '@/app/api/on2door/actions'
+import { createDriverApi, getTeamsApi } from '@/app/api/on2door/actions'
 
 const schema = object({
   email: pipe(string(), nonEmpty('This field is required'), email('Please enter a valid email')),
@@ -69,7 +69,7 @@ const CreateDriverDialog = ({ open, setOpen }) => {
   const teams = teamsData?.teams?.data || []
 
   const { mutate: createDriver, isPending } = useMutation({
-    mutationFn: createDriverInvitationApi,
+    mutationFn: createDriverApi,
 
     onMutate: () => setErrorState(null),
 
@@ -261,4 +261,3 @@ const CreateDriverDialog = ({ open, setOpen }) => {
 }
 
 export default CreateDriverDialog
-

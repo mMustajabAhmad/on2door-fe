@@ -20,7 +20,7 @@ export function logoutAdministratorApi() {
 }
 
 // Invitations
-export function createAdministratorInvitationApi(payload) {
+export function createAdministratorApi(payload) {
   return client()
     .post('/administrator/invitation', payload)
     .then(response => response.data)
@@ -84,18 +84,6 @@ export function destroyDispatcherApi(id) {
 }
 
 // Drivers
-export function createDriverInvitationApi(payload) {
-  return client()
-    .post('/driver/invitation', payload)
-    .then(response => response.data)
-}
-
-export function acceptDriverInvitationApi(payload) {
-  return client()
-    .put('/driver/invitation', payload)
-    .then(response => response.data)
-}
-
 export function getDriversApi(payload) {
   return client()
     .get('/administrators/drivers', { params: payload })
@@ -108,6 +96,12 @@ export function getDriverApi(id) {
     .then(response => response.data)
 }
 
+export function createDriverApi(payload) {
+  return client()
+    .post('/driver/invitation', payload)
+    .then(response => response.data)
+}
+
 export function updateDriverApi(id, payload) {
   return client()
     .put(`/administrators/drivers/${id}`, payload)
@@ -117,6 +111,12 @@ export function updateDriverApi(id, payload) {
 export function destroyDriverApi(id) {
   return client()
     .delete(`/administrators/drivers/${id}`)
+    .then(response => response.data)
+}
+
+export function acceptDriverInvitationApi(payload) {
+  return client()
+    .put('/driver/invitation', payload)
     .then(response => response.data)
 }
 

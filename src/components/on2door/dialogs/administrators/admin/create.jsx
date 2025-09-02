@@ -25,7 +25,7 @@ import { object, string, email, pipe, nonEmpty } from 'valibot'
 import { toast } from 'react-toastify'
 
 // API Imports
-import { createAdministratorInvitationApi } from '@/app/api/on2door/actions'
+import { createAdministratorApi } from '@/app/api/on2door/actions'
 
 const schema = object({
   email: pipe(string(), nonEmpty('This field is required'), email('Please enter a valid email')),
@@ -54,7 +54,7 @@ const CreateAdminDialog = ({ open, setOpen }) => {
   })
 
   const { mutate: createAdmin, isPending } = useMutation({
-    mutationFn: createAdministratorInvitationApi,
+    mutationFn: createAdministratorApi,
 
     onMutate: () => setErrorState(null),
 

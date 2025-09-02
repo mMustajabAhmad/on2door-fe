@@ -52,7 +52,7 @@ const AcceptInvitationPage = () => {
     setIsLoading(false)
   }, [searchParams])
 
-  const determineUserTypeAndAcceptInvitation = async (payload) => {
+  const handleInvitation = async (payload) => {
     let adminError = null
     let driverError = null
 
@@ -76,7 +76,7 @@ const AcceptInvitationPage = () => {
 
   // Accept invitation mutation
   const { mutate: acceptInvitation, isPending } = useMutation({
-    mutationFn: determineUserTypeAndAcceptInvitation,
+    mutationFn: handleInvitation,
 
     onMutate: () => {
       setErrorState(null)

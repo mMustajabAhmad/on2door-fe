@@ -31,7 +31,7 @@ import { object, string, email, pipe, nonEmpty, optional, array } from 'valibot'
 import { toast } from 'react-toastify'
 
 // API Imports
-import { createAdministratorInvitationApi, getTeamsApi } from '@/app/api/on2door/actions'
+import { createAdministratorApi, getTeamsApi } from '@/app/api/on2door/actions'
 
 const schema = object({
   email: pipe(string(), nonEmpty('This field is required'), email('Please enter a valid email')),
@@ -69,7 +69,7 @@ const CreateDispatcherDialog = ({ open, setOpen }) => {
   const teams = teamsData?.teams?.data || []
 
   const { mutate: createAdmin, isPending } = useMutation({
-    mutationFn: createAdministratorInvitationApi,
+    mutationFn: createAdministratorApi,
 
     onMutate: () => setErrorState(null),
 
@@ -263,4 +263,3 @@ const CreateDispatcherDialog = ({ open, setOpen }) => {
 }
 
 export default CreateDispatcherDialog
-
