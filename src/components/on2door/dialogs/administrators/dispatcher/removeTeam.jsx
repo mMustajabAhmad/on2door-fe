@@ -54,11 +54,7 @@ const RemoveTeamDialog = ({ open, setOpen, dispatcherData, teamId }) => {
 
   const handleRemoveTeam = () => {
     const updatedTeamIds = currentTeamIds.filter(id => id !== teamId)
-    
-    const payload = {
-      administrator: { team_ids: updatedTeamIds } 
-    }
-
+    const payload = { administrator: { team_ids: updatedTeamIds } }
     removeTeam({ id: dispatcher.id, payload })
   }
 
