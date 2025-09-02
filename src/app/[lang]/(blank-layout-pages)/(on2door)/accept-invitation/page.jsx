@@ -19,7 +19,7 @@ import Box from '@mui/material/Box'
 import { getLocalizedUrl } from '@/utils/i18n'
 
 // API Imports
-import { acceptInvitationApi } from '@/app/api/on2door/actions'
+import { acceptAdministratorInvitationApi, acceptDriverInvitationApi } from '@/app/api/on2door/actions'
 
 const AcceptInvitationPage = () => {
   // States
@@ -52,9 +52,31 @@ const AcceptInvitationPage = () => {
     setIsLoading(false)
   }, [searchParams])
 
+  const determineUserTypeAndAcceptInvitation = async (payload) => {
+    let adminError = null
+    let driverError = null
+
+    try {
+      const response = await acceptAdministratorInvitationApi(payload)
+      return response
+    } catch (error) {
+      adminError = error
+    }
+
+    try {
+      const response = await acceptDriverInvitationApi(payload)
+      return response
+    } catch (error) {
+      driverError = error
+    }
+
+    const errorMessage = 'Invalid invitation. This invitation may have expired, been used already, or the email address may not be associated with any pending invitations.'
+    throw new Error(errorMessage)
+  }
+
   // Accept invitation mutation
   const { mutate: acceptInvitation, isPending } = useMutation({
-    mutationFn: acceptInvitationApi,
+    mutationFn: determineUserTypeAndAcceptInvitation,
 
     onMutate: () => {
       setErrorState(null)

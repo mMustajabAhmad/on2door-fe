@@ -1,61 +1,61 @@
-// Next Imports
-import dynamic from 'next/dynamic'
-import { notFound } from 'next/navigation'
+'use client'
+
+// React Imports
+import { useQuery } from '@tanstack/react-query'
+import { useParams } from 'next/navigation'
 
 // MUI Imports
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-// import UserLeftOverview from '@views/apps/user/view/user-left-overview'
-// import UserRight from '@views/apps/user/view/user-right'
+import DriverOverview from '@/views/on2door/drivers/show'
+import DriverTeams from '@/views/on2door/drivers/show/children/DriverTeams'
 
-import DriverLeftOverview from '@/views/on2door/drivers/view/driver-left-overview'
-import DriverRight from '@/views/on2door/drivers/view/driver-right'
+// API Imports
+import { getDriverApi } from '@/app/api/on2door/actions'
 
-// Data Imports
-import { getPricingData, getDriverById } from '@/app/server/actions'
+const DriverViewPage = () => {
+  const { id } = useParams()
 
-// const OverViewTab = dynamic(() => import('@views/apps/user/view/user-right/overview'))
-// const SecurityTab = dynamic(() => import('@views/apps/user/view/user-right/security'))
-// const BillingPlans = dynamic(() => import('@views/apps/user/view/user-right/billing-plans'))
-// const NotificationsTab = dynamic(() => import('@views/apps/user/view/user-right/notifications'))
-// const ConnectionsTab = dynamic(() => import('@views/apps/user/view/user-right/connections'))
+  const { data: driverData, isLoading, error } = useQuery({
+    queryKey: ['driver', id],
+    queryFn: () => getDriverApi(id),
+    enabled: !!id
+  })
 
-const OverViewTab = dynamic(() => import('@/views/on2door/drivers/view/driver-right/overview'))
-const SecurityTab = dynamic(() => import('@/views/on2door/drivers/view/driver-right/security'))
-const BillingPlans = dynamic(() => import('@/views/on2door/drivers/view/driver-right/billing-plans'))
-const NotificationsTab = dynamic(() => import('@/views/on2door/drivers/view/driver-right/notifications'))
-const ConnectionsTab = dynamic(() => import('@/views/on2door/drivers/view/driver-right/connections'))
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='text-center'>
+          <i className='ri-loader-4-line text-6xl text-blue-500 mb-4 animate-spin'></i>
+          <h2 className='text-xl font-semibold mb-2'>Loading Driver...</h2>
+        </div>
+      </div>
+    )
+  }
 
-// Vars
-const tabContentList = (data, userData) => ({
-  overview: <OverViewTab userData={userData} />,
-  security: <SecurityTab userData={userData} />,
-  'billing-plans': <BillingPlans data={data} userData={userData} />,
-  notifications: <NotificationsTab userData={userData} />,
-  connections: <ConnectionsTab userData={userData} />
-})
-
-const UserViewPage = async ({ params }) => {
-  // Get user data by ID
-  const { id } = await params
-  const userData = await getDriverById(id)
-
-  if (!userData) notFound()
-
-  // Get pricing data for billing plans
-  const data = await getPricingData()
+  if (error || !driverData) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='text-center'>
+          <i className='ri-error-warning-line text-6xl text-red-500 mb-4'></i>
+          <h2 className='text-xl font-semibold mb-2'>Failed to load driver</h2>
+          <p className='text-gray-600'>Please try again later</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <Grid container spacing={6}>
-      <Grid size={{ xs: 12, lg: 4, md: 5 }}>
-        <DriverLeftOverview userData={userData} />
+      <Grid size={{ xs: 12, lg: 6, md: 6 }}>
+        <DriverOverview driverData={driverData} />
       </Grid>
-      <Grid size={{ xs: 12, lg: 8, md: 7 }}>
-        <DriverRight tabContentList={tabContentList(data, userData)} />
+      <Grid size={{ xs: 12, lg: 6, md: 6 }}>
+        <DriverTeams driverData={driverData} />
       </Grid>
     </Grid>
   )
 }
 
-export default UserViewPage
+export default DriverViewPage

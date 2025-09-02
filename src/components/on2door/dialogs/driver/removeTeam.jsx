@@ -16,18 +16,18 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 
 // API Imports
-import { updateDispatcherApi } from '@/app/api/on2door/actions'
+import { updateDriverApi } from '@/app/api/on2door/actions'
 import { toast } from 'react-toastify'
 
-const RemoveTeamDialog = ({ open, setOpen, dispatcherData, teamId }) => {
+const RemoveTeamDialog = ({ open, setOpen, driverData, teamId }) => {
   const [errorState, setErrorState] = useState(null)
   const queryClient = useQueryClient()
 
-  const dispatcher = dispatcherData?.administrator?.data?.attributes || {}
-  const currentTeamIds = dispatcher.team_ids || []
+  const driver = driverData?.driver?.data?.attributes || {}
+  const currentTeamIds = driver.team_ids || []
 
   const { mutate: removeTeam, isPending } = useMutation({
-    mutationFn: ({ id, payload }) => updateDispatcherApi(id, payload),
+    mutationFn: ({ id, payload }) => updateDriverApi(id, payload),
 
     onMutate: () => setErrorState(null),
 
@@ -43,7 +43,7 @@ const RemoveTeamDialog = ({ open, setOpen, dispatcherData, teamId }) => {
       queryClient.invalidateQueries({
         predicate: query => {
           const queryKey = query.queryKey
-          return Array.isArray(queryKey) && (queryKey[0] === 'dispatcher' || queryKey[0] === 'dispatchers')
+          return Array.isArray(queryKey) && (queryKey[0] === 'driver' || queryKey[0] === 'drivers')
         }
       })
       setOpen(false)
@@ -54,8 +54,8 @@ const RemoveTeamDialog = ({ open, setOpen, dispatcherData, teamId }) => {
 
   const handleRemoveTeam = () => {
     const updatedTeamIds = currentTeamIds.filter(id => id !== teamId)
-    const payload = { administrator: { team_ids: updatedTeamIds } }
-    removeTeam({ id: dispatcher.id, payload })
+    const payload = { driver: { team_ids: updatedTeamIds } }
+    removeTeam({ id: driver.id, payload })
   }
 
   const handleClose = () => {
@@ -86,11 +86,10 @@ const RemoveTeamDialog = ({ open, setOpen, dispatcherData, teamId }) => {
               'Failed to remove team. Please try again.'}
           </Alert>
         )}
-
         <Box className='flex flex-col items-center gap-4 py-4'>          
           <Box className='text-center'>
             <Typography variant='h6' color='text.primary'>
-              This team will be removed from dispatcher {dispatcher.first_name} {dispatcher.last_name}. 
+              This team will be removed from driver {driver.first_name} {driver.last_name}. 
             </Typography>
           </Box>
         </Box>
