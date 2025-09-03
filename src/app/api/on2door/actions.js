@@ -181,3 +181,16 @@ export function destroyHubApi(id) {
     .delete(`/administrators/hubs/${id}`)
     .then(response => response.data)
 }
+
+// Organizations
+export function getOrganizationApi(payload) {
+  return client()
+    .get('/administrators/organizations', { params: payload })
+    .then(response => response.data)
+}
+
+export function updateOrganizationApi(id, payload) {
+  return client()
+    .put(`/administrators/organizations/${id}`, payload)
+    .then(response => response.data)
+}
