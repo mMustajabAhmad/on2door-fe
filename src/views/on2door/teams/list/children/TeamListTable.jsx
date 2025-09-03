@@ -113,7 +113,6 @@ const TeamListTable = ({
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [data, setData] = useState([])
   const [filteredData, setFilteredData] = useState(data)
-  // const [globalFilter, setGlobalFilter] = useState('')
   const [rowSelection, setRowSelection] = useState({})
 
   // Hooks
@@ -253,7 +252,6 @@ const TeamListTable = ({
       }
     },
     enableRowSelection: true, //enable row selection for all rows
-    // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
     globalFilterFn: fuzzyFilter,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),

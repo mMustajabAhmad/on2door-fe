@@ -20,7 +20,6 @@ const TeamFilters = ({ perPage, onPerPageChange, hubFilter, onHubFilterChange })
     queryKey: ['hubs'],
     queryFn: () => getHubsApi()
   })
-
   const hubs = hubsData?.hubs?.data || []
 
   const handleClearFilters = () => {
