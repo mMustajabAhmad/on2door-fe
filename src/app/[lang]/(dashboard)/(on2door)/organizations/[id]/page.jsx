@@ -1,61 +1,57 @@
-// Next Imports
-import dynamic from 'next/dynamic'
-import { notFound } from 'next/navigation'
+'use client'
+
+// React Imports
+import { useQuery } from '@tanstack/react-query'
+import { useParams } from 'next/navigation'
 
 // MUI Imports
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-// import UserLeftOverview from '@views/apps/user/view/user-left-overview'
-// import UserRight from '@views/apps/user/view/user-right'
-
-import OrganizationLeftOverview from '@/views/on2door/organizations/view/organization-left-overview'
-import OrganizationRight from '@/views/on2door/organizations/view/organization-right'
+import OrganizationOverview from '@/views/on2door/organizations/show'
 
 // Data Imports
-import { getPricingData, getOrganizationById } from '@/app/server/actions'
+import { getOrganizationApi } from '@/app/api/on2door/actions'
 
-// const OverViewTab = dynamic(() => import('@views/apps/user/view/user-right/overview'))
-// const SecurityTab = dynamic(() => import('@views/apps/user/view/user-right/security'))
-// const BillingPlans = dynamic(() => import('@views/apps/user/view/user-right/billing-plans'))
-// const NotificationsTab = dynamic(() => import('@views/apps/user/view/user-right/notifications'))
-// const ConnectionsTab = dynamic(() => import('@views/apps/user/view/user-right/connections'))
+const OrganizationViewPage = () => {
+  const { id } = useParams()
 
-const OverViewTab = dynamic(() => import('@/views/on2door/organizations/view/organization-right/overview'))
-const SecurityTab = dynamic(() => import('@/views/on2door/organizations/view/organization-right/security'))
-const BillingPlans = dynamic(() => import('@/views/on2door/organizations/view/organization-right/billing-plans'))
-const NotificationsTab = dynamic(() => import('@/views/on2door/organizations/view/organization-right/notifications'))
-const ConnectionsTab = dynamic(() => import('@/views/on2door/organizations/view/organization-right/connections'))
+  const { data: organizationData, isLoading, error } = useQuery({
+    queryKey: ['organization', id],
+    queryFn: () => getOrganizationApi(id),
+    enabled: !!id
+  })
 
-// Vars
-const tabContentList = (data, userData) => ({
-  overview: <OverViewTab userData={userData} />,
-  security: <SecurityTab userData={userData} />,
-  'billing-plans': <BillingPlans data={data} userData={userData} />,
-  notifications: <NotificationsTab userData={userData} />,
-  connections: <ConnectionsTab userData={userData} />
-})
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='text-center'>
+          <i className='ri-loader-4-line text-6xl text-blue-500 mb-4 animate-spin'></i>
+          <h2 className='text-xl font-semibold mb-2'>Loading Organization...</h2>
+        </div>
+      </div>
+    )
+  }
 
-const UserViewPage = async ({ params }) => {
-  // Get organization data by ID
-  const { id } = await params
-  const userData = await getOrganizationById(id)
-
-  if (!userData)  notFound()
-
-  // Get pricing data for billing plans
-  const data = await getPricingData()
+  if (error || !organizationData) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='text-center'>
+          <i className='ri-error-warning-line text-6xl text-red-500 mb-4'></i>
+          <h2 className='text-xl font-semibold mb-2'>Failed to load organization</h2>
+          <p className='text-gray-600'>Please try again later</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <Grid container spacing={6}>
-      <Grid size={{ xs: 12, lg: 4, md: 5 }}>
-        <OrganizationLeftOverview userData={userData} />
-      </Grid>
-      <Grid size={{ xs: 12, lg: 8, md: 7 }}>
-        <OrganizationRight tabContentList={tabContentList(data, userData)} />
+      <Grid size={{ xs: 12 }}>
+        <OrganizationOverview organizationData={organizationData} />
       </Grid>
     </Grid>
   )
 }
 
-export default UserViewPage
+export default OrganizationViewPage
