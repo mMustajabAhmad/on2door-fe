@@ -19,7 +19,6 @@ import { getInitials } from '@/utils/getInitials'
 const TeamDetails = ({ teamData }) => {
   const team = teamData?.team?.data?.attributes || {}
   const teamId = teamData?.team?.data?.id
-
   const dispatchersCount = team.dispatchers_count || 0
   const driversCount = team.drivers_count || 0
 

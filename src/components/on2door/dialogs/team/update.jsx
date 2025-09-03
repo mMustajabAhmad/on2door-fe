@@ -62,7 +62,6 @@ const EditTeamDialog = ({ open, setOpen, currentTeam }) => {
     queryKey: ['hubs'],
     queryFn: () => getHubsApi()
   })
-
   const hubs = hubsData?.hubs?.data || []
 
   useEffect(() => {

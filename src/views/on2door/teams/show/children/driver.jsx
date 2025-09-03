@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
-
 // MUI
 import {
   Card,
@@ -12,6 +11,7 @@ import {
   Typography,
   Button,
   Box,
+  Alert,
   Chip,
   FormControl,
   InputLabel,
@@ -37,6 +37,7 @@ const DriversTab = ({ teamData }) => {
   const teamDrivers = teamData?.team?.data?.attributes?.drivers || []
 
   const [selected, setSelected] = useState([])
+  const [errorState, setErrorState] = useState(null)
 
   // Load all drivers
   const { data: driversRes } = useQuery({
@@ -56,7 +57,9 @@ const DriversTab = ({ teamData }) => {
       setSelected([])
     },
     
-    onError: () => toast.error('Update failed. Try again.')
+    onError: err => { 
+      setErrorState(err) 
+      toast.error('Failed to update team dispatchers. Please try again.', { position: 'top-right', autoClose: 3000 })}
   })
 
   const handleAdd = () => {
@@ -76,6 +79,9 @@ const DriversTab = ({ teamData }) => {
     <Card>
       <CardHeader title='Drivers Management' />
       <CardContent>
+        {errorState && ( 
+         <Alert severity='error' sx={{ mb: 2 }}> {errorState?.response?.data?.error || errorState?.response?.data?.message || 'Something went wrong.'}
+         </Alert> )}
         {/* Current Drivers */}
         <Typography variant='h6' gutterBottom>
           Current Drivers ({teamDrivers.length})

@@ -23,15 +23,11 @@ const HubTab = dynamic(() => import('@/views/on2door/teams/show/children/hub'))
 const DispatchersTab = dynamic(() => import('@/views/on2door/teams/show/children/dispatcher'))
 const DriversTab = dynamic(() => import('@/views/on2door/teams/show/children/driver'))
 
-const TeamsViewPage = () => {
+const TeamViewPage = () => {
   const { id } = useParams()
   const [activeTab, setActiveTab] = useState('hub')
 
-  const {
-    data: teamData,
-    isLoading,
-    error
-  } = useQuery({
+  const { data: teamData, isLoading, error } = useQuery({
     queryKey: ['team', id],
     queryFn: () => getTeamApi(id)
   })
@@ -77,4 +73,4 @@ const TeamsViewPage = () => {
   )
 }
 
-export default TeamsViewPage
+export default TeamViewPage

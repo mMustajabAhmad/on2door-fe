@@ -12,6 +12,7 @@ import {
   Typography,
   Button,
   Box,
+  Alert,
   Chip,
   FormControl,
   InputLabel,
@@ -38,6 +39,7 @@ const DispatchersTab = ({ teamData }) => {
   const teamDispatchers = teamData?.team?.data?.attributes?.dispatchers || []
 
   const [selected, setSelected] = useState([])
+  const [errorState, setErrorState] = useState(null)
 
   // Load all dispatchers
   const { data: dispatchersRes } = useQuery({
@@ -56,7 +58,9 @@ const DispatchersTab = ({ teamData }) => {
       queryClient.invalidateQueries({ queryKey: ['dispatchers'] })
       setSelected([])
     },
-    onError: () => toast.error('Update failed. Try again.')
+    onError: err => { 
+      setErrorState(err) 
+      toast.error('Failed to update team dispatchers. Please try again.', { position: 'top-right', autoClose: 3000 })}
   })
 
   const handleAdd = () => {
@@ -77,6 +81,9 @@ const DispatchersTab = ({ teamData }) => {
     <Card>
       <CardHeader title='Dispatchers Management' />
       <CardContent>
+        {errorState && ( 
+         <Alert severity='error' sx={{ mb: 2 }}> {errorState?.response?.data?.error || errorState?.response?.data?.message || 'Something went wrong.'}
+         </Alert> )}
         {/* Current Dispatchers */}
         <Typography variant='h6' gutterBottom>
           Current Dispatchers ({teamDispatchers.length})

@@ -10,9 +10,7 @@ import Box from '@mui/material/Box'
 
 const TeamTabs = ({ activeTab, setActiveTab, tabContentList }) => {
 
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue)
-  }
+  const handleTabChange = (event, newValue) => setActiveTab(newValue)
 
   return (
     <Card>

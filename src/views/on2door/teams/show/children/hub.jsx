@@ -86,23 +86,12 @@ const HubTab = ({ teamData }) => {
       })
       return
     }
-
-    const payload = {
-      team: {
-        hub_id: parseInt(selectedHub)
-      }
-    }
-
+    const payload = { team: { hub_id: parseInt(selectedHub) } }
     updateTeam({ id: teamData?.team?.data?.id, payload })
   }
 
   const handleRemoveHub = () => {
-    const payload = {
-      team: {
-        hub_id: null
-      }
-    }
-
+    const payload = { team: { hub_id: null } }
     updateTeam({ id: teamData?.team?.data?.id, payload })
     setSelectedHub('')
   }
