@@ -121,21 +121,21 @@ export function acceptDriverInvitationApi(payload) {
 }
 
 //Teams
-export function getTeamsApi(payload = {}) {
+export function getTeamsApi(payload) {
   return client()
     .get('/administrators/teams', { params: payload })
-    .then(response => response.data)
-}
-
-export function createTeamApi(payload) {
-  return client()
-    .post('/administrators/teams', payload)
     .then(response => response.data)
 }
 
 export function getTeamApi(id) {
   return client()
     .get(`/administrators/teams/${id}`)
+    .then(response => response.data)
+}
+
+export function createTeamApi(payload) {
+  return client()
+    .post('/administrators/teams', payload)
     .then(response => response.data)
 }
 
