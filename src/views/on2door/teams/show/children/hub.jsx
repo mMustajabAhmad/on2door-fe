@@ -12,7 +12,6 @@ import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
-import Alert from '@mui/material/Alert'
 import CircularProgress from '@mui/material/CircularProgress'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
@@ -27,7 +26,7 @@ import { toast } from 'react-toastify'
 import { updateTeamApi, getHubsApi } from '@/app/api/on2door/actions'
 
 const HubTab = ({ teamData }) => {
-  const [selectedHub, setSelectedHub] = useState(teamData?.team?.data?.attributes?.hub_id?.toString() || '')
+  const [selectedHub, setSelectedHub] = useState(teamData?.team?.data?.attributes?.hub_id || '')
   const queryClient = useQueryClient()
 
   const { data: hubsData } = useQuery({
@@ -37,10 +36,11 @@ const HubTab = ({ teamData }) => {
 
   const hubs = hubsData?.hubs?.data || []
   const currentHubId = teamData?.team?.data?.attributes?.hub_id
+	const teamId = teamData?.team?.data?.id
 
   useEffect(() => {
     if (teamData?.team?.data?.attributes?.hub_id) {
-      setSelectedHub(teamData.team.data.attributes.hub_id.toString())
+      setSelectedHub(teamData.team.data.attributes.hub_id)
     } else {
       setSelectedHub('')
     }
@@ -59,7 +59,7 @@ const HubTab = ({ teamData }) => {
         draggable: true
       })
       queryClient.invalidateQueries({ queryKey: ['teams'] })
-      queryClient.invalidateQueries({ queryKey: ['team', teamData?.team?.data?.id] })
+      queryClient.invalidateQueries({ queryKey: ['team', teamId] })
     },
 
     onError: err => {
@@ -75,24 +75,13 @@ const HubTab = ({ teamData }) => {
   })
 
   const handleAssignHub = () => {
-    if (!selectedHub) {
-      toast.error('Please select a hub first.', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true
-      })
-      return
-    }
     const payload = { team: { hub_id: parseInt(selectedHub) } }
-    updateTeam({ id: teamData?.team?.data?.id, payload })
+    updateTeam({ id: teamId, payload })
   }
 
   const handleRemoveHub = () => {
     const payload = { team: { hub_id: null } }
-    updateTeam({ id: teamData?.team?.data?.id, payload })
+    updateTeam({ id: teamId, payload })
     setSelectedHub('')
   }
 
@@ -135,7 +124,7 @@ const HubTab = ({ teamData }) => {
                     <em>No Hub</em>
                   </MenuItem>
                   {hubs.map(hub => (
-                    <MenuItem key={hub.id} value={hub.id.toString()}>
+                    <MenuItem key={hub.id} value={hub.id}>
                       {hub.attributes?.name || `Hub ${hub.id}`}
                     </MenuItem>
                   ))}

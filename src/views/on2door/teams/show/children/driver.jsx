@@ -33,11 +33,10 @@ import { getInitials } from '@/utils/getInitials'
 
 const DriversTab = ({ teamData }) => {
   const queryClient = useQueryClient()
-  const teamId = Number(teamData?.team?.data?.id)
+  const teamId = teamData?.team?.data?.id
   const teamDrivers = teamData?.team?.data?.attributes?.drivers || []
 
   const [selected, setSelected] = useState([])
-  const [errorState, setErrorState] = useState(null)
 
   // Load all drivers
   const { data: driversRes } = useQuery({
@@ -45,26 +44,34 @@ const DriversTab = ({ teamData }) => {
     queryFn: getDriversApi
   })
   const drivers = driversRes?.drivers?.data || []
-  const assignedSet = new Set(teamDrivers.map(d => Number(d.id)))
+  const assignedSet = new Set(teamDrivers.map(d => d.id))
 
   const { mutate: updateTeam, isPending } = useMutation({
     mutationFn: payload => updateTeamApi(teamId, payload),
 
     onSuccess: () => {
       toast.success('Team drivers updated!')
-      queryClient.invalidateQueries({ queryKey: ['team', String(teamId)] })
+      queryClient.invalidateQueries({ queryKey: ['team', teamId] })
       queryClient.invalidateQueries({ queryKey: ['drivers'] })
       setSelected([])
     },
-    
-    onError: err => { 
-      setErrorState(err) 
-      toast.error('Failed to update team dispatchers. Please try again.', { position: 'top-right', autoClose: 3000 })}
+
+    onError: err => {
+      toast.error(
+      err?.response?.data?.error ||
+      err?.response?.data?.message ||
+      'Failed to update team dispatchers. Please try again.',
+      {
+        position: 'top-right',
+        autoClose: 3000
+      }
+    )
+  }
   })
 
   const handleAdd = () => {
     if (selected.length === 0) return
-    const mergedIds = [...new Set([...teamDrivers.map(d => d.id), ...selected.map(Number)])]
+    const mergedIds = [...new Set([...teamDrivers.map(d => d.id), ...selected])]
     updateTeam({ team: { driver_ids: mergedIds } })
   }
 
@@ -79,9 +86,6 @@ const DriversTab = ({ teamData }) => {
     <Card>
       <CardHeader title='Drivers Management' />
       <CardContent>
-        {errorState && ( 
-         <Alert severity='error' sx={{ mb: 2 }}> {errorState?.response?.data?.error || errorState?.response?.data?.message || 'Something went wrong.'}
-         </Alert> )}
         {/* Current Drivers */}
         <Typography variant='h6' gutterBottom>
           Current Drivers ({teamDrivers.length})
@@ -116,7 +120,7 @@ const DriversTab = ({ teamData }) => {
               renderValue={ids => (
                 <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
                   {ids.map(id => {
-                    const d = drivers.find(x => x.id.toString() === id)
+                    const d = drivers.find(x => x.id === id)
                     return <Chip key={id} label={getName(d)} size='small' />
                   })}
                 </Box>
@@ -126,7 +130,7 @@ const DriversTab = ({ teamData }) => {
                 const name = getName(d)
                 const alreadyAssigned = assignedSet.has(Number(d.id))
                 return (
-                  <MenuItem key={d.id} value={d.id.toString()} disabled={alreadyAssigned} disableRipple>
+                  <MenuItem key={d.id} value={d.id} disabled={alreadyAssigned} disableRipple>
                     {name}
                   </MenuItem>
                 )

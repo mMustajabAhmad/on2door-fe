@@ -35,11 +35,10 @@ import { getInitials } from '@/utils/getInitials'
 
 const DispatchersTab = ({ teamData }) => {
   const queryClient = useQueryClient()
-  const teamId = Number(teamData?.team?.data?.id)
+  const teamId = teamData?.team?.data?.id
   const teamDispatchers = teamData?.team?.data?.attributes?.dispatchers || []
 
   const [selected, setSelected] = useState([])
-  const [errorState, setErrorState] = useState(null)
 
   // Load all dispatchers
   const { data: dispatchersRes } = useQuery({
@@ -47,25 +46,34 @@ const DispatchersTab = ({ teamData }) => {
     queryFn: getDispatchersApi
   })
   const dispatchers = dispatchersRes?.administrators?.data || []
-  const assignedSet = new Set(teamDispatchers.map(d => Number(d.id)))
+  const assignedSet = new Set(teamDispatchers.map(d => d.id))
 
   const { mutate: updateTeam, isPending } = useMutation({
     mutationFn: payload => updateTeamApi(teamId, payload),
 
     onSuccess: () => {
       toast.success('Team dispatchers updated!')
-      queryClient.invalidateQueries({ queryKey: ['team', String(teamId)] })
+      queryClient.invalidateQueries({ queryKey: ['team', teamId] })
       queryClient.invalidateQueries({ queryKey: ['dispatchers'] })
       setSelected([])
     },
-    onError: err => { 
-      setErrorState(err) 
-      toast.error('Failed to update team dispatchers. Please try again.', { position: 'top-right', autoClose: 3000 })}
+
+    onError: err => {
+    toast.error(
+      err?.response?.data?.error ||
+      err?.response?.data?.message ||
+      'Failed to update team dispatchers. Please try again.',
+      {
+        position: 'top-right',
+        autoClose: 3000
+      }
+    )
+  }
   })
 
   const handleAdd = () => {
     if (selected.length === 0) return
-    const mergedIds = [...new Set([...teamDispatchers.map(d => d.id), ...selected.map(Number)])]
+    const mergedIds = [...new Set([...teamDispatchers.map(d => d.id), ...selected])]
     updateTeam({ team: { administrator_ids: mergedIds } })
   }
 
@@ -76,14 +84,11 @@ const DispatchersTab = ({ teamData }) => {
 
   const getName = d =>
     `${d.attributes?.first_name || ''} ${d.attributes?.last_name || ''}`.trim() || `Dispatcher ${d.id}`
-  
+
   return (
     <Card>
       <CardHeader title='Dispatchers Management' />
       <CardContent>
-        {errorState && ( 
-         <Alert severity='error' sx={{ mb: 2 }}> {errorState?.response?.data?.error || errorState?.response?.data?.message || 'Something went wrong.'}
-         </Alert> )}
         {/* Current Dispatchers */}
         <Typography variant='h6' gutterBottom>
           Current Dispatchers ({teamDispatchers.length})
@@ -118,7 +123,7 @@ const DispatchersTab = ({ teamData }) => {
               renderValue={ids => (
                 <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
                   {ids.map(id => {
-                    const d = dispatchers.find(x => x.id.toString() === id)
+                    const d = dispatchers.find(x => x.id === id)
                     return <Chip key={id} label={getName(d)} size='small' />
                   })}
                 </Box>
@@ -128,7 +133,7 @@ const DispatchersTab = ({ teamData }) => {
                 const name = getName(d)
                 const alreadyAssigned = assignedSet.has(Number(d.id))
                 return (
-                  <MenuItem key={d.id} value={d.id.toString()} disabled={alreadyAssigned} disableRipple>
+                  <MenuItem key={d.id} value={d.id} disabled={alreadyAssigned} disableRipple>
                     {name}
                   </MenuItem>
                 )
