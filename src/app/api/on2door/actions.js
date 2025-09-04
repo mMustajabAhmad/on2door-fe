@@ -194,3 +194,34 @@ export function updateOrganizationApi(id, payload) {
     .put(`/administrators/organizations/${id}`, payload)
     .then(response => response.data)
 }
+
+//Tasks
+export function getTasksApi(payload) {
+  return client()
+    .get('/administrators/tasks', { params: payload })
+    .then(response => response.data)
+}
+
+export function getTaskApi(id) {
+  return client()
+    .get(`/administrators/tasks/${id}`)
+    .then(response => response.data)
+}
+
+export function createTaskApi(payload) {
+  return client()
+    .post('/administrators/tasks', payload)
+    .then(response => response.data)
+}
+
+export function updateTaskApi(id, payload) {
+  return client()
+    .put(`/administrators/tasks/${id}`, payload)
+    .then(response => response.data)
+}
+
+export function destroyTaskApi(id) {
+  return client()
+    .delete(`/administrators/tasks/${id}`)
+    .then(response => response.data)
+}
