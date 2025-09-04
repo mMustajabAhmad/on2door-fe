@@ -1,61 +1,76 @@
+'use client'
+
+// React Imports
+import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+
 // Next Imports
+import { useParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import { notFound } from 'next/navigation'
 
 // MUI Imports
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-// import UserLeftOverview from '@views/apps/user/view/user-left-overview'
-// import UserRight from '@views/apps/user/view/user-right'
+import TaskOverview from '@/views/on2door/tasks/show'
+import TaskTabs from '@/views/on2door/tasks/show/children/TaskTabs'
 
-import TaskLeftOverview from '@/views/on2door/tasks/view/task-left-overview'
-import TaskRight from '@/views/on2door/tasks/view/task-right'
+// API Imports
+import { getTaskApi } from '@/app/api/on2door/actions'
 
-// Data Imports
-import { getPricingData, getTaskById } from '@/app/server/actions'
+// Dynamic imports for tabs
+const HubTab = dynamic(() => import('@/views/on2door/teams/show/children/hub'))
+const DispatchersTab = dynamic(() => import('@/views/on2door/teams/show/children/dispatcher'))
+const DriversTab = dynamic(() => import('@/views/on2door/teams/show/children/driver'))
 
-// const OverViewTab = dynamic(() => import('@views/apps/user/view/user-right/overview'))
-// const SecurityTab = dynamic(() => import('@views/apps/user/view/user-right/security'))
-// const BillingPlans = dynamic(() => import('@views/apps/user/view/user-right/billing-plans'))
-// const NotificationsTab = dynamic(() => import('@views/apps/user/view/user-right/notifications'))
-// const ConnectionsTab = dynamic(() => import('@views/apps/user/view/user-right/connections'))
+const TaskViewPage = () => {
+  const { id } = useParams()
+  const [activeTab, setActiveTab] = useState('hub')
 
-const OverViewTab = dynamic(() => import('@/views/on2door/tasks/view/task-right/overview'))
-const SecurityTab = dynamic(() => import('@/views/on2door/tasks/view/task-right/security'))
-const BillingPlans = dynamic(() => import('@/views/on2door/tasks/view/task-right/billing-plans'))
-const NotificationsTab = dynamic(() => import('@/views/on2door/tasks/view/task-right/notifications'))
-const ConnectionsTab = dynamic(() => import('@/views/on2door/tasks/view/task-right/connections'))
+  const { data: taskData, isLoading, error } = useQuery({
+    queryKey: ['task', id],
+    queryFn: () => getTaskApi(id)
+  })
 
-// Vars
-const tabContentList = (data, userData) => ({
-  overview: <OverViewTab userData={userData} />,
-  security: <SecurityTab userData={userData} />,
-  'billing-plans': <BillingPlans data={data} userData={userData} />,
-  notifications: <NotificationsTab userData={userData} />,
-  connections: <ConnectionsTab userData={userData} />
-})
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='text-center'>
+          <i className='ri-loader-4-line text-6xl text-blue-500 mb-4 animate-spin'></i>
+          <h2 className='text-xl font-semibold mb-2'>Loading Task...</h2>
+        </div>
+      </div>
+    )
+  }
 
-const UserViewPage = async ({ params }) => {
-  // Get user data by ID
-  const { id } = await params
-  const userData = await getTaskById(id)
+  if (error) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='text-center'>
+          <i className='ri-error-warning-line text-6xl text-red-500 mb-4'></i>
+          <h2 className='text-xl font-semibold mb-2'>Failed to load task</h2>
+          <p className='text-gray-600'>Please try again later</p>
+        </div>
+      </div>
+    )
+  }
 
-  if (!userData) notFound()
-
-  // Get pricing data for billing plans
-  const data = await getPricingData()
+  const tabContentList = {
+    hub: <HubTab taskData={taskData} />,
+    dispatchers: <DispatchersTab taskData={taskData} />,
+    drivers: <DriversTab taskData={taskData} />
+  }
 
   return (
     <Grid container spacing={6}>
       <Grid size={{ xs: 12, lg: 4, md: 5 }}>
-        <TaskLeftOverview userData={userData} />
+        <TaskOverview taskData={taskData} />
       </Grid>
       <Grid size={{ xs: 12, lg: 8, md: 7 }}>
-        <TaskRight tabContentList={tabContentList(data, userData)} />
+        <TaskTabs activeTab={activeTab} setActiveTab={setActiveTab} tabContentList={tabContentList} />
       </Grid>
     </Grid>
   )
 }
 
-export default UserViewPage
+export default TaskViewPage

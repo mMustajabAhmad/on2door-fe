@@ -9,7 +9,7 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 
-const TableFilters = ({ setData, tableData }) => {
+const TaskFilters = ({ setData, tableData }) => {
   // States
   const [role, setRole] = useState('')
   const [plan, setPlan] = useState('')
@@ -95,4 +95,4 @@ const TableFilters = ({ setData, tableData }) => {
   )
 }
 
-export default TableFilters
+export default TaskFilters

@@ -41,9 +41,7 @@ import {
 } from '@tanstack/react-table'
 
 // Component Imports
-import TableFilters from './TableFilters'
-import AddUserDrawer from './AddTaskDrawer'
-import OptionMenu from '@core/components/option-menu'
+import TaskFilters from './children/TaskFilters'
 import CustomAvatar from '@core/components/mui/Avatar'
 
 // Util Imports
@@ -306,7 +304,7 @@ const UserListTable = ({ tableData }) => {
     <>
       <Card>
         <CardHeader title='Filters' />
-        <TableFilters setData={setFilteredData} tableData={data} />
+        <TaskFilters setData={setFilteredData} tableData={data} />
         <Divider />
         <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
           {/* <Button

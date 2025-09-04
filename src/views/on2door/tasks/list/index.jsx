@@ -2,20 +2,16 @@
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-import UserListTable from './TaskListTable'
-// import UserListCards from './AdminListCards'
+import TaskListTable from './children/TaskListTable'
 
-const UserList = ({ userData }) => {
+const TaskList = ({ userData }) => {
   return (
     <Grid container spacing={6}>
-      {/* <Grid size={{ xs: 12 }}>
-        <UserListCards />
-      </Grid> */}
       <Grid size={{ xs: 12 }}>
-        <UserListTable tableData={userData} />
+        <TaskListTable tableData={userData} />
       </Grid>
     </Grid>
   )
 }
 
-export default UserList
+export default TaskList
