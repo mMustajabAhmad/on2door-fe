@@ -8,8 +8,10 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 //Component Imports
-import EditUserInfo from '@components/dialogs/edit-user-info'
-import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
+import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
+import CreateTaskDialog from '@/components/on2door/dialogs/task/create'
+import EditTaskDialog from '@/components/on2door/dialogs/task/update'
+import DeleteTaskDialog from '@/components/on2door/dialogs/task/delete'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -18,11 +20,8 @@ import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import Chip from '@mui/material/Chip'
 import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
-import { styled } from '@mui/material/styles'
-import TablePagination from '@mui/material/TablePagination'
 
 // Third-party Imports
 import classnames from 'classnames'
@@ -41,18 +40,14 @@ import {
 } from '@tanstack/react-table'
 
 // Component Imports
-import TaskFilters from './children/TaskFilters'
-import CustomAvatar from '@core/components/mui/Avatar'
+import TaskFilters from './TaskFilters'
+import CustomPagination from '@components/on2door/shared/CustomPagination'
 
 // Util Imports
-import { getInitials } from '@/utils/getInitials'
 import { getLocalizedUrl } from '@/utils/i18n'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
-
-// Styled Components
-const Icon = styled('i')({})
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -67,58 +62,77 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
   return itemRank.passed
 }
 
-const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...props }) => {
+const DebouncedInput = ({ value: initialValue, onChange, debounce = 3000, ...props }) => {
   // States
   const [value, setValue] = useState(initialValue)
+  const [isUserTyping, setIsUserTyping] = useState(false)
 
   useEffect(() => {
     setValue(initialValue)
   }, [initialValue])
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value)
-    }, debounce)
+    if (isUserTyping) {
+      const timeout = setTimeout(() => {
+        onChange(value)
+        setIsUserTyping(false)
+      }, debounce)
 
-    return () => clearTimeout(timeout)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
+      return () => clearTimeout(timeout)
+    }
+  }, [value, onChange, isUserTyping, debounce])
 
-  return <TextField {...props} value={value} onChange={e => setValue(e.target.value)} size='small' />
-}
+  const handleInputChange = e => {
+    setValue(e.target.value)
+    setIsUserTyping(true)
+  }
 
-// Vars
-const userRoleObj = {
-  admin: { icon: 'ri-vip-crown-line', color: 'error' },
-  author: { icon: 'ri-computer-line', color: 'warning' },
-  editor: { icon: 'ri-edit-box-line', color: 'info' },
-  maintainer: { icon: 'ri-pie-chart-2-line', color: 'success' },
-  subscriber: { icon: 'ri-user-3-line', color: 'primary' }
-}
-
-const userStatusObj = {
-  active: 'success',
-  pending: 'warning',
-  inactive: 'secondary'
+  return <TextField {...props} value={value} onChange={handleInputChange} size='small' />
 }
 
 // Column Definitions
 const columnHelper = createColumnHelper()
 
-const UserListTable = ({ tableData }) => {
-  // const buttonProps = (children, color, variant) => ({
-  //   children,
-  //   color,
-  //   variant
-  // })
+const TaskListTable = ({
+  tableData,
+  page,
+  perPage,
+  onPageChange,
+  onPerPageChange,
+  searchQuery,
+  setSearchQuery,
+  state,
+  onStateChange
+}) => {
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
-  const [rowSelection, setRowSelection] = useState({})
-  const [data, setData] = useState(...[tableData])
+  const [data, setData] = useState([])
   const [filteredData, setFilteredData] = useState(data)
-  const [globalFilter, setGlobalFilter] = useState('')
+  const [rowSelection, setRowSelection] = useState({})
 
   // Hooks
   const { lang: locale } = useParams()
+
+  // Transform API data to match expected format
+  const transformApiData = apiData => {
+    if (!apiData?.tasks?.data) return []
+    console.log('API Data:', apiData)
+    return apiData.tasks.data.map(task => ({
+      id: task.id,
+      pickup_task: task.attributes?.pickup_task === true ? 'Yes' : 'No', 
+      state: task.attributes?.state || 'N/A',
+      created_at: task.attributes?.created_at.split('T')[0] || 'N/A',
+      driver_id: task.attributes?.driver_id || 'Unassigned',
+      team_id: task.attributes?.team_id || 'Un-assigned',
+      recipient_id: task.attributes?.recipient_id || 'N/A'
+    }))
+  }
+
+  // Update data when tableData changes
+  useEffect(() => {
+    const transformedData = transformApiData(tableData)
+    setData(transformedData)
+    setFilteredData(transformedData)
+  }, [tableData])
 
   const columns = useMemo(
     () => [
@@ -144,69 +158,70 @@ const UserListTable = ({ tableData }) => {
           />
         )
       },
-      columnHelper.accessor('fullName', {
-        header: 'User',
+      columnHelper.accessor('pickup_task', {
+        header: 'Pickup Task',
         cell: ({ row }) => (
-          <div className='flex items-center gap-4'>
-            {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })}
-            <div className='flex flex-col'>
-              <Typography className='font-medium' color='text.primary'>
-                {row.original.fullName}
-              </Typography>
-              <Typography variant='body2'>{row.original.username}</Typography>
-            </div>
-          </div>
-        )
-      }),
-      columnHelper.accessor('email', {
-        header: 'Email',
-        cell: ({ row }) => <Typography>{row.original.email}</Typography>
-      }),
-      columnHelper.accessor('role', {
-        header: 'Role',
-        cell: ({ row }) => (
-          <div className='flex items-center gap-2'>
-            <Icon
-              className={userRoleObj[row.original.role].icon}
-              sx={{ color: `var(--mui-palette-${userRoleObj[row.original.role].color}-main)`, fontSize: '1.375rem' }}
-            />
-            <Typography className='capitalize' color='text.primary'>
-              {row.original.role}
-            </Typography>
-          </div>
-        )
-      }),
-      columnHelper.accessor('currentPlan', {
-        header: 'Plan',
-        cell: ({ row }) => (
-          <Typography className='capitalize' color='text.primary'>
-            {row.original.currentPlan}
+          <Typography className='font-medium' color='text.primary'>
+            {row.original.pickup_task}
           </Typography>
         )
       }),
-      columnHelper.accessor('status', {
-        header: 'Status',
+      columnHelper.accessor('state', {
+        header: 'State',
         cell: ({ row }) => (
-          <div className='flex items-center gap-3'>
-            <Chip
-              variant='tonal'
-              label={row.original.status}
-              size='small'
-              color={userStatusObj[row.original.status]}
-              className='capitalize'
-            />
-          </div>
+          <Typography className='font-medium' color='text.primary'>
+            {row.original.state}
+          </Typography>
+        )
+      }),
+      columnHelper.accessor('created_at', {
+        header: 'Created At',
+        cell: ({ row }) => (
+          <Typography className='font-medium' color='text.primary'>
+            {row.original.created_at}
+          </Typography>
+        )
+      }),
+      columnHelper.accessor('driver_id', {
+        header: 'Driver ID',
+        cell: ({ row }) => (
+          <Typography className='font-medium' color='text.primary'>
+            {row.original.driver_id}
+          </Typography>
+        )
+      }),
+      columnHelper.accessor('team_id', {
+        header: 'Team ID',
+        cell: ({ row }) => (
+          <Typography className='font-medium' color='text.primary'>
+            {row.original.team_id}
+          </Typography>
+        )
+      }),
+      columnHelper.accessor('recipient_id', {
+        header: 'Recipient ID',
+        cell: ({ row }) => (
+          <Typography className='font-medium' color='text.primary'>
+            {row.original.recipient_id}
+          </Typography>
         )
       }),
       columnHelper.accessor('action', {
         header: 'Action',
         cell: ({ row }) => (
           <div className='flex items-center'>
-            <IconButton onClick={() => setData(data?.filter(product => product.id !== row.original.id))}>
-              <i className='ri-delete-bin-7-line text-textSecondary' />
-            </IconButton>
+            <OpenDialogOnElementClick
+              element={IconButton}
+              elementProps={{
+                children: <i className='ri-delete-bin-7-line text-textSecondary' />
+              }}
+              dialog={DeleteTaskDialog}
+              dialogProps={{
+                data: tableData,
+                itemToDelete: row.original
+              }}
+            />
             <IconButton>
-              {/* <Link href={getLocalizedUrl(`/apps/user/view/${row.original.id}`, locale)} className='flex'> */}
               <Link href={getLocalizedUrl(`/tasks/${row.original.id}`, locale)} className='flex'>
                 <i className='ri-eye-line text-textSecondary' />
               </Link>
@@ -217,44 +232,15 @@ const UserListTable = ({ tableData }) => {
                 color: 'primary',
                 children: <i className='ri-edit-box-line text-textSecondary' />
               }}
-              dialog={EditUserInfo}
-              dialogProps={{ data: data }}
+              dialog={EditTaskDialog}
+              dialogProps={{ currentTask: row.original }}
             />
-
-            {/* <IconButton>
-              <Link href={getLocalizedUrl(`/apps/user/view/${row.original.id}`, locale)} className='flex'>
-                <i className='ri-edit-box-line text-textSecondary' />
-              </Link>
-            </IconButton>
-            <OpenDialogOnElementClick
-              element={Button}
-              elementProps={buttonProps('Edit', 'primary', 'contained')}
-              dialog={EditUserInfo}
-              dialogProps={{ data: data }}
-            /> */}
-            {/* <OptionMenu
-              iconButtonProps={{ size: 'medium' }}
-              iconClassName='text-textSecondary'
-              options={[
-                {
-                  text: 'Download',
-                  icon: 'ri-download-line',
-                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
-                },
-                {
-                  text: 'Edit',
-                  icon: 'ri-edit-box-line',
-                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
-                }
-              ]}
-            /> */}
           </div>
         ),
         enableSorting: false
       })
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, filteredData]
+    [data, locale]
   )
 
   const table = useReactTable({
@@ -264,8 +250,7 @@ const UserListTable = ({ tableData }) => {
       fuzzy: fuzzyFilter
     },
     state: {
-      rowSelection,
-      globalFilter
+      rowSelection
     },
     initialState: {
       pagination: {
@@ -273,11 +258,9 @@ const UserListTable = ({ tableData }) => {
       }
     },
     enableRowSelection: true, //enable row selection for all rows
-    // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
     globalFilterFn: fuzzyFilter,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
-    onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -286,43 +269,33 @@ const UserListTable = ({ tableData }) => {
     getFacetedMinMaxValues: getFacetedMinMaxValues()
   })
 
-  const getAvatar = params => {
-    const { avatar, fullName } = params
-
-    if (avatar) {
-      return <CustomAvatar src={avatar} skin='light' size={34} />
-    } else {
-      return (
-        <CustomAvatar skin='light' size={34}>
-          {getInitials(fullName)}
-        </CustomAvatar>
-      )
-    }
-  }
-
   return (
     <>
       <Card>
-        <CardHeader title='Filters' />
-        <TaskFilters setData={setFilteredData} tableData={data} />
+        <CardHeader title='Tasks' />
+        <TaskFilters
+          perPage={perPage}
+          onPerPageChange={onPerPageChange}
+          state={state}
+          onStateChange={onStateChange}
+        />
         <Divider />
+
         <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
-          {/* <Button
-            color='secondary'
-            variant='outlined'
-            startIcon={<i className='ri-upload-2-line text-xl' />}
-            className='max-sm:is-full'
-          >
-            Export
-          </Button> */}
           <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
             <DebouncedInput
-              value={globalFilter ?? ''}
-              onChange={value => setGlobalFilter(String(value))}
+              value={searchQuery ?? ''}
+              onChange={value => setSearchQuery(String(value))}
               placeholder='Search Task'
               className='max-sm:is-full'
             />
-            <Button variant='contained' onClick={() => setAddUserOpen(!addUserOpen)} className='max-sm:is-full'>
+            <Button color='secondary' variant='outlined' className='max-sm:is-full' onClick={() => setSearchQuery('')}>
+              Clear
+              <i className='ri-filter-line'></i>
+            </Button>
+          </div>
+          <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
+            <Button variant='contained' onClick={() => setAddUserOpen(true)} className='max-sm:is-full'>
               Add New Task
             </Button>
           </div>
@@ -366,43 +339,35 @@ const UserListTable = ({ tableData }) => {
               </tbody>
             ) : (
               <tbody>
-                {table
-                  .getRowModel()
-                  .rows.slice(0, table.getState().pagination.pageSize)
-                  .map(row => {
-                    return (
-                      <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
-                        {row.getVisibleCells().map(cell => (
-                          <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-                        ))}
-                      </tr>
-                    )
-                  })}
+                {table.getRowModel().rows.map(row => {
+                  return (
+                    <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
+                      {row.getVisibleCells().map(cell => (
+                        <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                      ))}
+                    </tr>
+                  )
+                })}
               </tbody>
             )}
           </table>
         </div>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component='div'
-          className='border-bs'
-          count={table.getFilteredRowModel().rows.length}
-          rowsPerPage={table.getState().pagination.pageSize}
-          page={table.getState().pagination.pageIndex}
-          onPageChange={(_, page) => {
-            table.setPageIndex(page)
-          }}
-          onRowsPerPageChange={e => table.setPageSize(Number(e.target.value))}
-        />
+        <div className='flex justify-between items-center p-4 border-t'>
+          <div className='text-sm text-gray-600'>
+            Showing {(page - 1) * perPage + 1} to {Math.min(page * perPage, tableData?.total_count)} of{' '}
+            {tableData?.total_count} results
+          </div>
+          <CustomPagination
+            page={page}
+            perPage={perPage}
+            totalCount={tableData?.total_count || 0}
+            onPageChange={onPageChange}
+          />
+        </div>
       </Card>
-      <AddUserDrawer
-        open={addUserOpen}
-        handleClose={() => setAddUserOpen(!addUserOpen)}
-        userData={data}
-        setData={setData}
-      />
+      <CreateTaskDialog open={addUserOpen} setOpen={setAddUserOpen} />
     </>
   )
 }
 
-export default UserListTable
+export default TaskListTable
