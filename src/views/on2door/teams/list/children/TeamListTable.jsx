@@ -1,45 +1,50 @@
 'use client'
 
 // React Imports
-import { useState, useMemo, useEffect } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
 // Next Imports
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
-// Component Imports
-import EditHubDialog from '@/components/on2door/dialogs/hub/update'
-import DeleteHubDialog from '@/components/on2door/dialogs/hub/delete'
-import CreateHubDialog from '@/components/on2door/dialogs/hub/create'
-import OpenDialogOnElementClick from '@/components/on2door/dialogs/OpenDialogOnElementClick'
+//Component Imports
+import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
+import CreateTeamDialog from '@/components/on2door/dialogs/team/create'
+import EditTeamDialog from '@/components/on2door/dialogs/team/update'
+import DeleteTeamDialog from '@/components/on2door/dialogs/team/delete'
 
 // MUI Imports
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
-import CardContent from '@mui/material/CardContent'
 import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import Chip from '@mui/material/Chip'
+import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
-import CircularProgress from '@mui/material/CircularProgress'
+import { styled } from '@mui/material/styles'
 
 // Third-party Imports
 import classnames from 'classnames'
 import { rankItem } from '@tanstack/match-sorter-utils'
+
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
   getFilteredRowModel,
-  getSortedRowModel,
-  getPaginationRowModel
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFacetedMinMaxValues,
+  getPaginationRowModel,
+  getSortedRowModel
 } from '@tanstack/react-table'
 
 // Component Imports
-import HubFilters from './HubFilters'
-import CustomPagination from '@/components/on2door/shared/CustomPagination'
+import TableFilters from './TeamFilters'
+import CustomPagination from '@components/on2door/shared/CustomPagination'
 
 // Util Imports
 import { getLocalizedUrl } from '@/utils/i18n'
@@ -47,26 +52,37 @@ import { getLocalizedUrl } from '@/utils/i18n'
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
 
+// Styled Components
+const Icon = styled('i')({})
+
 const fuzzyFilter = (row, columnId, value, addMeta) => {
+  // Rank the item
   const itemRank = rankItem(row.getValue(columnId), value)
-  addMeta({ itemRank })
+
+  // Store the itemRank info
+  addMeta({
+    itemRank
+  })
+
+  // Return if the item should be filtered in/out
   return itemRank.passed
 }
 
 const DebouncedInput = ({ value: initialValue, onChange, debounce = 3000, ...props }) => {
+  // States
   const [value, setValue] = useState(initialValue)
   const [isUserTyping, setIsUserTyping] = useState(false)
 
   useEffect(() => {
     setValue(initialValue)
   }, [initialValue])
-
   useEffect(() => {
     if (isUserTyping) {
       const timeout = setTimeout(() => {
         onChange(value)
         setIsUserTyping(false)
       }, debounce)
+
       return () => clearTimeout(timeout)
     }
   }, [value, onChange, isUserTyping, debounce])
@@ -79,7 +95,10 @@ const DebouncedInput = ({ value: initialValue, onChange, debounce = 3000, ...pro
   return <TextField {...props} value={value} onChange={handleInputChange} size='small' />
 }
 
-const HubListTable = ({
+// Column Definitions
+const columnHelper = createColumnHelper()
+
+const TeamListTable = ({
   tableData,
   page,
   perPage,
@@ -87,80 +106,99 @@ const HubListTable = ({
   onPerPageChange,
   searchQuery,
   setSearchQuery,
-  city,
-  onCityChange,
-  state,
-  onStateChange,
-  country,
-  onCountryChange,
-  hasTeams,
-  onHasTeamsChange
+  hubFilter,
+  onHubFilterChange
 }) => {
   // States
-  const [addHubOpen, setAddHubOpen] = useState(false)
+  const [addUserOpen, setAddUserOpen] = useState(false)
+  const [data, setData] = useState([])
+  const [filteredData, setFilteredData] = useState(data)
+  const [rowSelection, setRowSelection] = useState({})
 
   // Hooks
   const { lang: locale } = useParams()
 
   // Transform API data to match expected format
   const transformApiData = apiData => {
-    if (!apiData?.hubs?.data) return []
+    if (!apiData?.teams?.data) return []
 
-    return apiData.hubs.data.map(hub => {
-      const hubAttributes = hub.attributes || hub
-      const address = hubAttributes.address || {}
-      const teamIds = hubAttributes.team_ids || []
+    return apiData.teams.data.map(team => {
+      const t = team.attributes || team
 
       return {
-        id: hub.id,
-        name: hubAttributes.name || 'N/A',
-        street: address.street || '',
-        city: address.city || 'N/A',
-        state: address.state || 'N/A',
-        postal_code: address.postal_code || '',
-        country: address.country || 'N/A',
-        fullAddress:
-          [address.street, address.city, address.state, address.postal_code, address.country]
-            .filter(Boolean)
-            .join(', ') || 'No address provided',
-        team_ids: teamIds
+        id: team.id,
+        name: t.name || 'N/A',
+        hub_id: t.hub_id || null,
+        hub_name: t.hub?.attributes?.name || t.hub?.name || (t.hub_id ? `Hub ${t.hub_id}` : 'No Hub Assigned'),
+        dispatchers_count: t.dispatchers_count || 0,
+        drivers_count: t.drivers_count || 0,
+        organization_id: t.organization_id
       }
     })
   }
-
-  const [data, setData] = useState(transformApiData(tableData))
-  const [filteredData, setfilteredData] = useState(data)
 
   // Update data when tableData changes
   useEffect(() => {
     const transformedData = transformApiData(tableData)
     setData(transformedData)
-    setfilteredData(transformedData)
+    setFilteredData(transformedData)
   }, [tableData])
-
-  const columnHelper = createColumnHelper()
 
   const columns = useMemo(
     () => [
+      {
+        id: 'select',
+        header: ({ table }) => (
+          <Checkbox
+            {...{
+              checked: table.getIsAllRowsSelected(),
+              indeterminate: table.getIsSomeRowsSelected(),
+              onChange: table.getToggleAllRowsSelectedHandler()
+            }}
+          />
+        ),
+        cell: ({ row }) => (
+          <Checkbox
+            {...{
+              checked: row.getIsSelected(),
+              disabled: !row.getCanSelect(),
+              indeterminate: row.getIsSomeSelected(),
+              onChange: row.getToggleSelectedHandler()
+            }}
+          />
+        )
+      },
       columnHelper.accessor('name', {
-        header: 'Hub Name',
+        header: 'Team Name',
         cell: ({ row }) => (
           <Typography className='font-medium' color='text.primary'>
             {row.original.name}
           </Typography>
         )
       }),
-      columnHelper.accessor('city', {
-        header: 'City',
-        cell: ({ row }) => <Typography>{row.original.city}</Typography>
+      columnHelper.accessor('hub_name', {
+        header: 'Hub',
+        cell: ({ row }) => {
+          const hasHub = row.original.hub_id && row.original.hub_id !== null
+          const hubName = row.original.hub_name || 'No Hub Assigned'
+
+          return (
+            <Chip
+              label={hubName}
+              color={hasHub ? 'primary' : 'default'}
+              variant={hasHub ? 'filled' : 'outlined'}
+              size='small'
+            />
+          )
+        }
       }),
-      columnHelper.accessor('state', {
-        header: 'State',
-        cell: ({ row }) => <Typography>{row.original.state}</Typography>
+      columnHelper.accessor('dispatchers_count', {
+        header: 'Dispatchers',
+        cell: ({ row }) => <Typography>{row.original.dispatchers_count}</Typography>
       }),
-      columnHelper.accessor('country', {
-        header: 'Country',
-        cell: ({ row }) => <Typography>{row.original.country}</Typography>
+      columnHelper.accessor('drivers_count', {
+        header: 'Drivers',
+        cell: ({ row }) => <Typography>{row.original.drivers_count}</Typography>
       }),
       columnHelper.accessor('action', {
         header: 'Action',
@@ -171,14 +209,14 @@ const HubListTable = ({
               elementProps={{
                 children: <i className='ri-delete-bin-7-line text-textSecondary' />
               }}
-              dialog={DeleteHubDialog}
+              dialog={DeleteTeamDialog}
               dialogProps={{
                 itemToDelete: row.original,
-                data: tableData
+                data: data
               }}
             />
             <IconButton>
-              <Link href={getLocalizedUrl(`/hubs/${row.original.id}`, locale)} className='flex'>
+              <Link href={getLocalizedUrl(`/teams/${row.original.id}`, locale)} className='flex'>
                 <i className='ri-eye-line text-textSecondary' />
               </Link>
             </IconButton>
@@ -188,15 +226,15 @@ const HubListTable = ({
                 color: 'primary',
                 children: <i className='ri-edit-box-line text-textSecondary' />
               }}
-              dialog={EditHubDialog}
-              dialogProps={{ currentHub: row.original }}
+              dialog={EditTeamDialog}
+              dialogProps={{ currentTeam: row.original }}
             />
           </div>
         ),
         enableSorting: false
       })
     ],
-    [data, filteredData]
+    [data, locale]
   )
 
   const table = useReactTable({
@@ -206,44 +244,34 @@ const HubListTable = ({
       fuzzy: fuzzyFilter
     },
     state: {
-      searchQuery
+      rowSelection
     },
+    initialState: {
+      pagination: {
+        pageSize: 10
+      }
+    },
+    enableRowSelection: true, //enable row selection for all rows
     globalFilterFn: fuzzyFilter,
-    onGlobalFilterChange: setSearchQuery,
+    onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel()
+    getPaginationRowModel: getPaginationRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues()
   })
-
-  if (!tableData) {
-    return (
-      <Card>
-        <CardContent className='flex justify-center items-center h-64'>
-          <div className='text-center'>
-            <CircularProgress />
-            <Typography className='mt-4'>Loading hubs...</Typography>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
 
   return (
     <>
       <Card>
-        <CardHeader title='Filters' />
-        <HubFilters
+        <CardHeader title='Teams' />
+        <TableFilters
           perPage={perPage}
           onPerPageChange={onPerPageChange}
-          city={city}
-          onCityChange={onCityChange}
-          state={state}
-          onStateChange={onStateChange}
-          country={country}
-          onCountryChange={onCountryChange}
-          hasTeams={hasTeams}
-          onHasTeamsChange={onHasTeamsChange}
+          hubFilter={hubFilter}
+          onHubFilterChange={onHubFilterChange}
         />
         <Divider />
 
@@ -252,7 +280,7 @@ const HubListTable = ({
             <DebouncedInput
               value={searchQuery ?? ''}
               onChange={value => setSearchQuery(String(value))}
-              placeholder='Search Hub'
+              placeholder='Search Team'
               className='max-sm:is-full'
             />
             <Button color='secondary' variant='outlined' className='max-sm:is-full' onClick={() => setSearchQuery('')}>
@@ -261,8 +289,8 @@ const HubListTable = ({
             </Button>
           </div>
           <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
-            <Button variant='contained' onClick={() => setAddHubOpen(true)} className='max-sm:is-full'>
-              Add New Hub
+            <Button variant='contained' onClick={() => setAddUserOpen(true)} className='max-sm:is-full'>
+              Add New Team
             </Button>
           </div>
         </div>
@@ -274,19 +302,21 @@ const HubListTable = ({
                   {headerGroup.headers.map(header => (
                     <th key={header.id}>
                       {header.isPlaceholder ? null : (
-                        <div
-                          className={classnames({
-                            'flex items-center': header.column.getIsSorted(),
-                            'cursor-pointer select-none': header.column.getCanSort()
-                          })}
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                          {{
-                            asc: <i className='ri-arrow-up-s-line text-xl' />,
-                            desc: <i className='ri-arrow-down-s-line text-xl' />
-                          }[header.column.getIsSorted()] ?? null}
-                        </div>
+                        <>
+                          <div
+                            className={classnames({
+                              'flex items-center': header.column.getIsSorted(),
+                              'cursor-pointer select-none': header.column.getCanSort()
+                            })}
+                            onClick={header.column.getToggleSortingHandler()}
+                          >
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            {{
+                              asc: <i className='ri-arrow-up-s-line text-xl' />,
+                              desc: <i className='ri-arrow-down-s-line text-xl' />
+                            }[header.column.getIsSorted()] ?? null}
+                          </div>
+                        </>
                       )}
                     </th>
                   ))}
@@ -318,20 +348,35 @@ const HubListTable = ({
         </div>
         <div className='flex justify-between items-center p-4 border-t'>
           <div className='text-sm text-gray-600'>
-            Showing {(page - 1) * perPage + 1} to {Math.min(page * perPage, tableData?.total_count)} of{' '}
-            {tableData?.total_count} results
+            {(() => {
+              const totalCount =
+                tableData?.teams?.meta?.total_count ||
+                tableData?.teams?.meta?.total ||
+                tableData?.teams?.length ||
+                tableData?.teams?.data?.length ||
+                0
+              const start = (page - 1) * perPage + 1
+              const end = Math.min(page * perPage, totalCount)
+              return `Showing ${start} to ${end} of ${totalCount} results`
+            })()}
           </div>
           <CustomPagination
             page={page}
             perPage={perPage}
-            totalCount={tableData?.total_count || 0}
+            totalCount={
+              tableData?.teams?.meta?.total_count ||
+              tableData?.teams?.meta?.total ||
+              tableData?.teams?.length ||
+              tableData?.teams?.data?.length ||
+              0
+            }
             onPageChange={onPageChange}
           />
         </div>
       </Card>
-      <CreateHubDialog open={addHubOpen} setOpen={setAddHubOpen} />
+      <CreateTeamDialog open={addUserOpen} setOpen={setAddUserOpen} />
     </>
   )
 }
 
-export default HubListTable
+export default TeamListTable

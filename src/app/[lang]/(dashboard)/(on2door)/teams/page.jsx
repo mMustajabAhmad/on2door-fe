@@ -1,30 +1,85 @@
+'use client'
+
+// React Imports
+import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+
 // Component Imports
-import TeamList from '@views/on2door/teams/list'
+import TeamList from '@/views/on2door/teams/list'
 
-// Data Imports
-import { getUserData } from '@/app/server/actions'
+// API Imports
+import { getTeamsApi } from '@/app/api/on2door/actions'
 
-/**
- * ! If you need data using an API call, uncomment the below API code, update the `process.env.API_URL` variable in the
- * ! `.env` file found at root of your project and also update the API endpoints like `/apps/user-list` in below example.
- * ! Also, remove the above server action import and the action itself from the `src/app/server/actions.ts` file to clean up unused code
- * ! because we've used the server action for getting our static data.
- */
-/* const getUserData = async () => {
-  // Vars
-  const res = await fetch(`${process.env.API_URL}/apps/user-list`)
+const TeamListPage = () => {
+  const [page, setPage] = useState(1)
+  const [perPage, setPerPage] = useState(10)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [hubFilter, setHubFilter] = useState('')
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch userData')
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['teams', page, perPage, searchQuery, hubFilter],
+    queryFn: () => {
+      const payload = { page, per_page: perPage }
+      if (searchQuery) payload['q[name_cont]'] = searchQuery
+      if (hubFilter) payload['q[hub_id_eq]'] = hubFilter
+
+      return getTeamsApi(payload)
+    }
+  })
+
+  const handlePageChange = newPage => setPage(newPage)
+
+  const handlePerPageChange = newPerPage => {
+    setPage(1)
+    setPerPage(newPerPage)
   }
 
-  return res.json()
-} */
-const UserListApp = async () => {
-  // Vars
-  const data = await getUserData()
+  const handleSearchChange = value => {
+    setPage(1)
+    setSearchQuery(value)
+  }
 
-  return <TeamList userData={data} />
+  const handleHubFilterChange = value => {
+    setPage(1)
+    setHubFilter(value)
+  }
+
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='text-center'>
+          <i className='ri-loader-4-line text-6xl text-blue-500 mb-4 animate-spin'></i>
+          <h2 className='text-xl font-semibold mb-2'>Loading Teams...</h2>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='text-center'>
+          <i className='ri-error-warning-line text-6xl text-red-500 mb-4'></i>
+          <h2 className='text-xl font-semibold mb-2'>Failed to load teams</h2>
+          <p className='text-gray-600'>Please try again later</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <TeamList
+      teamData={data}
+      page={page}
+      perPage={perPage}
+      onPageChange={handlePageChange}
+      onPerPageChange={handlePerPageChange}
+      searchQuery={searchQuery}
+      setSearchQuery={handleSearchChange}
+      hubFilter={hubFilter}
+      onHubFilterChange={handleHubFilterChange}
+    />
+  )
 }
 
-export default UserListApp
+export default TeamListPage

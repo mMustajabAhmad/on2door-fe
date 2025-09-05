@@ -1,21 +1,42 @@
+'use client'
+
+// React Imports
+import { useState, useEffect } from 'react'
+
+// Component Imports
+import TeamListTable from './children/TeamListTable'
+
 // MUI Imports
 import Grid from '@mui/material/Grid2'
 
-// Component Imports
-import UserListTable from './TeamListTable'
-// import UserListCards from './AdminListCards'
-
-const UserList = ({ userData }) => {
+const TeamList = ({
+  teamData,
+  page,
+  perPage,
+  onPageChange,
+  onPerPageChange,
+  searchQuery,
+  setSearchQuery,
+  hubFilter,
+  onHubFilterChange
+}) => {
   return (
     <Grid container spacing={6}>
-      {/* <Grid size={{ xs: 12 }}>
-        <UserListCards />
-      </Grid> */}
       <Grid size={{ xs: 12 }}>
-        <UserListTable tableData={userData} />
+        <TeamListTable
+          tableData={teamData}
+          page={page}
+          perPage={perPage}
+          onPageChange={onPageChange}
+          onPerPageChange={onPerPageChange}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          hubFilter={hubFilter}
+          onHubFilterChange={onHubFilterChange}
+        />
       </Grid>
     </Grid>
   )
 }
 
-export default UserList
+export default TeamList
