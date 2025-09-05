@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
+import { useForm, Controller } from 'react-hook-form'
+
 // MUI
 import {
   Card,
@@ -36,15 +38,25 @@ const DriversTab = ({ teamData }) => {
   const teamId = teamData?.team?.data?.id
   const teamDrivers = teamData?.team?.data?.attributes?.drivers || []
 
-  const [selected, setSelected] = useState([])
-
   // Load all drivers
   const { data: driversRes } = useQuery({
     queryKey: ['drivers'],
     queryFn: getDriversApi
   })
   const drivers = driversRes?.drivers?.data || []
-  const assignedSet = new Set(teamDrivers.map(d => d.id))
+
+  const { control, handleSubmit, setValue } = useForm({
+    defaultValues: { driver_ids: [] }
+  })
+
+  useEffect(() => {
+    if (teamDrivers.length > 0) {
+      const currentIds = teamDrivers.map(d => d.id.toString())
+      setValue('driver_ids', currentIds)
+    } else {
+      setValue('driver_ids', [])
+    }
+  }, [teamDrivers, setValue])
 
   const { mutate: updateTeam, isPending } = useMutation({
     mutationFn: payload => updateTeamApi(teamId, payload),
@@ -53,34 +65,33 @@ const DriversTab = ({ teamData }) => {
       toast.success('Team drivers updated!')
       queryClient.invalidateQueries({ queryKey: ['team', teamId] })
       queryClient.invalidateQueries({ queryKey: ['drivers'] })
-      setSelected([])
     },
 
     onError: err => {
-      toast.error(
-      err?.response?.data?.error ||
-      err?.response?.data?.message ||
-      'Failed to update team dispatchers. Please try again.',
-      {
-        position: 'top-right',
-        autoClose: 3000
-      }
-    )
-  }
+      const currentIds = teamDrivers.map(d => d.id.toString())
+      setValue('driver_ids', currentIds)
+
+      const errorMessage =
+        err?.response?.data?.error || err?.response?.data?.message || 'Update failed. Reverting changes.'
+      toast.error(errorMessage, { position: 'top-right', autoClose: 3000 })
+    }
   })
 
-  const handleAdd = () => {
-    if (selected.length === 0) return
-    const mergedIds = [...new Set([...teamDrivers.map(d => d.id), ...selected])]
-    updateTeam({ team: { driver_ids: mergedIds } })
+  const onSubmit = data => {
+    const payload = { team: { driver_ids: data.driver_ids?.map(id => parseInt(id)) || [] } }
+    updateTeam(payload)
   }
 
   const handleRemove = id => {
     const remaining = teamDrivers.filter(d => d.id !== id).map(d => d.id)
-    updateTeam({ team: { driver_ids: remaining } })
+    const payload = { team: { driver_ids: remaining } }
+    updateTeam(payload)
   }
 
-  const getName = d => `${d.attributes?.first_name || ''} ${d.attributes?.last_name || ''}`.trim() || `Driver ${d.id}`
+  const getName = d => {
+    if (!d) return 'Unknown Driver'
+    return `${d.attributes?.first_name || ''} ${d.attributes?.last_name || ''}`.trim() || `Driver ${d.id}`
+  }
 
   return (
     <Card>
@@ -108,43 +119,52 @@ const DriversTab = ({ teamData }) => {
           <Typography color='text.secondary'>No drivers assigned</Typography>
         )}
 
-        {/* Add New */}
-        <Box mt={4} display='flex' gap={2} alignItems='flex-end'>
-          <FormControl sx={{ minWidth: 250 }}>
-            <InputLabel>Select Drivers</InputLabel>
-            <Select
-              multiple
-              value={selected}
-              onChange={e => setSelected(e.target.value)}
-              input={<OutlinedInput label='Select Drivers' />}
-              renderValue={ids => (
-                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                  {ids.map(id => {
-                    const d = drivers.find(x => x.id === id)
-                    return <Chip key={id} label={getName(d)} size='small' />
-                  })}
-                </Box>
-              )}
-            >
-              {drivers.map(d => {
-                const name = getName(d)
-                const alreadyAssigned = assignedSet.has(Number(d.id))
-                return (
-                  <MenuItem key={d.id} value={d.id} disabled={alreadyAssigned} disableRipple>
-                    {name}
-                  </MenuItem>
-                )
-              })}
-            </Select>
-          </FormControl>
-          <Button
-            variant='contained'
-            onClick={handleAdd}
-            disabled={selected.length === 0 || isPending}
-            startIcon={isPending ? <CircularProgress size={16} /> : null}
-          >
-            {isPending ? 'Saving...' : 'Add'}
-          </Button>
+        {/* Update Form */}
+        <Box mt={4}>
+          <Typography variant='h6' gutterBottom>
+            Update Drivers
+          </Typography>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Box display='flex' gap={2} alignItems='flex-end'>
+              <FormControl fullWidth>
+                <InputLabel>Select Drivers</InputLabel>
+                <Controller
+                  name='driver_ids'
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      multiple
+                      value={field.value || []}
+                      onChange={e => field.onChange(e.target.value)}
+                      input={<OutlinedInput label='Select Drivers' />}
+                      renderValue={selected => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {selected.map(value => {
+                            const d = drivers.find(x => x.id.toString() === value)
+                            return <Chip key={value} label={getName(d)} size='small' />
+                          })}
+                        </Box>
+                      )}
+                    >
+                      {drivers.map(d => (
+                        <MenuItem key={d.id} value={d.id.toString()}>
+                          {getName(d)}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+              </FormControl>
+              <Button
+                type='submit'
+                variant='contained'
+                disabled={isPending}
+                startIcon={isPending ? <CircularProgress size={16} /> : null}
+              >
+                {isPending ? 'Updating...' : 'Update'}
+              </Button>
+            </Box>
+          </form>
         </Box>
       </CardContent>
     </Card>
