@@ -270,103 +270,106 @@ const TaskListTable = ({
   })
 
   return (
-    <>
-      <Card>
-        <CardHeader title='Tasks' />
-        <TaskFilters
-          perPage={perPage}
-          onPerPageChange={onPerPageChange}
-          state={state}
-          onStateChange={onStateChange}
-        />
-        <Divider />
+    <Card>
+      <CardHeader title='Tasks' />
+      <TaskFilters
+        perPage={perPage}
+        onPerPageChange={onPerPageChange}
+        state={state}
+        onStateChange={onStateChange}
+      />
+      <Divider />
 
-        <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
-          <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
-            <DebouncedInput
-              value={searchQuery ?? ''}
-              onChange={value => setSearchQuery(String(value))}
-              placeholder='Search Task'
-              className='max-sm:is-full'
-            />
-            <Button color='secondary' variant='outlined' className='max-sm:is-full' onClick={() => setSearchQuery('')}>
-              Clear
-              <i className='ri-filter-line'></i>
-            </Button>
-          </div>
-          <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
-            <Button variant='contained' onClick={() => setAddUserOpen(true)} className='max-sm:is-full'>
-              Add New Task
-            </Button>
-          </div>
+      <div className='flex justify-between p-5 gap-4 flex-col items-start sm:flex-row sm:items-center'>
+        <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
+          <DebouncedInput
+            value={searchQuery ?? ''}
+            onChange={value => setSearchQuery(String(value))}
+            placeholder='Search Task'
+            className='max-sm:is-full'
+          />
+          <Button color='secondary' variant='outlined' className='max-sm:is-full' onClick={() => setSearchQuery('')}>
+            Clear
+            <i className='ri-filter-line'></i>
+          </Button>
         </div>
-        <div className='overflow-x-auto'>
-          <table className={tableStyles.table}>
-            <thead>
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th key={header.id}>
-                      {header.isPlaceholder ? null : (
-                        <>
-                          <div
-                            className={classnames({
-                              'flex items-center': header.column.getIsSorted(),
-                              'cursor-pointer select-none': header.column.getCanSort()
-                            })}
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                            {{
-                              asc: <i className='ri-arrow-up-s-line text-xl' />,
-                              desc: <i className='ri-arrow-down-s-line text-xl' />
-                            }[header.column.getIsSorted()] ?? null}
-                          </div>
-                        </>
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            {table.getFilteredRowModel().rows.length === 0 ? (
-              <tbody>
-                <tr>
-                  <td colSpan={table.getVisibleFlatColumns().length} className='text-center'>
-                    No data available
-                  </td>
-                </tr>
-              </tbody>
-            ) : (
-              <tbody>
-                {table.getRowModel().rows.map(row => {
-                  return (
-                    <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
-                      {row.getVisibleCells().map(cell => (
-                        <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-                      ))}
-                    </tr>
-                  )
-                })}
-              </tbody>
-            )}
-          </table>
-        </div>
-        <div className='flex justify-between items-center p-4 border-t'>
-          <div className='text-sm text-gray-600'>
-            Showing {(page - 1) * perPage + 1} to {Math.min(page * perPage, tableData?.total_count)} of{' '}
-            {tableData?.total_count} results
-          </div>
-          <CustomPagination
-            page={page}
-            perPage={perPage}
-            totalCount={tableData?.total_count || 0}
-            onPageChange={onPageChange}
+        <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
+          <OpenDialogOnElementClick
+            element={Button}
+            elementProps={{
+              variant: 'contained',
+              className: 'max-sm:is-full',
+              children: 'Add New Task'
+            }}
+            dialog={CreateTaskDialog}
           />
         </div>
-      </Card>
-      <CreateTaskDialog open={addUserOpen} setOpen={setAddUserOpen} />
-    </>
+      </div>
+      <div className='overflow-x-auto'>
+        <table className={tableStyles.table}>
+          <thead>
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <th key={header.id}>
+                    {header.isPlaceholder ? null : (
+                      <>
+                        <div
+                          className={classnames({
+                            'flex items-center': header.column.getIsSorted(),
+                            'cursor-pointer select-none': header.column.getCanSort()
+                          })}
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {{
+                            asc: <i className='ri-arrow-up-s-line text-xl' />,
+                            desc: <i className='ri-arrow-down-s-line text-xl' />
+                          }[header.column.getIsSorted()] ?? null}
+                        </div>
+                      </>
+                    )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          {table.getFilteredRowModel().rows.length === 0 ? (
+            <tbody>
+              <tr>
+                <td colSpan={table.getVisibleFlatColumns().length} className='text-center'>
+                  No data available
+                </td>
+              </tr>
+            </tbody>
+          ) : (
+            <tbody>
+              {table.getRowModel().rows.map(row => {
+                return (
+                  <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
+                    {row.getVisibleCells().map(cell => (
+                      <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                    ))}
+                  </tr>
+                )
+              })}
+            </tbody>
+          )}
+        </table>
+      </div>
+      <div className='flex justify-between items-center p-4 border-t'>
+        <div className='text-sm text-gray-600'>
+          Showing {(page - 1) * perPage + 1} to {Math.min(page * perPage, tableData?.total_count)} of{' '}
+          {tableData?.total_count} results
+        </div>
+        <CustomPagination
+          page={page}
+          perPage={perPage}
+          totalCount={tableData?.total_count || 0}
+          onPageChange={onPageChange}
+        />
+      </div>
+    </Card>
   )
 }
 
