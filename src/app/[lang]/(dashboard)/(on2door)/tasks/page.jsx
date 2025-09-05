@@ -14,14 +14,14 @@ const TaskListPage = () => {
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(10)
   const [searchQuery, setSearchQuery] = useState('')
-  const [hubFilter, setHubFilter] = useState('')
+  const [state, setState] = useState('')
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['tasks', page, perPage, searchQuery, hubFilter],
+    queryKey: ['tasks', page, perPage, searchQuery, state],
     queryFn: () => {
       const payload = { page, per_page: perPage }
-      if (searchQuery) payload['q[name_cont]'] = searchQuery
-      if (hubFilter) payload['q[hub_id_eq]'] = hubFilter
+      if (searchQuery) payload['q[state_or_driver_id_or_team_id_or_recipient_id_eq]'] = searchQuery
+      if (state) payload['q[state_eq]'] = state
 
       return getTasksApi(payload)
     }
@@ -39,9 +39,9 @@ const TaskListPage = () => {
     setSearchQuery(value)
   }
 
-  const handleHubFilterChange = value => {
+  const handleStateChange = value => {
     setPage(1)
-    setHubFilter(value)
+    setState(value)
   }
 
   if (isLoading) {
@@ -69,15 +69,15 @@ const TaskListPage = () => {
 
   return (
     <TaskList
-      teamData={data}
+      taskData={data}
       page={page}
       perPage={perPage}
       onPageChange={handlePageChange}
       onPerPageChange={handlePerPageChange}
       searchQuery={searchQuery}
       setSearchQuery={handleSearchChange}
-      hubFilter={hubFilter}
-      onHubFilterChange={handleHubFilterChange}
+      state={state}
+      onStateChange={handleStateChange}
     />
   )
 }
