@@ -19,15 +19,14 @@ import TaskTabs from '@/views/on2door/tasks/show/children/TaskTabs'
 import { getTaskApi } from '@/app/api/on2door/actions'
 
 // Dynamic imports for tabs
-const HubTab = dynamic(() => import('@/views/on2door/teams/show/children/hub'))
-const DispatchersTab = dynamic(() => import('@/views/on2door/teams/show/children/dispatcher'))
-const DriversTab = dynamic(() => import('@/views/on2door/teams/show/children/driver'))
+const AssignmentTab = dynamic(() => import('@/views/on2door/tasks/show/children/AssignmentTab'))
+const RequirementsTab = dynamic(() => import('@/views/on2door/tasks/show/children/RequirementsTab'))
 
 const TaskViewPage = () => {
   const { id } = useParams()
-  const [activeTab, setActiveTab] = useState('hub')
+  const [activeTab, setActiveTab] = useState('assignment')
 
-  const { data: taskData, isLoading, error } = useQuery({
+  const { data: taskData, isLoading, error} = useQuery({
     queryKey: ['task', id],
     queryFn: () => getTaskApi(id)
   })
@@ -56,9 +55,8 @@ const TaskViewPage = () => {
   }
 
   const tabContentList = {
-    hub: <HubTab taskData={taskData} />,
-    dispatchers: <DispatchersTab taskData={taskData} />,
-    drivers: <DriversTab taskData={taskData} />
+    assignment: <AssignmentTab taskData={taskData} />,
+    requirements: <RequirementsTab taskData={taskData} />
   }
 
   return (

@@ -9,18 +9,16 @@ import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
 
 const TaskTabs = ({ activeTab, setActiveTab, tabContentList }) => {
-
   const handleTabChange = (event, newValue) => setActiveTab(newValue)
 
   return (
     <Card>
-      <CardHeader title='Team Management' />
+      <CardHeader title='Task Management' />
       <CardContent>
         <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-          <Tabs value={activeTab} onChange={handleTabChange} aria-label='team management tabs'>
-            <Tab label='Hub' value='hub' />
-            <Tab label='Dispatchers' value='dispatchers' />
-            <Tab label='Drivers' value='drivers' />
+          <Tabs value={activeTab} onChange={handleTabChange} aria-label='task management tabs'>
+            <Tab label='Assignment' value='assignment' />
+            <Tab label='Requirements' value='requirements' />
           </Tabs>
         </Box>
 

@@ -8,7 +8,6 @@ import Chip from '@mui/material/Chip'
 import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
-import Avatar from '@mui/material/Avatar'
 
 // Component Imports
 import EditTaskDialog from '@/components/on2door/dialogs/task/update'
@@ -19,8 +18,28 @@ import { getInitials } from '@/utils/getInitials'
 const TaskDetails = ({ taskData }) => {
   const task = taskData?.task?.data?.attributes || {}
   const taskId = taskData?.task?.data?.id
-  const dispatchersCount = task.dispatchers_count || 0
-  const driversCount = task.drivers_count || 0
+
+  // Get status color based on task state
+  const getStatusColor = state => {
+    switch (state) {
+      case 'unassigned':
+        return 'warning'
+      case 'assigned':
+        return 'info'
+      case 'active':
+        return 'primary'
+      case 'completed':
+        return 'success'
+      default:
+        return 'default'
+    }
+  }
+
+  // Format date
+  const formatDate = dateString => {
+    if (!dateString) return 'N/A'
+    return new Date(dateString).toLocaleDateString()
+  }
 
   return (
     <Card>
@@ -29,30 +48,36 @@ const TaskDetails = ({ taskData }) => {
           <div className='flex items-center justify-center flex-col gap-4'>
             <div className='flex flex-col items-center gap-4'>
               <CustomAvatar variant='rounded' skin='light' color='primary' size={120}>
-                <Typography variant='h5'>{getInitials(task.name || 'Task')}</Typography>
+                <i className='ri-task-line text-4xl' />
               </CustomAvatar>
-              <Typography variant='h5'>{task.name}</Typography>
+              <Typography variant='h5'>Task # {task.short_id || taskId}</Typography>
             </div>
-            <Chip label='Active Task' color='success' size='small' variant='tonal' />
+            <Chip
+              label={task.state?.replace('_', ' ').toUpperCase() || 'UNKNOWN'}
+              color={getStatusColor(task.state)}
+              size='small'
+              variant='tonal'
+            />
           </div>
+
           <div className='flex items-center justify-around flex-wrap gap-4'>
             <div className='flex items-center gap-2'>
               <CustomAvatar variant='rounded' skin='light' color='primary' size={50}>
-                <i className='ri-user-3-line' />
+                <i className='ri-team-line' />
               </CustomAvatar>
-              <Typography variant='h6'>{dispatchersCount} Dispatchers</Typography>
+              <Typography variant='h6'>Team {task.team_id || 'N/A'}</Typography>
             </div>
             <div className='flex items-center gap-2'>
               <CustomAvatar variant='rounded' skin='light' color='secondary' size={50}>
                 <i className='ri-steering-2-line' />
               </CustomAvatar>
-              <Typography variant='h6'>{driversCount} Drivers</Typography>
+              <Typography variant='h6'>{task.driver_id ? `Driver ${task.driver_id}` : 'Unassigned'}</Typography>
             </div>
           </div>
         </div>
 
         <div>
-          <Typography variant='h5'>Task Details</Typography>
+          <Typography variant='h5'>Task Information</Typography>
           <Divider className='mlb-4' />
           <div className='flex flex-col gap-2'>
             <div className='flex items-center gap-2'>
@@ -65,18 +90,34 @@ const TaskDetails = ({ taskData }) => {
             </div>
             <div className='flex items-center gap-2'>
               <Typography variant='body2' color='text.secondary'>
-                Organization ID:
+                Short ID:
               </Typography>
               <Typography variant='body2' fontWeight='medium'>
-                #{task.organization_id}
+                {task.short_id || 'N/A'}
               </Typography>
             </div>
             <div className='flex items-center gap-2'>
               <Typography variant='body2' color='text.secondary'>
-                Hub:
+                State:
               </Typography>
               <Typography variant='body2' fontWeight='medium'>
-                {task.hub_id ? task.hub?.name || `Hub ${task.hub_id}` : 'No Hub Assigned'}
+                {task.state?.replace('_', ' ').toUpperCase() || 'N/A'}
+              </Typography>
+            </div>
+            <div className='flex items-center gap-2'>
+              <Typography variant='body2' color='text.secondary'>
+                Created:
+              </Typography>
+              <Typography variant='body2' fontWeight='medium'>
+                {formatDate(task.created_at)}
+              </Typography>
+            </div>
+            <div className='flex items-center gap-2'>
+              <Typography variant='body2' color='text.secondary'>
+                Pickup Task:
+              </Typography>
+              <Typography variant='body2' fontWeight='medium'>
+                {task.pickup_task ? 'Yes' : 'No'}
               </Typography>
             </div>
           </div>
@@ -95,9 +136,14 @@ const TaskDetails = ({ taskData }) => {
             dialogProps={{
               currentTask: {
                 id: taskId,
-                name: task.name,
-                hub_id: task.hub_id,
-                administrator_ids: task.administrators || []
+                short_id: task.short_id,
+                state: task.state,
+                pickup_task: task.pickup_task,
+                destination_notes: task.destination_notes,
+                team_id: task.team_id,
+                driver_id: task.driver_id,
+                recipient_id: task.recipient_id,
+                address_id: task.address_id
               }
             }}
           />
