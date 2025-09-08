@@ -41,7 +41,8 @@ const SideNav = ({ dictionary, scrollMenu }) => {
   const { lang: locale } = params
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
 
-  const organizationId = '1' //localStorage
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'))
+  const organizationId = currentUser?.organization_id
 
   return (
     // eslint-disable-next-line lines-around-comment
