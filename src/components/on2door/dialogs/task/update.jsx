@@ -36,7 +36,7 @@ import { object, string, pipe, nonEmpty, optional, array, boolean, number } from
 import { toast } from 'react-toastify'
 
 // API Imports
-import { updateTaskApi, getTeamsApi, getDriversApi, getTasksApi } from '@/app/api/on2door/actions'
+import { updateTaskApi, getTeamsApi, getDriversApi, getTasksApi, getTaskApi } from '@/app/api/on2door/actions'
 
 const schema = object({
   pickup_task: boolean(),
@@ -129,33 +129,40 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
     queryFn: () => getTasksApi()
   })
 
+  const { data: taskData, isLoading: isLoadingTask } = useQuery({
+    queryKey: ['task', currentTask?.id],
+    queryFn: () => getTaskApi(currentTask?.id),
+    enabled: !!currentTask?.id && open
+  })
+
   const teams = teamsData?.teams?.data || []
   const drivers = driversData?.drivers?.data || []
   const existingTasks = tasksData?.tasks?.data || []
 
   useEffect(() => {
-    if (currentTask && open) {
-      console.log('Populating form with current task data:', currentTask)
+    if (taskData && open && !isLoadingTask) {
       setIsFormPopulated(false)
-      
+
+      const task = taskData?.task?.data?.attributes || {}
+
       // Basic task fields
-      setValue('pickup_task', Boolean(currentTask.pickup_task))
-      setValue('complete_after', currentTask.complete_after || '')
-      setValue('complete_before', currentTask.complete_before || '')
-      setValue('destination_notes', currentTask.destination_notes || '')
-      setValue('service_time', currentTask.service_time || '')
-      setValue('quantity', currentTask.quantity || '')
+      setValue('pickup_task', Boolean(task.pickup_task))
+      setValue('complete_after', task.complete_after ? task.complete_after.substring(0, 16) : '')
+      setValue('complete_before', task.complete_before ? task.complete_before.substring(0, 16) : '')
+      setValue('destination_notes', task.destination_notes || '')
+      setValue('service_time', task.service_time || '')
+      setValue('quantity', task.quantity || '')
       
-      // ID fields - handle both direct and nested access
-      setValue('driver_id', currentTask.driver_id?.toString() || currentTask.attributes?.driver_id?.toString() || '')
-      setValue('team_id', currentTask.team_id?.toString() || currentTask.attributes?.team_id?.toString() || '')
+      // ID fields
+      setValue('driver_id', task.driver_id?.toString() || '')
+      setValue('team_id', task.team_id?.toString() || '')
       
       // Linked tasks
-      const linkedTasks = currentTask.linked_task_ids || currentTask.attributes?.linked_task_ids || []
+      const linkedTasks = task.linked_task_ids || []
       setValue('linked_task_ids', linkedTasks.map(id => id.toString()))
       
       // Task completion requirements
-      const completionReqs = currentTask.task_completion_requirements || currentTask.attributes?.task_completion_requirements || {}
+      const completionReqs = task.task_completion_requirements || {}
       setValue('task_completion_requirements', {
         customer_signature: Boolean(completionReqs.customer_signature),
         photo_of_delivery: Boolean(completionReqs.photo_of_delivery),
@@ -163,14 +170,14 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
       })
 
       // Recipient attributes
-      const recipient = currentTask.recipient_attributes || currentTask.attributes?.recipient_attributes || {}
+      const recipient = task.recipient_attributes || {}
       setValue('recipient_attributes', {
         name: recipient.name || '',
         phone_number: recipient.phone_number || ''
       })
 
       // Address attributes
-      const address = currentTask.address_attributes || currentTask.attributes?.address_attributes || {}
+      const address = task.address_attributes || {}
       setValue('address_attributes', {
         name: address.name || '',
         street: address.street || '',
@@ -186,10 +193,10 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
       setTimeout(() => {
         setIsFormPopulated(true)
       }, 100)
-    } else {
+    } else if (!taskData && open) {
       setIsFormPopulated(false)
     }
-  }, [currentTask, open, setValue])
+  }, [taskData, open, isLoadingTask, setValue])
 
   const { mutate: updateTask, isPending } = useMutation({
     mutationFn: ({ id, payload }) => updateTaskApi(id, payload),
@@ -234,7 +241,7 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
       }
     }
 
-    updateTask({ id: currentTask.id, payload })
+    updateTask({ id: taskData?.task?.data?.id || currentTask?.id, payload })
   }
 
   const handleClose = () => {
@@ -273,14 +280,14 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
           </Alert>
         )}
 
-        {!isFormPopulated && currentTask && (
+        {(!isFormPopulated || isLoadingTask) && currentTask && (
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 4 }}>
             <CircularProgress size={40} />
             <Typography sx={{ ml: 2 }}>Loading task data...</Typography>
           </Box>
         )}
 
-        {isFormPopulated && (
+        {isFormPopulated && !isLoadingTask && (
           <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={5} paddingTop={4}>
             {/* Team Selection */}
@@ -741,7 +748,7 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
         )}
       </DialogContent>
 
-      {isFormPopulated && (
+      {isFormPopulated && !isLoadingTask && (
         <DialogActions className='justify-center pbs-0 sm:pbe-16 sm:pli-16'>
           <Button
             variant='contained'
