@@ -182,7 +182,7 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
         name: address.name || '',
         street: address.street || '',
         street_number: address.street_number?.toString() || '',
-        appartment: address.appartment || '',
+        appartment: address.appartment?.toString() || '',
         city: address.city || '',
         state: address.state || '',
         postal_code: address.postal_code || '',
