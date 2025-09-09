@@ -37,7 +37,7 @@ const AssignmentTab = ({ taskData }) => {
     queryKey: ['drivers'],
     queryFn: getDriversApi
   })
-  const drivers = driversRes?.drivers?.data || []
+  const allDrivers = driversRes?.drivers?.data || []
 
   const { data: teamsRes } = useQuery({
     queryKey: ['teams'],
@@ -45,17 +45,33 @@ const AssignmentTab = ({ taskData }) => {
   })
   const teams = teamsRes?.teams?.data || []
 
-  const { control, handleSubmit, setValue } = useForm({
+  const { control, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
       driver_id: '',
       team_id: ''
     }
   })
 
+  // Watch the selected team_id
+  const selectedTeamId = watch('team_id')
+
+  // Filter drivers based on selected team
+  const filteredDrivers = selectedTeamId 
+    ? allDrivers.filter(driver => {
+        const driverTeamIds = driver.attributes?.team_ids || []
+        return driverTeamIds.includes(parseInt(selectedTeamId))
+      })
+    : allDrivers
+
   useEffect(() => {
     setValue('driver_id', task.driver_id?.toString() || '')
     setValue('team_id', task.team_id?.toString() || '')
   }, [task, setValue])
+
+  // Reset driver selection when team changes
+  useEffect(() => {
+    setValue('driver_id', '')
+  }, [selectedTeamId, setValue])
 
   const { mutate: updateTask, isPending } = useMutation({
     mutationFn: payload => updateTaskApi(taskId, payload),
@@ -132,32 +148,6 @@ const AssignmentTab = ({ taskData }) => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box display='flex' gap={2} alignItems='flex-end' className='mb-4'>
             <FormControl fullWidth>
-              <InputLabel>Select Driver</InputLabel>
-              <Controller
-                name='driver_id'
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    value={field.value || ''}
-                    onChange={e => field.onChange(e.target.value)}
-                    input={<OutlinedInput label='Select Driver' />}
-                  >
-                    <MenuItem value=''>
-                      <em>Unassigned</em>
-                    </MenuItem>
-                    {drivers.map(d => (
-                      <MenuItem key={d.id} value={d.id.toString()}>
-                        {getName(d)}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </FormControl>
-          </Box>
-
-          <Box display='flex' gap={2} alignItems='flex-end' className='mb-4'>
-            <FormControl fullWidth>
               <InputLabel>Select Team</InputLabel>
               <Controller
                 name='team_id'
@@ -176,6 +166,46 @@ const AssignmentTab = ({ taskData }) => {
                         {getTeamName(t)}
                       </MenuItem>
                     ))}
+                  </Select>
+                )}
+              />
+            </FormControl>
+          </Box>
+
+            <Box display='flex' gap={2} alignItems='flex-end' className='mb-4'>
+            <FormControl fullWidth>
+              <InputLabel>
+                {selectedTeamId 
+                  ? `Select Driver from Team (${filteredDrivers.length} available)` 
+                  : 'Select Driver'
+                }
+              </InputLabel>
+              <Controller
+                name='driver_id'
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value || ''}
+                    onChange={e => field.onChange(e.target.value)}
+                    input={<OutlinedInput label={selectedTeamId 
+                      ? `Select Driver from Team (${filteredDrivers.length} available)` 
+                      : 'Select Driver'
+                    } />}
+                  >
+                    <MenuItem value=''>
+                      <em>Unassigned</em>
+                    </MenuItem>
+                    {filteredDrivers.length === 0 && selectedTeamId ? (
+                      <MenuItem disabled>
+                        <em>No drivers available for this team</em>
+                      </MenuItem>
+                    ) : (
+                      filteredDrivers.map(d => (
+                        <MenuItem key={d.id} value={d.id.toString()}>
+                          {getName(d)}
+                        </MenuItem>
+                      ))
+                    )}
                   </Select>
                 )}
               />
