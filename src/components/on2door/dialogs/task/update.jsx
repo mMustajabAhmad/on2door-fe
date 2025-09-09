@@ -79,6 +79,7 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors }
   } = useForm({
     resolver: valibotResolver(schema),
@@ -136,8 +137,24 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
   })
 
   const teams = teamsData?.teams?.data || []
-  const drivers = driversData?.drivers?.data || []
+  const allDrivers = driversData?.drivers?.data || []
   const existingTasks = tasksData?.tasks?.data || []
+
+  // Watch the selected team_id
+  const selectedTeamId = watch('team_id')
+
+  // Filter drivers based on selected team
+  const filteredDrivers = selectedTeamId 
+    ? allDrivers.filter(driver => {
+        const driverTeamIds = driver.attributes?.team_ids || []
+        return driverTeamIds.includes(parseInt(selectedTeamId))
+      })
+    : allDrivers
+
+  // Reset driver selection when team changes
+  useEffect(() => {
+    setValue('driver_id', '')
+  }, [selectedTeamId, setValue])
 
   useEffect(() => {
     if (taskData && open && !isLoadingTask) {
@@ -326,20 +343,34 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
                 control={control}
                 render={({ field }) => (
                   <FormControl fullWidth disabled={isPending}>
-                    <InputLabel>Select Driver (Optional)</InputLabel>
+                    <InputLabel>
+                      {selectedTeamId 
+                        ? `Select Driver from Team (${filteredDrivers.length} available)` 
+                        : 'Select Driver (Optional)'
+                      }
+                    </InputLabel>
                     <Select
                       value={field.value || ''}
                       onChange={e => field.onChange(e.target.value)}
-                      input={<OutlinedInput label='Select Driver (Optional)' />}
+                      input={<OutlinedInput label={selectedTeamId 
+                        ? `Select Driver from Team (${filteredDrivers.length} available)` 
+                        : 'Select Driver (Optional)'
+                      } />}
                     >
                       <MenuItem value=''>
                         <em>No Driver Assigned</em>
                       </MenuItem>
-                      {drivers.map(driver => (
-                        <MenuItem key={driver.id} value={driver.id.toString()}>
-                          {driver.attributes?.first_name} {driver.attributes?.last_name}
+                      {filteredDrivers.length === 0 && selectedTeamId ? (
+                        <MenuItem disabled>
+                          <em>No drivers available for this team</em>
                         </MenuItem>
-                      ))}
+                      ) : (
+                        filteredDrivers.map(driver => (
+                          <MenuItem key={driver.id} value={driver.id.toString()}>
+                            {driver.attributes?.first_name} {driver.attributes?.last_name}
+                          </MenuItem>
+                        ))
+                      )}
                     </Select>
                   </FormControl>
                 )}

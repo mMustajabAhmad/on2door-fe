@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -77,6 +77,8 @@ const CreateTaskDialog = ({ open, setOpen }) => {
     control,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors }
   } = useForm({
     resolver: valibotResolver(schema),
@@ -128,8 +130,24 @@ const CreateTaskDialog = ({ open, setOpen }) => {
   })
 
   const teams = teamsData?.teams?.data || []
-  const drivers = driversData?.drivers?.data || []
+  const allDrivers = driversData?.drivers?.data || []
   const existingTasks = tasksData?.tasks?.data || []
+
+  // Watch the selected team_id
+  const selectedTeamId = watch('team_id')
+
+  // Filter drivers based on selected team
+  const filteredDrivers = selectedTeamId 
+    ? allDrivers.filter(driver => {
+        const driverTeamIds = driver.attributes?.team_ids || []
+        return driverTeamIds.includes(parseInt(selectedTeamId))
+      })
+    : allDrivers
+
+  // Reset driver selection when team changes
+  useEffect(() => {
+    setValue('driver_id', '')
+  }, [selectedTeamId, setValue])
 
   const { mutate: createTask, isPending } = useMutation({
     mutationFn: createTaskApi,
@@ -218,8 +236,11 @@ const CreateTaskDialog = ({ open, setOpen }) => {
                     <Select
                       value={field.value || ''}
                       onChange={e => field.onChange(e.target.value)}
-                      input={<OutlinedInput label='Select Team *' />}
+                      input={<OutlinedInput label='Select Team (Optional)' />}
                     >
+                      <MenuItem value=''>
+                        <em>No Team Assigned</em>
+                      </MenuItem>
                       {teams.map(team => (
                         <MenuItem key={team.id} value={team.id.toString()}>
                           {team.attributes?.name || `Team ${team.id}`}
@@ -243,20 +264,34 @@ const CreateTaskDialog = ({ open, setOpen }) => {
                 control={control}
                 render={({ field }) => (
                   <FormControl fullWidth disabled={isPending}>
-                    <InputLabel>Select Driver (Optional)</InputLabel>
+                    <InputLabel>
+                      {selectedTeamId 
+                        ? `Select Driver from Team (${filteredDrivers.length} available)` 
+                        : 'Select Driver (Optional)'
+                      }
+                    </InputLabel>
                     <Select
                       value={field.value || ''}
                       onChange={e => field.onChange(e.target.value)}
-                      input={<OutlinedInput label='Select Driver (Optional)' />}
+                      input={<OutlinedInput label={selectedTeamId 
+                        ? `Select Driver from Team (${filteredDrivers.length} available)` 
+                        : 'Select Driver (Optional)'
+                      } />}
                     >
                       <MenuItem value=''>
                         <em>No Driver Assigned</em>
                       </MenuItem>
-                      {drivers.map(driver => (
-                        <MenuItem key={driver.id} value={driver.id.toString()}>
-                          {driver.attributes?.first_name} {driver.attributes?.last_name}
+                      {filteredDrivers.length === 0 && selectedTeamId ? (
+                        <MenuItem disabled>
+                          <em>No drivers available for this team</em>
                         </MenuItem>
-                      ))}
+                      ) : (
+                        filteredDrivers.map(driver => (
+                          <MenuItem key={driver.id} value={driver.id.toString()}>
+                            {driver.attributes?.first_name} {driver.attributes?.last_name}
+                          </MenuItem>
+                        ))
+                      )}
                     </Select>
                   </FormControl>
                 )}
