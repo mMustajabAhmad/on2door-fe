@@ -1,30 +1,85 @@
+'use client'
+
+// React Imports
+import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+
 // Component Imports
-import TaskList from '@views/on2door/tasks/list'
+import TaskList from '@/views/on2door/tasks/list'
 
-// Data Imports
-import { getUserData } from '@/app/server/actions'
+// API Imports
+import { getTasksApi } from '@/app/api/on2door/actions'
 
-/**
- * ! If you need data using an API call, uncomment the below API code, update the `process.env.API_URL` variable in the
- * ! `.env` file found at root of your project and also update the API endpoints like `/apps/user-list` in below example.
- * ! Also, remove the above server action import and the action itself from the `src/app/server/actions.ts` file to clean up unused code
- * ! because we've used the server action for getting our static data.
- */
-/* const getUserData = async () => {
-  // Vars
-  const res = await fetch(`${process.env.API_URL}/apps/user-list`)
+const TaskListPage = () => {
+  const [page, setPage] = useState(1)
+  const [perPage, setPerPage] = useState(10)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [state, setState] = useState('')
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch userData')
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['tasks', page, perPage, searchQuery, state],
+    queryFn: () => {
+      const payload = { page, per_page: perPage }
+      if (searchQuery) payload['q[state_or_driver_id_or_team_id_or_recipient_id_eq]'] = searchQuery
+      if (state) payload['q[state_eq]'] = state
+
+      return getTasksApi(payload)
+    }
+  })
+
+  const handlePageChange = newPage => setPage(newPage)
+
+  const handlePerPageChange = newPerPage => {
+    setPage(1)
+    setPerPage(newPerPage)
   }
 
-  return res.json()
-} */
-const UserListApp = async () => {
-  // Vars
-  const data = await getUserData()
+  const handleSearchChange = value => {
+    setPage(1)
+    setSearchQuery(value)
+  }
 
-  return <TaskList userData={data} />
+  const handleStateChange = value => {
+    setPage(1)
+    setState(value)
+  }
+
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='text-center'>
+          <i className='ri-loader-4-line text-6xl text-blue-500 mb-4 animate-spin'></i>
+          <h2 className='text-xl font-semibold mb-2'>Loading Tasks...</h2>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='text-center'>
+          <i className='ri-error-warning-line text-6xl text-red-500 mb-4'></i>
+          <h2 className='text-xl font-semibold mb-2'>Failed to load tasks</h2>
+          <p className='text-gray-600'>Please try again later</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <TaskList
+      taskData={data}
+      page={page}
+      perPage={perPage}
+      onPageChange={handlePageChange}
+      onPerPageChange={handlePerPageChange}
+      searchQuery={searchQuery}
+      setSearchQuery={handleSearchChange}
+      state={state}
+      onStateChange={handleStateChange}
+    />
+  )
 }
 
-export default UserListApp
+export default TaskListPage

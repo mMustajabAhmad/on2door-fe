@@ -1,0 +1,76 @@
+// MUI Imports
+import CardContent from '@mui/material/CardContent'
+import FormControl from '@mui/material/FormControl'
+import Grid from '@mui/material/Grid2'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import Button from '@mui/material/Button'
+
+const TaskFilters = ({ perPage, onPerPageChange, state, onStateChange }) => {
+  
+  const handleClearFilters = () => {
+    onStateChange('')
+    onPerPageChange(10)
+  }
+
+  return (
+    <CardContent>
+      <Grid container spacing={5}>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <FormControl fullWidth>
+            <InputLabel id='state-select'>Select State</InputLabel>
+            <Select
+              fullWidth
+              id='select-state'
+              label='Select State'
+              value={state}
+              onChange={e => onStateChange(e.target.value)}
+              labelId='state-select'
+              inputProps={{ placeholder: 'Select State' }}
+            >
+              <MenuItem value=''>Select State</MenuItem>
+              <MenuItem value='0'>Unassigned</MenuItem>
+              <MenuItem value='1'>Assigned</MenuItem>
+              <MenuItem value='2'>Active</MenuItem>
+              <MenuItem value='3'>Completed</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <FormControl fullWidth>
+            <InputLabel id='per-page-select'>Records per page</InputLabel>
+            <Select
+              fullWidth
+              id='select-per-page'
+              label='Records per page'
+              value={perPage}
+              onChange={e => onPerPageChange(Number(e.target.value))}
+              labelId='per-page-select'
+            >
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={25}>25</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 2 }}>
+          <Button
+            variant='outlined'
+            color='secondary'
+            onClick={handleClearFilters}
+            fullWidth
+            sx={{ height: '55px', gap: 1.5 }}
+          >
+            Clear
+            <i className='ri-filter-line'></i>
+          </Button>
+        </Grid>
+      </Grid>
+    </CardContent>
+  )
+}
+
+export default TaskFilters
