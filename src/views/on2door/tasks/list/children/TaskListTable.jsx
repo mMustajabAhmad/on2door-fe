@@ -5,12 +5,10 @@ import { useEffect, useState, useMemo } from 'react'
 
 // Next Imports
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
 //Component Imports
 import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
-import CreateTaskDialog from '@/components/on2door/dialogs/task/create'
-import EditTaskDialog from '@/components/on2door/dialogs/task/update'
 import DeleteTaskDialog from '@/components/on2door/dialogs/task/delete'
 
 // MUI Imports
@@ -103,6 +101,7 @@ const TaskListTable = ({
   state,
   onStateChange
 }) => {
+  const router = useRouter()
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [data, setData] = useState([])
@@ -118,7 +117,7 @@ const TaskListTable = ({
     console.log('API Data:', apiData)
     return apiData.tasks.data.map(task => ({
       id: task.id,
-      pickup_task: task.attributes?.pickup_task === true ? 'Yes' : 'No', 
+      pickup_task: task.attributes?.pickup_task === true ? 'Yes' : 'No',
       state: task.attributes?.state || 'N/A',
       created_at: task.attributes?.created_at.split('T')[0] || 'N/A',
       driver_id: task.attributes?.driver_id || 'Unassigned',
@@ -226,15 +225,9 @@ const TaskListTable = ({
                 <i className='ri-eye-line text-textSecondary' />
               </Link>
             </IconButton>
-            <OpenDialogOnElementClick
-              element={IconButton}
-              elementProps={{
-                color: 'primary',
-                children: <i className='ri-edit-box-line text-textSecondary' />
-              }}
-              dialog={EditTaskDialog}
-              dialogProps={{ currentTask: row.original }}
-            />
+            <IconButton color='primary' onClick={() => router.push(`/tasks/update/${row.original.id}`)}>
+              <i className='ri-edit-box-line text-textSecondary' />
+            </IconButton>
           </div>
         ),
         enableSorting: false
@@ -294,15 +287,9 @@ const TaskListTable = ({
           </Button>
         </div>
         <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
-          <OpenDialogOnElementClick
-            element={Button}
-            elementProps={{
-              variant: 'contained',
-              className: 'max-sm:is-full',
-              children: 'Add New Task'
-            }}
-            dialog={CreateTaskDialog}
-          />
+          <Button variant='contained' className='max-sm:is-full' onClick={() => router.push('/tasks/create')}>
+            Add New Task
+          </Button>
         </div>
       </div>
       <div className='overflow-x-auto'>
