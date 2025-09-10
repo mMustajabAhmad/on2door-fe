@@ -1,5 +1,8 @@
 'use client'
 
+// Next Imports
+import { useRouter } from 'next/navigation'
+
 // MUI Imports
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -10,12 +13,11 @@ import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 
 // Component Imports
-import EditTaskDialog from '@/components/on2door/dialogs/task/update'
-import OpenDialogOnElementClick from '@/components/on2door/dialogs/OpenDialogOnElementClick'
 import CustomAvatar from '@core/components/mui/Avatar'
 import { getInitials } from '@/utils/getInitials'
 
 const TaskDetails = ({ taskData }) => {
+  const router = useRouter()
   const task = taskData?.task?.data?.attributes || {}
   const taskId = taskData?.task?.data?.id
 
@@ -124,29 +126,14 @@ const TaskDetails = ({ taskData }) => {
         </div>
 
         <Box className='flex justify-center'>
-          <OpenDialogOnElementClick
-            element={Button}
-            elementProps={{
-              children: 'Edit Task',
-              variant: 'contained',
-              color: 'primary',
-              startIcon: <i className='ri-edit-line' />
-            }}
-            dialog={EditTaskDialog}
-            dialogProps={{
-              currentTask: {
-                id: taskId,
-                short_id: task.short_id,
-                state: task.state,
-                pickup_task: task.pickup_task,
-                destination_notes: task.destination_notes,
-                team_id: task.team_id,
-                driver_id: task.driver_id,
-                recipient_id: task.recipient_id,
-                address_id: task.address_id
-              }
-            }}
-          />
+          <Button
+            variant='contained'
+            color='primary'
+            startIcon={<i className='ri-edit-line' />}
+            onClick={() => router.push(`/tasks/update/${taskId}`)}
+          >
+            Edit Task
+          </Button>
         </Box>
       </CardContent>
     </Card>
