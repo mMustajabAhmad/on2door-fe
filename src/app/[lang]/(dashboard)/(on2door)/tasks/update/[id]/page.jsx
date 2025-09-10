@@ -44,7 +44,7 @@ const schema = object({
   service_time: optional(string()),
   quantity: optional(string()),
   driver_id: optional(string()),
-  team_id: pipe(string(), nonEmpty('Team is required')),
+  team_id: optional(string()),
   linked_task_ids: optional(array(string())),
   task_completion_requirements: object({
     customer_signature: boolean(),
@@ -298,7 +298,7 @@ const UpdateTaskPage = () => {
                     control={control}
                     render={({ field }) => (
                       <FormControl fullWidth disabled={isPending} error={!!errors.team_id}>
-                        <InputLabel>Select Team *</InputLabel>
+                        <InputLabel>Select Team</InputLabel>
                         <Select
                           value={field.value || ''}
                           onChange={e => field.onChange(e.target.value)}
