@@ -1,7 +1,8 @@
 'use client'
 
 // React Imports
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { toast } from 'react-toastify'
 import { useMutation } from '@tanstack/react-query'
 import { loginAdministratorApi } from '@/app/api/on2door/actions'
 
@@ -90,6 +91,22 @@ const Login = ({ mode }) => {
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
+  useEffect(() => {
+    const showSessionExpiredToast = localStorage.getItem('showSessionExpiredToast')
+    if (showSessionExpiredToast === 'true') {
+      toast.error('Session expired. Please login again.', {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      })
+      // flag created in AuthGuard when redirecting due to expired token
+      localStorage.removeItem('showSessionExpiredToast')
+    }
+  }, [])
+
   const { mutate: loginAdministrator, isPending } = useMutation({
     mutationFn: loginAdministratorApi,
 
@@ -99,8 +116,11 @@ const Login = ({ mode }) => {
       const user = dataRes?.administrator?.data?.attributes
       const token = user?.auth_token
 
-      if (token) localStorage.setItem('authToken', token)
-      if (user) localStorage.setItem('currentUser', JSON.stringify(user))
+      // Use utility function to set auth data
+      if (token && user) {
+        localStorage.setItem('authToken', token)
+        localStorage.setItem('currentUser', JSON.stringify(user))
+      }
 
       const redirectURL = searchParams.get('redirectTo') ?? '/'
       router.replace(getLocalizedUrl(redirectURL, locale))
