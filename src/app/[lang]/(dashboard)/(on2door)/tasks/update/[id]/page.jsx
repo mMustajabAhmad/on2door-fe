@@ -304,6 +304,9 @@ const UpdateTaskPage = () => {
                           onChange={e => field.onChange(e.target.value)}
                           input={<OutlinedInput label='Select Team *' />}
                         >
+                          <MenuItem value=''>
+                            <em>No Team Assigned</em>
+                          </MenuItem>
                           {teams.map(team => (
                             <MenuItem key={team.id} value={team.id.toString()}>
                               {team.attributes?.name || `Team ${team.id}`}

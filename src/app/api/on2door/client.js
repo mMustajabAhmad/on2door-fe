@@ -52,7 +52,7 @@ const client = (apiURL = API_URL) => {
       },
       error => {
         const status = error.response?.status
-        if (status === 401 || status === 403) handleTokenExpiration()
+        if (status === 401) handleTokenExpiration()
 
         return Promise.reject(error)
       }

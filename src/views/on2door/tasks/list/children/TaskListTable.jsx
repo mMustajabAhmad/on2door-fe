@@ -117,7 +117,7 @@ const TaskListTable = ({
     console.log('API Data:', apiData)
     return apiData.tasks.data.map(task => ({
       id: task.id,
-      pickup_task: task.attributes?.pickup_task === true ? 'Yes' : 'No',
+      task_name: `${task.attributes?.short_id || task.id} - ${task.attributes?.recipient_attributes?.name || 'Unknown Recipient'}`,
       state: task.attributes?.state || 'N/A',
       created_at: task.attributes?.created_at.split('T')[0] || 'N/A',
       driver_id: task.attributes?.driver_id || 'Unassigned',
@@ -157,11 +157,11 @@ const TaskListTable = ({
           />
         )
       },
-      columnHelper.accessor('pickup_task', {
-        header: 'Pickup Task',
+      columnHelper.accessor('task_name', {
+        header: 'Task Name',
         cell: ({ row }) => (
           <Typography className='font-medium' color='text.primary'>
-            {row.original.pickup_task}
+            {row.original.task_name}
           </Typography>
         )
       }),
