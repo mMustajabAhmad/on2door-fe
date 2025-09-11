@@ -549,6 +549,8 @@ const CreateTaskPage = () => {
                       fullWidth
                       label='Apartment *'
                       placeholder='e.g., Apt 50'
+                      error={!!errors.address_attributes?.appartment}
+                      helperText={errors.address_attributes?.appartment?.message}
                       disabled={isPending}
                     />
                   )}

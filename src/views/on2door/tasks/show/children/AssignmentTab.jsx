@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { useForm, Controller } from 'react-hook-form'
 
@@ -18,7 +19,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  OutlinedInput,
+  OutlinedInput
 } from '@mui/material'
 
 import CircularProgress from '@mui/material/CircularProgress'
@@ -28,9 +29,14 @@ import { getDriversApi, getTeamsApi, updateTaskApi } from '@/app/api/on2door/act
 import { getInitials } from '@/utils/getInitials'
 
 const AssignmentTab = ({ taskData }) => {
+  const router = useRouter()
   const queryClient = useQueryClient()
   const taskId = taskData?.task?.data?.id
   const task = taskData?.task?.data?.attributes || {}
+
+  // Get current user role
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'))
+  const userRole = currentUser?.role
 
   // Load all drivers and teams
   const { data: driversRes } = useQuery({
@@ -76,14 +82,52 @@ const AssignmentTab = ({ taskData }) => {
   const { mutate: updateTask, isPending } = useMutation({
     mutationFn: payload => updateTaskApi(taskId, payload),
 
-    onSuccess: () => {
-      toast.success('Task assignment updated!')
+    onSuccess: (variables) => {
+      if (userRole === 'dispatcher' && variables.task.team_id === null) {
+        toast.success('Team unassigned. Redirecting to tasks list...', {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        })
+        setTimeout(() => {
+          router.push('/tasks')
+        }, 1500)
+        return
+      }
+      
+      toast.success('Task assignment updated!', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      })
       queryClient.invalidateQueries({ queryKey: ['task', taskId] })
       queryClient.invalidateQueries({ queryKey: ['drivers'] })
       queryClient.invalidateQueries({ queryKey: ['teams'] })
+      queryClient.invalidateQueries({ queryKey: ['tasks'] })
     },
 
     onError: err => {
+      if (err?.response?.status === 403 && userRole === 'dispatcher') {
+        toast.error('You no longer have access to this task. Redirecting to tasks list.', {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        })
+        setTimeout(() => {
+          router.push('/tasks')
+        }, 2000)
+        return
+      }
+
       const errorMessage =
         err?.response?.data?.error || err?.response?.data?.message || 'Update failed. Reverting changes.'
       toast.error(errorMessage, { position: 'top-right', autoClose: 3000 })
