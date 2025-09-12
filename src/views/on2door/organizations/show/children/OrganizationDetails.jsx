@@ -17,6 +17,17 @@ const OrganizationDetails = ({ organizationData }) => {
   const organization = organizationData.organization?.data?.attributes || {}
   const organizationName = organization.name || 'N/A'
 
+  const formatMonthlyDeliveryVolume = volume => {
+    const volumeMap = {
+      range_0_100: '0 - 100',
+      range_101_2000: '101 - 2000',
+      range_2001_5000: '2001 - 5000',
+      range_5001_12500: '5001 - 12500',
+      range_12501_plus: '12501+'
+    }
+    return volumeMap[volume] || volume || 'N/A'
+  }
+
   return (
     <>
       <Card>
@@ -62,9 +73,9 @@ const OrganizationDetails = ({ organizationData }) => {
 
               <div className='flex items-center flex-wrap gap-x-1.5'>
                 <Typography className='font-medium' color='text.primary'>
-                  Monthly Delivery Voulme:
+                  Monthly Delivery Volume:
                 </Typography>
-                <Typography>{organization.monthly_delivery_volume || 'N/A'}</Typography>
+                <Typography>{formatMonthlyDeliveryVolume(organization.monthly_delivery_volume)}</Typography>
               </div>
 
               <div className='flex items-center flex-wrap gap-x-1.5'>
@@ -78,7 +89,7 @@ const OrganizationDetails = ({ organizationData }) => {
                 <Typography className='font-medium' color='text.primary'>
                   TimeZone:
                 </Typography>
-                <Typography>{organization.timezone|| 'N/A'}</Typography>
+                <Typography>{organization.timezone || 'N/A'}</Typography>
               </div>
             </div>
           </div>
@@ -91,7 +102,7 @@ const OrganizationDetails = ({ organizationData }) => {
               dialogProps={{
                 data: organizationData,
                 currentOrganization: {
-                  id: organization.id,
+                  id: organization.id
                 }
               }}
             />

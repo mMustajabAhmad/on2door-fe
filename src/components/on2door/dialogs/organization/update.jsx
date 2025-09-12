@@ -11,7 +11,6 @@ import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import Alert from '@mui/material/Alert'
 import CircularProgress from '@mui/material/CircularProgress'
-import Box from '@mui/material/Box'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
@@ -37,7 +36,7 @@ const schema = object({
   message: pipe(string(), nonEmpty('Message is required')),
   monthly_delivery_volume: pipe(string(), nonEmpty('This field is required')),
   primary_industry: pipe(string(), nonEmpty('This field is required')),
-  country: pipe(string(), nonEmpty('Country is required')),
+  country: pipe(string(), nonEmpty('Country is required'))
 })
 
 const EditOrganizationDialog = ({ open, setOpen, currentOrganization }) => {
@@ -61,7 +60,6 @@ const EditOrganizationDialog = ({ open, setOpen, currentOrganization }) => {
     queryFn: () => getOrganizationApi(currentOrganization?.id),
     enabled: !!currentOrganization?.id && open
   })
-
 
   const { mutate: updateOrganization, isPending } = useMutation({
     mutationFn: ({ id, payload }) => updateOrganizationApi(id, payload),
@@ -166,7 +164,6 @@ const EditOrganizationDialog = ({ open, setOpen, currentOrganization }) => {
                 )}
               />
             </Grid>
-
 
             <Grid size={{ xs: 12 }}>
               <Controller
