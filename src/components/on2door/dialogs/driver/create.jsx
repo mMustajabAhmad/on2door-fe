@@ -28,7 +28,7 @@ import FormHelperText from '@mui/material/FormHelperText'
 // Third-party Imports
 import { Controller, useForm } from 'react-hook-form'
 import { valibotResolver } from '@hookform/resolvers/valibot'
-import { object, string, email, pipe, nonEmpty, optional, array } from 'valibot'
+import { object, string, email, pipe, nonEmpty, optional, array, minLength } from 'valibot'
 import { toast } from 'react-toastify'
 
 // API Imports
@@ -39,7 +39,7 @@ const schema = object({
   first_name: pipe(string(), nonEmpty('This field is required')),
   last_name: pipe(string(), nonEmpty('This field is required')),
   phone_number: pipe(string(), nonEmpty('This field is required')),
-  team_ids: array(string(), nonEmpty('This field is required')),
+  team_ids: pipe(array(string()), minLength(1, 'Please select at least one team')),
   license_plate: pipe(string(), nonEmpty('License plate is required')),
   vehicle_type: pipe(string(), nonEmpty('Vehicle type is required')),
   color: optional(string()),
