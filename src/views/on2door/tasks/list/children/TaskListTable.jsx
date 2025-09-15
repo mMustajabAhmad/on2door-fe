@@ -114,7 +114,7 @@ const TaskListTable = ({
   // Transform API data to match expected format
   const transformApiData = apiData => {
     if (!apiData?.tasks?.data) return []
-    console.log('API Data:', apiData)
+    // console.log('API Data:', apiData)
     return apiData.tasks.data.map(task => ({
       id: task.id,
       task_name: `${task.attributes?.short_id || task.id} - ${task.attributes?.recipient_attributes?.name || 'Unknown Recipient'}`,
