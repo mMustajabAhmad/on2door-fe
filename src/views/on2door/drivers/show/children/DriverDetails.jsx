@@ -16,10 +16,22 @@ import { getInitials } from '@/utils/getInitials'
 
 const DriverDetails = ({ driverData }) => {
   const driver = driverData?.driver?.data?.attributes || {}
+  const vehicle = driver.vehicle_attributes || {}
 
   const fullName = `${driver.first_name || ''} ${driver.last_name || ''}`.trim() || 'N/A'
   const status = driver.is_active ? 'active' : 'inactive'
   const teamIds = driver.team_ids || []
+
+  const formatVehicleType = type => {
+    const typeMap = {
+      car: 'Car',
+      van: 'Van',
+      truck: 'Truck',
+      motorcycle: 'Motorcycle',
+      bicycle: 'Bicycle'
+    }
+    return typeMap[type] || type || 'N/A'
+  }
 
   return (
     <>
@@ -109,6 +121,41 @@ const DriverDetails = ({ driverData }) => {
                 <Typography color='text.primary'>
                   {teamIds.length > 0 ? teamIds.join(', ') : 'No teams assigned'}
                 </Typography>
+              </div>
+            </div>
+          </div>
+
+          {/* Vehicle Information Section */}
+          <div>
+            <Typography variant='h5'>Vehicle Information</Typography>
+            <Divider className='mlb-4' />
+            <div className='flex flex-col gap-3'>
+              <div className='flex items-center flex-wrap gap-x-1.5'>
+                <Typography className='font-medium' color='text.primary'>
+                  License Plate:
+                </Typography>
+                <Typography>{vehicle.license_plate || 'N/A'}</Typography>
+              </div>
+
+              <div className='flex items-center flex-wrap gap-x-1.5'>
+                <Typography className='font-medium' color='text.primary'>
+                  Vehicle Type:
+                </Typography>
+                <Typography>{formatVehicleType(vehicle.type)}</Typography>
+              </div>
+
+              <div className='flex items-center flex-wrap gap-x-1.5'>
+                <Typography className='font-medium' color='text.primary'>
+                  Color:
+                </Typography>
+                <Typography>{vehicle.color || 'N/A'}</Typography>
+              </div>
+
+              <div className='flex items-center flex-wrap gap-x-1.5'>
+                <Typography className='font-medium' color='text.primary'>
+                  Description:
+                </Typography>
+                <Typography>{vehicle.description || 'N/A'}</Typography>
               </div>
             </div>
           </div>

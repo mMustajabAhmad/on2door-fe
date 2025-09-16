@@ -23,11 +23,12 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Chip from '@mui/material/Chip'
 import OutlinedInput from '@mui/material/OutlinedInput'
+import FormHelperText from '@mui/material/FormHelperText'
 
 // Third-party Imports
 import { Controller, useForm } from 'react-hook-form'
 import { valibotResolver } from '@hookform/resolvers/valibot'
-import { object, string, email, pipe, nonEmpty, optional, array } from 'valibot'
+import { object, string, email, pipe, nonEmpty, optional, array, minLength } from 'valibot'
 import { toast } from 'react-toastify'
 
 // API Imports
@@ -38,7 +39,11 @@ const schema = object({
   first_name: pipe(string(), nonEmpty('This field is required')),
   last_name: pipe(string(), nonEmpty('This field is required')),
   phone_number: pipe(string(), nonEmpty('This field is required')),
-  team_ids: array(string(), nonEmpty('This field is required'))
+  team_ids: pipe(array(string()), minLength(1, 'Please select at least one team')),
+  license_plate: pipe(string(), nonEmpty('License plate is required')),
+  vehicle_type: pipe(string(), nonEmpty('Vehicle type is required')),
+  color: optional(string()),
+  description: optional(string())
 })
 
 const CreateDriverDialog = ({ open, setOpen }) => {
@@ -57,7 +62,11 @@ const CreateDriverDialog = ({ open, setOpen }) => {
       first_name: '',
       last_name: '',
       phone_number: '',
-      team_ids: []
+      team_ids: [],
+      license_plate: '',
+      vehicle_type: '',
+      color: '',
+      description: ''
     }
   })
 
@@ -97,7 +106,11 @@ const CreateDriverDialog = ({ open, setOpen }) => {
       last_name: data.last_name,
       phone_number: data.phone_number,
       is_active: false,
-      team_ids: data.team_ids?.map(id => parseInt(id)) || []
+      team_ids: data.team_ids?.map(id => parseInt(id)) || [],
+      license_plate: data.license_plate,
+      vehicle_type: data.vehicle_type,
+      color: data.color,
+      description: data.description
     }
 
     createDriver(payload)
@@ -211,7 +224,7 @@ const CreateDriverDialog = ({ open, setOpen }) => {
                 name='team_ids'
                 control={control}
                 render={({ field }) => (
-                  <FormControl fullWidth disabled={isPending}>
+                  <FormControl fullWidth error={!!errors.team_ids} disabled={isPending}>
                     <InputLabel>Select Teams</InputLabel>
                     <Select
                       multiple
@@ -235,7 +248,90 @@ const CreateDriverDialog = ({ open, setOpen }) => {
                         </MenuItem>
                       ))}
                     </Select>
+                    {errors.team_ids && <FormHelperText>{errors.team_ids.message}</FormHelperText>}
                   </FormControl>
+                )}
+              />
+            </Grid>
+
+            {/* Vehicle Information Section */}
+            <Grid size={{ xs: 12 }}>
+              <Typography variant='h6' className='mb-4'>
+                Vehicle Information
+              </Typography>
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Controller
+                name='license_plate'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='License Plate'
+                    placeholder='ABC123'
+                    error={!!errors.license_plate}
+                    helperText={errors.license_plate?.message}
+                    disabled={isPending}
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Controller
+                name='vehicle_type'
+                control={control}
+                render={({ field }) => (
+                  <FormControl fullWidth error={!!errors.vehicle_type} disabled={isPending}>
+                    <InputLabel>Vehicle Type</InputLabel>
+                    <Select value={field.value} label='Vehicle Type' onChange={field.onChange} onBlur={field.onBlur}>
+                      <MenuItem value=''>Select vehicle type</MenuItem>
+                      <MenuItem value='car'>Car</MenuItem>
+                      <MenuItem value='truck'>Truck</MenuItem>
+                      <MenuItem value='van'>Van</MenuItem>
+                      <MenuItem value='motorcycle'>Motorcycle</MenuItem>
+                      <MenuItem value='bicycle'>Bicycle</MenuItem>
+                    </Select>
+                    {errors.vehicle_type && <FormHelperText>{errors.vehicle_type.message}</FormHelperText>}
+                  </FormControl>
+                )}
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Controller
+                name='color'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='Vehicle Color (Optional)'
+                    placeholder='White'
+                    error={!!errors.color}
+                    helperText={errors.color?.message}
+                    disabled={isPending}
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Controller
+                name='description'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='Vehicle Description (Optional)'
+                    placeholder='Delivery van'
+                    error={!!errors.description}
+                    helperText={errors.description?.message}
+                    disabled={isPending}
+                  />
                 )}
               />
             </Grid>
