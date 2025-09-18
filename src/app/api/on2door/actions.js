@@ -225,3 +225,28 @@ export function destroyTaskApi(id) {
     .delete(`/administrators/tasks/${id}`)
     .then(response => response.data)
 }
+
+// Schedules
+export function getSchedulesApi(payload) {
+  return client()
+    .get('/administrators/schedules', { params: payload })
+    .then(response => response.data)
+}
+
+export function createScheduleApi(payload) {
+  return client()
+    .post('/administrators/schedules', payload)
+    .then(response => response.data)
+}
+
+export function createSubscheduleApi(payload) {
+  return client()
+    .post('/administrators/subschedules', payload)
+    .then(response => response.data)
+}
+
+export function destroySubscheduleApi(id) {
+  return client()
+    .delete(`/administrators/subschedules/${id}`)
+    .then(response => response.data)
+}
