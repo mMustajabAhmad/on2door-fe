@@ -31,16 +31,10 @@ const scheduleSchema = object({
   date: pipe(string(), nonEmpty('Date is required'))
 })
 
-const subscheduleSchema = object({
-  shift_start: pipe(string(), nonEmpty('Shift start time is required')),
-  shift_end: pipe(string(), nonEmpty('Shift end time is required'))
-})
-
 const ScheduleTab = ({ driverData }) => {
   const [selectedDate, setSelectedDate] = useState('')
   const [createdScheduleId, setCreatedScheduleId] = useState(null)
   const [errorState, setErrorState] = useState(null)
-  const [subscheduleErrorState, setSubscheduleErrorState] = useState(null)
   const [timeSlots, setTimeSlots] = useState([{ start: '', end: '' }])
   const [isSaving, setIsSaving] = useState(false)
   const queryClient = useQueryClient()
@@ -79,26 +73,6 @@ const ScheduleTab = ({ driverData }) => {
       date: ''
     }
   })
-
-  // Subschedule form
-  const {
-    control: subscheduleControl,
-    handleSubmit: handleSubscheduleSubmit,
-    reset: resetSubschedule,
-    watch: watchSubschedule,
-    formState: { errors: subscheduleErrors }
-  } = useForm({
-    resolver: valibotResolver(subscheduleSchema),
-    defaultValues: {
-      shift_start: '',
-      shift_end: ''
-    }
-  })
-
-  // Watch subschedule form values for real-time validation
-  const watchedStartTime = watchSubschedule('shift_start')
-  const watchedEndTime = watchSubschedule('shift_end')
-  const durationError = validateShiftDuration(watchedStartTime, watchedEndTime)
 
   // Fetch existing schedules
   const { data: schedulesData, refetch: refetchSchedules } = useQuery({
@@ -145,25 +119,6 @@ const ScheduleTab = ({ driverData }) => {
     }
   })
 
-  // Create subschedule mutation
-  const { mutate: createSubschedule, isPending: isCreatingSubschedule } = useMutation({
-    mutationFn: createSubscheduleApi,
-    onMutate: () => setSubscheduleErrorState(null),
-    onSuccess: () => {
-      toast.success('Subschedule created successfully!', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true
-      })
-      queryClient.invalidateQueries({ queryKey: ['schedules', driverId] })
-      resetSubschedule()
-    },
-    onError: err => setSubscheduleErrorState(err)
-  })
-
   const onScheduleSubmit = data => {
     const payload = {
       schedule: {
@@ -174,51 +129,24 @@ const ScheduleTab = ({ driverData }) => {
     createSchedule(payload)
   }
 
-  const onSubscheduleSubmit = data => {
-    if (!createdScheduleId) {
-      toast.error('Please create a schedule first!', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true
-      })
-      return
-    }
-
-    const payload = {
-      subschedule: {
-        schedule_id: parseInt(createdScheduleId),
-        shift_start: data.shift_start,
-        shift_end: data.shift_end
-      }
-    }
-    createSubschedule(payload)
-  }
-
   const handleDateChange = date => {
     setSelectedDate(date)
     checkExistingSchedule(date)
-    // Reset time slots when date changes
     setTimeSlots([{ start: '', end: '' }])
   }
 
-  // Add new time slot
   const addTimeSlot = () => {
     const newSlots = timeSlots.concat([{ start: '', end: '' }])
     setTimeSlots(newSlots)
   }
 
-  // Remove time slot
   const removeTimeSlot = index => {
     if (timeSlots.length > 1) {
       const newSlots = timeSlots.filter((slot, i) => i !== index)
       setTimeSlots(newSlots)
     }
   }
- 
-  // Update time slot
+
   const updateTimeSlot = (index, field, value) => {
     const newSlots = timeSlots.map((slot, i) => {
       if (i === index) {
@@ -229,7 +157,6 @@ const ScheduleTab = ({ driverData }) => {
     setTimeSlots(newSlots)
   }
 
-  // Save all subschedules
   const saveAllSubschedules = async () => {
     if (!createdScheduleId) {
       toast.error('Please create a schedule first!', {
@@ -243,7 +170,6 @@ const ScheduleTab = ({ driverData }) => {
       return
     }
 
-    // Validate all time slots
     const validSlots = timeSlots.filter(slot => slot.start && slot.end)
     if (validSlots.length === 0) {
       toast.error('Please add at least one time slot!', {
@@ -257,7 +183,6 @@ const ScheduleTab = ({ driverData }) => {
       return
     }
 
-    // Validate duration for each slot
     for (const slot of validSlots) {
       const validation = validateShiftDuration(slot.start, slot.end)
       if (validation !== true) {
@@ -274,7 +199,6 @@ const ScheduleTab = ({ driverData }) => {
     }
 
     setIsSaving(true)
-    setSubscheduleErrorState(null)
 
     try {
       // Create all subschedules
@@ -309,13 +233,12 @@ const ScheduleTab = ({ driverData }) => {
       }, 500)
     } catch (error) {
       console.error('Error creating subschedules:', error)
-      setSubscheduleErrorState(error)
     } finally {
       setIsSaving(false)
     }
   }
 
-  // Check for existing schedules when schedules data is loaded
+  // Check for existing schedules
   useEffect(() => {
     if (schedulesData && selectedDate) {
       checkExistingSchedule(selectedDate)
@@ -438,13 +361,12 @@ const ScheduleTab = ({ driverData }) => {
             )}
 
             {/* Error Display */}
-            {(errorState || subscheduleErrorState) && (
+            {errorState && (
               <Alert severity='error' sx={{ mb: 2 }}>
                 <Typography variant='body2'>
                   {errorState?.response?.data?.error ||
                     errorState?.response?.data?.message ||
-                    subscheduleErrorState?.response?.data?.error ||
-                    subscheduleErrorState?.response?.data?.message ||
+                    errorState?.message ||
                     'An error occurred. Please try again.'}
                 </Typography>
               </Alert>
