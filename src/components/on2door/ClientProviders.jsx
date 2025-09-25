@@ -7,6 +7,7 @@ import { useState } from 'react'
 // import { NextAuthProvider } from '@/contexts/nextAuthProvider'
 import { VerticalNavProvider } from '@menu/contexts/verticalNavContext'
 import { SettingsProvider } from '@core/contexts/settingsContext'
+import { ActionCableProvider } from '@/contexts/ActionCableContext'
 import ThemeProvider from '@components/theme'
 import ReduxProvider from '@/redux-store/ReduxProvider'
 
@@ -14,11 +15,13 @@ import ReduxProvider from '@/redux-store/ReduxProvider'
 import AppReactToastify from '@/libs/styles/AppReactToastify'
 
 const ClientProviders = ({ children, mode, settingsCookie, systemMode, direction }) => {
+
   const [queryClient] = useState(() => new QueryClient())
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* <NextAuthProvider basePath={process.env.NEXTAUTH_BASEPATH}> */}
+      <ActionCableProvider>
         <VerticalNavProvider>
           <SettingsProvider settingsCookie={settingsCookie} mode={mode}>
             <ThemeProvider direction={direction} systemMode={systemMode}>
@@ -27,6 +30,7 @@ const ClientProviders = ({ children, mode, settingsCookie, systemMode, direction
             </ThemeProvider>
           </SettingsProvider>
         </VerticalNavProvider>
+      </ActionCableProvider>
       {/* </NextAuthProvider> */}
     </QueryClientProvider>
   )

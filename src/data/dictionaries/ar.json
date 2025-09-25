@@ -109,6 +109,8 @@
     "drivers": "السائقون",
     "teams": "الفرق",
     "hubs": "المراكز",
-    "organization": "المنظمة"
+    "organization": "المنظمة",
+    "tasks": "المهام",
+    "fleet": "الأسطول"
   }
 }

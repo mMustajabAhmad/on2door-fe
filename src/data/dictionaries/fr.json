@@ -109,6 +109,8 @@
     "drivers": "Chauffeurs",
     "teams": "Équipes",
     "hubs": "Centres",
-    "organization": "Organisation"
+    "organization": "Organisation",
+    "tasks": "Tâches",
+    "fleet": "Flotte"
   }
 }
