@@ -75,15 +75,10 @@ export const useRealTimeDrivers = () => {
   // Fetch active tasks and subscribe to them
   const initializeActiveTasks = useCallback(async () => {
     if (!cable || hasInitialized) return
-
-    // console.log('Fetching active tasks')
     getTasksApi({ 'q[state_eq]': '2' }).then(response => {
       if (response?.tasks?.data) {
         const activeTasks = response.tasks.data.map(task => parseInt(task.id))
-        // console.log('Found active tasks:', activeTasks)
-
         setActiveTaskIds(new Set(activeTasks))
-
         activeTasks.forEach(taskId => {
           subscribeToTask(taskId)
         })
@@ -117,8 +112,7 @@ export const useRealTimeDrivers = () => {
       })
     }
 
-    const pollMs = 60000 // fetch active tasks every 60s
-    const interval = setInterval(pollNewActiveTasks, pollMs)
+    const interval = setInterval(pollNewActiveTasks, 60000)
     pollNewActiveTasks()
 
     return () => clearInterval(interval)
