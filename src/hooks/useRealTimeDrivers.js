@@ -22,7 +22,11 @@ export const useRealTimeDrivers = () => {
         longitude: data.lng,
         timestamp: data.updated_at,
         status: 'active',
-        task_id: parseInt(data.task_id)
+        task_id: parseInt(data.task_id),
+        destination: {
+          dest_lat: data.destination.lat,
+          dest_lng: data.destination.lng
+        }
       }
       newMap.set(data.driver_id, driverData)
       return newMap
