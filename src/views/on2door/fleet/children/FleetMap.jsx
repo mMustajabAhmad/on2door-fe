@@ -22,37 +22,61 @@ const FleetMap = props => {
   // State for routes
   const [routes, setRoutes] = useState(new Map())
 
+  // Deterministic HEX color per driver (Mapbox expects color tokens like hex/rgb)
+  const colorPalette = [
+    '#EF4444',
+    '#F59E0B',
+    '#10B981',
+    '#3B82F6',
+    '#8B5CF6',
+    '#EC4899',
+    '#14B8A6',
+    '#84CC16',
+    '#A855F7',
+    '#F97316'
+  ]
+  const getColorForDriver = useCallback(driverId => {
+    const idNum = Math.abs(parseInt(driverId, 10) || 0)
+    return colorPalette[idNum % colorPalette.length]
+  }, [])
+
   // Function to fetch route from Mapbox Directions API
-  const fetchRoute = useCallback(async (driverLat, driverLng, destLat, destLng) => {
-    try {
-      const response = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/driving/${driverLng},${driverLat};${destLng},${destLat}?geometries=geojson&overview=full&steps=false&access_token=${mapboxAccessToken}`
-      )
+  const fetchRoute = useCallback(
+    async (driverLat, driverLng, destLat, destLng) => {
+      try {
+        const response = await fetch(
+          `https://api.mapbox.com/directions/v5/mapbox/driving/${driverLng},${driverLat};${destLng},${destLat}?geometries=geojson&overview=full&steps=false&access_token=${mapboxAccessToken}`
+        )
 
-      if (!response.ok) throw new Error('Failed to fetch route')
-      
-      const data = await response.json()
+        if (!response.ok) throw new Error('Failed to fetch route')
 
-      if (data.routes && data.routes.length > 0) {
-        const route = {
-          type: 'Feature',
-          properties: {},
-          geometry: data.routes[0].geometry
+        const data = await response.json()
+
+        if (data.routes && data.routes.length > 0) {
+          const route = {
+            type: 'Feature',
+            properties: {},
+            geometry: data.routes[0].geometry
+          }
+
+          return route
         }
-        
-        return route
+      } catch (error) {
+        console.error('Error fetching route:', error)
+        return null
       }
-    } catch (error) {
-      console.error('Error fetching route:', error)
-      return null
-    }
-  }, [mapboxAccessToken])
+    },
+    [mapboxAccessToken]
+  )
 
   //update route for a driver
-  const updateDriverRoute = useCallback(async (driverId, driverLat, driverLng, destLat, destLng) => {
-    const route = await fetchRoute(driverLat, driverLng, destLat, destLng)
-    if (route) setRoutes(prev => new Map(prev.set(driverId, route)))
-  }, [fetchRoute])
+  const updateDriverRoute = useCallback(
+    async (driverId, driverLat, driverLng, destLat, destLng) => {
+      const route = await fetchRoute(driverLat, driverLng, destLat, destLng)
+      if (route) setRoutes(prev => new Map(prev.set(driverId, route)))
+    },
+    [fetchRoute]
+  )
 
   // Update routes when drivers change
   useEffect(() => {
@@ -68,6 +92,8 @@ const FleetMap = props => {
       }
     })
   }, [drivers, updateDriverRoute])
+
+  // Note: auto-focus-on-new-driver disabled to avoid abrupt camera moves during busy hours
 
   // Fly to selected driver when chosen from sidebar; no auto-fit on updates
   // useEffect(() => {
@@ -124,12 +150,12 @@ const FleetMap = props => {
       >
         {/* Route polylines */}
         {Array.from(routes.entries()).map(([driverId, route]) => (
-          <Source key={`route-${driverId}`} id={`route-${driverId}`} type="geojson" data={route}>
+          <Source key={`route-${driverId}`} id={`route-${driverId}`} type='geojson' data={route}>
             <Layer
               id={`route-line-${driverId}`}
-              type="line"
+              type='line'
               paint={{
-                'line-color': '#3B82F6',
+                'line-color': getColorForDriver(driverId),
                 'line-width': 4,
                 'line-opacity': 0.8
               }}
@@ -140,6 +166,7 @@ const FleetMap = props => {
         {/* Real-time drivers */}
         {drivers.map((driver, index) => {
           const isSelected = selectedDriver?.id === driver.id
+          const markerColor = getColorForDriver(driver.id)
           return (
             <div key={driver.id || index}>
               {/* Driver marker */}
@@ -149,19 +176,21 @@ const FleetMap = props => {
                 style={{ display: 'flex' }}
                 onClick={() => onDriverSelect && onDriverSelect(driver)}
               >
-                <img
-                  src='/images/apps/logistics/fleet-car.png'
-                  height={isSelected ? 50 : 42}
-                  width={isSelected ? 24 : 20}
-                  style={{
-                    filter: isSelected
-                      ? 'drop-shadow(0 0 10px #FF6B35) drop-shadow(0 0 20px #FF6B35)' // Orange highlight for selected
-                      : 'drop-shadow(0 0 7px #4CAF50)', // Green for real-time
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                  alt={`Driver ${driver.id}`}
-                />
+                <svg
+                  width={isSelected ? 30 : 24}
+                  height={isSelected ? 40 : 32}
+                  viewBox='0 0 24 32'
+                  style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
+                  aria-label={`Driver ${driver.id}`}
+                >
+                  <path
+                    d='M12 0C6.477 0 2 4.477 2 10c0 6.5 8.2 20 10 20s10-13.5 10-20C22 4.477 17.523 0 12 0z'
+                    fill={markerColor}
+                    stroke={isSelected ? '#111827' : 'white'}
+                    strokeWidth={isSelected ? 2 : 1}
+                  />
+                  <circle cx='12' cy='10' r='4' fill='white' />
+                </svg>
               </Marker>
 
               {/* Destination pin */}
@@ -171,11 +200,11 @@ const FleetMap = props => {
                   latitude={driver.destination.dest_lat}
                   style={{ display: 'flex' }}
                 >
-                <img
-                  src='/images/apps/logistics/destination-pin.png'
-                  height={isSelected ? 50 : 42}
-                  width={isSelected ? 24 : 20}
-                />
+                  <img
+                    src='/images/apps/logistics/destination-pin.png'
+                    height={isSelected ? 50 : 42}
+                    width={isSelected ? 24 : 20}
+                  />
                 </Marker>
               )}
             </div>
