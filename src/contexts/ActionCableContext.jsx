@@ -10,9 +10,7 @@ const ActionCableContext = createContext()
 
 export const useActionCable = () => {
   const context = useContext(ActionCableContext)
-  if (!context) {
-    throw new Error('useActionCable must be used within an ActionCableProvider')
-  }
+  if (!context) throw new Error('useActionCable must be used within an ActionCableProvider')
   return context
 }
 

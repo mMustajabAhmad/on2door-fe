@@ -24,9 +24,7 @@ const Fleet = ({ mapboxAccessToken }) => {
   const { settings } = useSettings()
 
   // Handlers
-  const handleDriverSelect = driver => {
-    setSelectedDriver(driver)
-  }
+  const handleDriverSelect = driver => setSelectedDriver(driver)
 
   return (
     <div
