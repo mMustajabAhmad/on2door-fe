@@ -22,9 +22,8 @@ const FleetMap = props => {
   // State for routes
   const [routes, setRoutes] = useState(new Map())
 
-  // Deterministic HEX color per driver (Mapbox expects color tokens like hex/rgb)
+  // HEX color per driver 
   const colorPalette = [
-    '#EF4444',
     '#F59E0B',
     '#10B981',
     '#3B82F6',
@@ -92,20 +91,6 @@ const FleetMap = props => {
       }
     })
   }, [drivers, updateDriverRoute])
-
-  // Note: auto-focus-on-new-driver disabled to avoid abrupt camera moves during busy hours
-
-  // Fly to selected driver when chosen from sidebar; no auto-fit on updates
-  // useEffect(() => {
-  //   if (drivers.length > 0 && mapRef.current) {
-  //     const driver = drivers[0]
-  //     mapRef.current.flyTo({
-  //       center: [driver.longitude, driver.latitude],
-  //       zoom: 16,
-  //       duration: 2000
-  //     })
-  //   }
-  // }, [drivers])
 
   useEffect(() => {
     if (selectedDriver && mapRef.current) {
