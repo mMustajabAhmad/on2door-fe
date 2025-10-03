@@ -6,7 +6,7 @@ import { Map as MapboxMap, Marker, Source, Layer } from 'react-map-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
 // Hook Imports
-import { useRealTimeDrivers } from '@/hooks/useRealTimeDrivers'
+import { useRealTimeDrivers } from '@/hooks/on2door/useRealTimeDrivers'
 
 // Style Imports
 import './styles.css'
