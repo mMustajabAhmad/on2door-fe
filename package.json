@@ -34,6 +34,7 @@
     "@mui/lab": "6.0.0-beta.19",
     "@mui/material": "6.2.1",
     "@mui/material-nextjs": "6.2.1",
+    "@rails/actioncable": "^8.0.300",
     "@reduxjs/toolkit": "2.5.0",
     "@tanstack/match-sorter-utils": "8.19.4",
     "@tanstack/react-query": "^5.83.0",

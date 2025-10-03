@@ -103,13 +103,14 @@
     "menuLevel3": "Menu Level 3",
     "disabledMenu": "Disabled Menu"
   },
-  "on2door" : {
+  "on2door": {
     "admins": "Admins",
     "dispatchers": "Dispatchers",
     "drivers": "Drivers",
-    "teams" : "Teams",
-    "hubs" : "Hubs",
+    "teams": "Teams",
+    "hubs": "Hubs",
     "organization": "Organization",
-    "tasks": "Tasks"
+    "tasks": "Tasks",
+    "fleet": "Fleet"
   }
 }

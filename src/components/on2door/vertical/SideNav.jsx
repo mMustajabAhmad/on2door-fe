@@ -76,9 +76,9 @@ const SideNav = ({ dictionary, scrollMenu }) => {
           {/* Show all menu items for non-dispatcher roles */}
           {userRole !== 'dispatcher' && (
             <>
-             <MenuItem href={`/${locale}/organizations/${organizationId}`} icon={<i className='ri-building-line' />}>
-              {dictionary['on2door'].organization}
-             </MenuItem>
+              <MenuItem href={`/${locale}/organizations/${organizationId}`} icon={<i className='ri-building-line' />}>
+                {dictionary['on2door'].organization}
+              </MenuItem>
               <MenuItem href={`/${locale}/administrators/admins`} icon={<i className='ri-admin-line' />}>
                 {dictionary['on2door'].admins}
               </MenuItem>
@@ -100,6 +100,9 @@ const SideNav = ({ dictionary, scrollMenu }) => {
           </MenuItem>
           <MenuItem href={`/${locale}/tasks`} icon={<i className='ri-task-line' />}>
             {dictionary['on2door'].tasks}
+          </MenuItem>
+          <MenuItem href={`/${locale}/fleet`} icon={<i className='ri-car-line' />}>
+            {dictionary['on2door'].fleet}
           </MenuItem>
         </MenuSection>
       </Menu>
