@@ -22,9 +22,7 @@ const FleetSidebar = ({ selectedDriver, onDriverSelect }) => {
   // Hooks
   const { drivers, isConnected } = useRealTimeDrivers()
 
-  const handleDriverClick = driver => {
-    onDriverSelect(driver)
-  }
+  const handleDriverClick = driver => onDriverSelect(driver)
 
   return (
     <Box sx={{ width: 360, height: '100%', borderRight: 1, borderColor: 'divider' }}>

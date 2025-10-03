@@ -20,31 +20,18 @@ export const ActionCableProvider = ({ children }) => {
   const [connectionError, setConnectionError] = useState(null)
 
   useEffect(() => {
-
-    const getAuthToken = () => {
-      if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('authToken')
-        return token
-      }
-      return null
-    }
+    const getAuthToken = () => (typeof window !== 'undefined' ? localStorage.getItem('authToken') : null)
 
     const initConnection = () => {
       const authToken = getAuthToken()
 
-      if (!authToken) {
-        setConnectionError('No authentication token available')
-        return
-      }
+      if (!authToken) return setConnectionError('No authentication token available')
 
       try {
-        // Create connection with auth token
         const baseUrl = process.env.NEXT_PUBLIC_ACTION_CABLE_URL || 'ws://localhost:3000/cable'
         const consumer = createConsumer(`${baseUrl}?auth_token=${authToken}`)
-
         setIsConnected(true)
         setConnectionError(null)
-
         setCable(consumer)
       } catch (error) {
         setConnectionError(error.message)
@@ -57,9 +44,7 @@ export const ActionCableProvider = ({ children }) => {
     // Cleanup
     return () => {
       clearTimeout(timer)
-      if (cable) {
-        cable.disconnect()
-      }
+      if (cable) cable.disconnect()
     }
   }, [])
 

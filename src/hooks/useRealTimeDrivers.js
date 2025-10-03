@@ -51,22 +51,8 @@ export const useRealTimeDrivers = () => {
         { channel: 'TaskChannel', task_id: taskId },
         {
           received: data => {
-            if (data.type === 'location_update') {
-              updateDriverLocation(data)
-            } else if (data.type === 'task_completed') {
-              if (data.driver_id) {
-                removeDriver(data.driver_id)
-              }
-            }
-          },
-          connected: () => {
-            console.log(`Subscribed to Task ${taskId}`)
-          },
-          disconnected: () => {
-            console.log(`Disconnected from Task ${taskId}`)
-          },
-          rejected: () => {
-            console.log(`Task ${taskId} subscription rejected`)
+            if (data.type === 'location_update') updateDriverLocation(data)
+            else if (data.type === 'task_completed' && data.driver_id) removeDriver(data.driver_id)
           }
         }
       )
@@ -94,9 +80,7 @@ export const useRealTimeDrivers = () => {
 
   // Initialize when cable is ready
   useEffect(() => {
-    if (cable && isConnected && !hasInitialized) {
-      initializeActiveTasks()
-    }
+    if (cable && isConnected && !hasInitialized) initializeActiveTasks()
   }, [cable, isConnected, hasInitialized, initializeActiveTasks])
 
   useEffect(() => {
@@ -107,9 +91,7 @@ export const useRealTimeDrivers = () => {
         const activeIds = (response?.tasks?.data || []).map(task => parseInt(task.id))
 
         activeIds.forEach(id => {
-          if (!subscriptions.has(id)) {
-            subscribeToTask(id)
-          }
+          if (!subscriptions.has(id)) subscribeToTask(id)
         })
 
         setActiveTaskIds(new Set(activeIds))
@@ -134,13 +116,9 @@ export const useRealTimeDrivers = () => {
           const newMap = new Map()
           let removedCount = 0
 
-          prev.forEach((driver, driverId) => {
-            if (currentActiveTaskIds.has(driver.task_id)) {
-              newMap.set(driverId, driver)
-            } else {
-              removedCount++
-            }
-          })
+          prev.forEach((driver, driverId) =>
+            currentActiveTaskIds.has(driver.task_id) ? newMap.set(driverId, driver) : removedCount++
+          )
 
           return newMap
         })

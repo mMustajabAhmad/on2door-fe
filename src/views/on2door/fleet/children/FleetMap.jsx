@@ -22,7 +22,7 @@ const FleetMap = props => {
   // State for routes
   const [routes, setRoutes] = useState(new Map())
 
-  // HEX color per driver 
+  // HEX color per driver
   const colorPalette = [
     '#F59E0B',
     '#10B981',
@@ -61,7 +61,7 @@ const FleetMap = props => {
           return route
         }
       } catch (error) {
-        console.error('Error fetching route:', error)
+        alert('Route fetch failed. Showing live location only.')
         return null
       }
     },
