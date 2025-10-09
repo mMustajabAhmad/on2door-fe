@@ -253,7 +253,7 @@ const AdminListTable = ({
         enableSorting: false
       })
     ],
-    [data, filteredData]
+    [data, filteredData, locale, tableData]
   )
 
   const table = useReactTable({

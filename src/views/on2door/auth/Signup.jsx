@@ -19,6 +19,7 @@ import Divider from '@mui/material/Divider'
 import Alert from '@mui/material/Alert'
 import CircularProgress from '@mui/material/CircularProgress'
 import { Select, MenuItem, FormControl, InputLabel, FormHelperText } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 
 // Third-party Imports
 import classnames from 'classnames'
@@ -26,12 +27,10 @@ import { useForm, Controller } from 'react-hook-form'
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { object, string, email, minLength, pipe, nonEmpty } from 'valibot'
 import { useMutation } from '@tanstack/react-query'
-
-// Component Imports
 import { countries } from 'countries-list'
-
 import PhoneInput from 'react-phone-input-2'
 
+// Component Imports
 import Logo from '@components/layout/shared/Logo'
 import Illustrations from '@components/Illustrations'
 
@@ -43,9 +42,8 @@ import { useSettings } from '@core/hooks/useSettings'
 import { getLocalizedUrl } from '@/utils/i18n'
 import { signupAdministratorApi } from '@/app/api/on2door/actions'
 
-// Country data
+// Style Imports
 import 'react-phone-input-2/lib/style.css'
-import { useTheme } from '@mui/material/styles'
 
 // Validation schema
 const schema = object({
@@ -62,6 +60,8 @@ const schema = object({
 })
 
 const RegisterV2 = ({ mode }) => {
+  const theme = useTheme()
+  
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [errorState, setErrorState] = useState(null)
@@ -275,7 +275,6 @@ const RegisterV2 = ({ mode }) => {
                 name='phone_number'
                 control={control}
                 render={({ field }) => {
-                  const theme = useTheme()
                   const commonBorder = `1px solid ${errors.phone_number ? theme.palette.error.main : theme.palette.divider}`
 
                   return (
