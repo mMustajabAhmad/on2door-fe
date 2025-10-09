@@ -1,9 +1,7 @@
 'use client'
 
-// React Imports
 import { createContext, useContext, useEffect, useState } from 'react'
 
-// Third-party Imports
 import { createConsumer } from '@rails/actioncable'
 
 const ActionCableContext = createContext()
@@ -22,6 +20,7 @@ export const ActionCableProvider = ({ children }) => {
   const [connectionError, setConnectionError] = useState(null)
 
   useEffect(() => {
+    let consumer = null
     const getAuthToken = () => (typeof window !== 'undefined' ? localStorage.getItem('authToken') : null)
 
     const initConnection = () => {
@@ -31,7 +30,8 @@ export const ActionCableProvider = ({ children }) => {
 
       try {
         const baseUrl = process.env.NEXT_PUBLIC_ACTION_CABLE_URL || 'ws://localhost:3000/cable'
-        const consumer = createConsumer(`${baseUrl}?auth_token=${authToken}`)
+
+        consumer = createConsumer(`${baseUrl}?auth_token=${authToken}`)
 
         setIsConnected(true)
         setConnectionError(null)
@@ -47,7 +47,7 @@ export const ActionCableProvider = ({ children }) => {
     // Cleanup
     return () => {
       clearTimeout(timer)
-      if (cable) cable.disconnect()
+      if (consumer) consumer.disconnect()
     }
   }, [])
 
