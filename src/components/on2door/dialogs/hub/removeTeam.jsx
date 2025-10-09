@@ -98,7 +98,7 @@ return Array.isArray(queryKey) && (queryKey[0] === 'hub' || queryKey[0] === 'hub
         <Box className='flex flex-col items-center gap-4 py-4'>
           <Box className='text-center'>
             <Typography variant='body2' color='text.secondary'>
-              This team will be removed from hub "{hub.name}". 
+              This team will be removed from hub: {hub.name}. 
               The team will no longer be associated with this hub.
             </Typography>
           </Box>

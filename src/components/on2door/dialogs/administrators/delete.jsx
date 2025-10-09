@@ -71,7 +71,7 @@ const DeleteAdministratorDialog = ({ open, setOpen, itemToDelete, data }) => {
       <DialogContent className='flex items-center flex-col text-center sm:pbs-16 sm:pbe-6 sm:pli-16'>
         <i className='ri-error-warning-line text-[88px] mbe-6 text-warning' />
         <Typography variant='h4'>Are you sure?</Typography>
-        <Typography color='text.primary'>You won't be able to revert this {userType}!</Typography>
+        <Typography color='text.primary'>You can not restore this {userType}!</Typography>
 
         {/* Error display */}
         {errorState && (
