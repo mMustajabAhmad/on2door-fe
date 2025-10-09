@@ -2,6 +2,7 @@
 
 // React Imports
 import { useState } from 'react'
+
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -16,8 +17,9 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 
 // API Imports
-import { updateHubApi } from '@/app/api/on2door/actions'
 import { toast } from 'react-toastify'
+
+import { updateHubApi } from '@/app/api/on2door/actions'
 
 const RemoveTeamDialog = ({ open, setOpen, hubData, teamId }) => {
   const [errorState, setErrorState] = useState(null)
@@ -43,7 +45,9 @@ const RemoveTeamDialog = ({ open, setOpen, hubData, teamId }) => {
       queryClient.invalidateQueries({
         predicate: query => {
           const queryKey = query.queryKey
-          return Array.isArray(queryKey) && (queryKey[0] === 'hub' || queryKey[0] === 'hubs')
+
+          
+return Array.isArray(queryKey) && (queryKey[0] === 'hub' || queryKey[0] === 'hubs')
         }
       })
       setOpen(false)

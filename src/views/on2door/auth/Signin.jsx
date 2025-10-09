@@ -2,13 +2,14 @@
 
 // React Imports
 import { useState, useEffect } from 'react'
-import { toast } from 'react-toastify'
-import { useMutation } from '@tanstack/react-query'
-import { loginAdministratorApi } from '@/app/api/on2door/actions'
+
 
 // Next Imports
 import Link from 'next/link'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
+
+import { useMutation } from '@tanstack/react-query'
+import { toast } from 'react-toastify'
 
 // MUI Imports
 import Typography from '@mui/material/Typography'
@@ -27,6 +28,8 @@ import { Controller, useForm } from 'react-hook-form'
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { object, minLength, string, email, pipe, nonEmpty } from 'valibot'
 import classnames from 'classnames'
+
+import { loginAdministratorApi } from '@/app/api/on2door/actions'
 
 // Component Imports
 import Logo from '@components/layout/shared/Logo'
@@ -81,6 +84,7 @@ const Login = ({ mode }) => {
   })
 
   const authBackground = useImageVariant(mode, lightImg, darkImg)
+
   const characterIllustration = useImageVariant(
     mode,
     lightIllustration,
@@ -93,6 +97,7 @@ const Login = ({ mode }) => {
 
   useEffect(() => {
     const showSessionExpiredToast = localStorage.getItem('showSessionExpiredToast')
+
     if (showSessionExpiredToast === 'true') {
       toast.error('Session expired. Please login again.', {
         position: 'top-right',
@@ -102,6 +107,7 @@ const Login = ({ mode }) => {
         pauseOnHover: true,
         draggable: true
       })
+
       // flag created in AuthGuard when redirecting due to expired token
       localStorage.removeItem('showSessionExpiredToast')
     }
@@ -123,6 +129,7 @@ const Login = ({ mode }) => {
       }
 
       const redirectURL = searchParams.get('redirectTo') ?? '/'
+
       router.replace(getLocalizedUrl(redirectURL, locale))
     },
 
@@ -136,6 +143,7 @@ const Login = ({ mode }) => {
         password: data.password
       }
     }
+
     loginAdministrator(payload)
   }
 

@@ -2,6 +2,7 @@
 
 // React Imports
 import { useState, useEffect } from 'react'
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -74,7 +75,8 @@ const SubschedulesTab = ({ driverData }) => {
   const filterSubschedulesByDate = () => {
     if (!schedulesData?.schedules?.data) {
       setFilteredSubschedules([])
-      return
+      
+return
     }
 
     const targetDate = searchDate ? new Date(searchDate).toISOString().split('T')[0] : null
@@ -166,15 +168,18 @@ const SubschedulesTab = ({ driverData }) => {
                     minute: '2-digit',
                     hour12: true
                   })
+
                   const endTime = new Date(subschedule.shift_end).toLocaleTimeString('en-US', {
                     hour: '2-digit',
                     minute: '2-digit',
                     hour12: true
                   })
+
                   const duration =
                     Math.round(
                       ((new Date(subschedule.shift_end) - new Date(subschedule.shift_start)) / (1000 * 60 * 60)) * 10
                     ) / 10
+
                   const scheduleDate = new Date(subschedule.schedule_date).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'short',

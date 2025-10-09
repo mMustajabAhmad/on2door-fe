@@ -2,6 +2,7 @@
 
 // React Imports
 import React, { useState, useEffect } from 'react'
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -60,6 +61,7 @@ const EditTeamDialog = ({ open, setOpen, currentTeam }) => {
     queryKey: ['hubs'],
     queryFn: () => getHubsApi()
   })
+
   const hubs = hubsData?.hubs?.data || []
 
   useEffect(() => {
@@ -86,7 +88,9 @@ const EditTeamDialog = ({ open, setOpen, currentTeam }) => {
       queryClient.invalidateQueries({
         predicate: query => {
           const queryKey = query.queryKey
-          return Array.isArray(queryKey) && (queryKey[0] === 'team' || queryKey[0] === 'teams')
+
+          
+return Array.isArray(queryKey) && (queryKey[0] === 'team' || queryKey[0] === 'teams')
         }
       })
       setOpen(false)

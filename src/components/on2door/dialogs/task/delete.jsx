@@ -2,6 +2,7 @@
 
 // React Imports
 import { useState } from 'react'
+
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -14,10 +15,11 @@ import Typography from '@mui/material/Typography'
 import CircularProgress from '@mui/material/CircularProgress'
 
 // API Imports
+import { toast } from 'react-toastify'
+
 import { destroyTaskApi } from '@/app/api/on2door/actions'
 
 // Third-party Imports
-import { toast } from 'react-toastify'
 
 const DeleteTaskDialog = ({ open, setOpen, itemToDelete }) => {
   const [isPending, setIsPending] = useState(false)

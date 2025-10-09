@@ -2,6 +2,7 @@
 
 // React Imports
 import React, { useState, useEffect } from 'react'
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -147,7 +148,9 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
   const filteredDrivers = selectedTeamId 
     ? allDrivers.filter(driver => {
         const driverTeamIds = driver.attributes?.team_ids || []
-        return driverTeamIds.includes(parseInt(selectedTeamId))
+
+        
+return driverTeamIds.includes(parseInt(selectedTeamId))
       })
     : allDrivers
 
@@ -176,10 +179,12 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
       
       // Linked tasks
       const linkedTasks = task.linked_task_ids || []
+
       setValue('linked_task_ids', linkedTasks.map(id => id.toString()))
       
       // Task completion requirements
       const completionReqs = task.task_completion_requirements || {}
+
       setValue('task_completion_requirements', {
         customer_signature: Boolean(completionReqs.customer_signature),
         photo_of_delivery: Boolean(completionReqs.photo_of_delivery),
@@ -188,6 +193,7 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
 
       // Recipient attributes
       const recipient = task.recipient_attributes || {}
+
       setValue('recipient_attributes', {
         name: recipient.name || '',
         phone_number: recipient.phone_number || ''
@@ -195,6 +201,7 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
 
       // Address attributes
       const address = task.address_attributes || {}
+
       setValue('address_attributes', {
         name: address.name || '',
         street: address.street || '',
@@ -501,7 +508,9 @@ const UpdateTaskDialog = ({ open, setOpen, currentTask }) => {
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                           {selected.map(value => {
                             const task = existingTasks.find(t => t.id.toString() === value)
-                            return (
+
+                            
+return (
                               <Chip
                                 key={value}
                                 label={

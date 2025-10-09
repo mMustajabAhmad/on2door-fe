@@ -1,8 +1,9 @@
 'use client'
 
 // React Imports
-import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
+
+import { useQuery } from '@tanstack/react-query'
 
 // MUI Imports
 import Grid from '@mui/material/Grid2'

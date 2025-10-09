@@ -1,8 +1,9 @@
 'use client'
 
 // React Imports
-import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
+
+import { useQuery } from '@tanstack/react-query'
 
 // Component Imports
 import TeamList from '@/views/on2door/teams/list'
@@ -20,6 +21,7 @@ const TeamListPage = () => {
     queryKey: ['teams', page, perPage, searchQuery, hubFilter],
     queryFn: () => {
       const payload = { page, per_page: perPage }
+
       if (searchQuery) payload['q[name_cont]'] = searchQuery
       if (hubFilter) payload['q[hub_id_eq]'] = hubFilter
 

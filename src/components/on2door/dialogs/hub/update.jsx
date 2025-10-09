@@ -2,6 +2,7 @@
 
 // React Imports
 import React, { useState, useEffect } from 'react'
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -70,6 +71,7 @@ const EditHubDialog = ({ open, setOpen, currentHub }) => {
     queryKey: ['teams'],
     queryFn: () => getTeamsApi()
   })
+
   const teams = teamsData?.teams?.data || []
 
   const { mutate: updateHub, isPending } = useMutation({
@@ -89,7 +91,9 @@ const EditHubDialog = ({ open, setOpen, currentHub }) => {
       queryClient.invalidateQueries({
         predicate: query => {
           const queryKey = query.queryKey
-          return Array.isArray(queryKey) && (queryKey[0] === 'hub' || queryKey[0] === 'hubs')
+
+          
+return Array.isArray(queryKey) && (queryKey[0] === 'hub' || queryKey[0] === 'hubs')
         }
       })
       setOpen(false)
@@ -270,7 +274,9 @@ const EditHubDialog = ({ open, setOpen, currentHub }) => {
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                           {selected.map(value => {
                             const team = teams.find(t => t.id.toString() === value)
-                            return (
+
+                            
+return (
                               <Chip key={value} label={team ? team.attributes.name : `Team ${value}`} size='small' />
                             )
                           })}

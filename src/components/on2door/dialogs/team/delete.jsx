@@ -2,6 +2,7 @@
 
 // React Imports
 import { useState } from 'react'
+
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -15,10 +16,11 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 
 // API Imports
+import { toast } from 'react-toastify'
+
 import { destroyTeamApi } from '@/app/api/on2door/actions'
 
 // Third-party Imports
-import { toast } from 'react-toastify'
 
 const DeleteTeamDialog = ({ open, setOpen, itemToDelete }) => {
   const [errorState, setErrorState] = useState(null)

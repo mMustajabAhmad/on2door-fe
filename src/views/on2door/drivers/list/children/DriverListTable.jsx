@@ -8,10 +8,6 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 //Component Imports
-import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
-import CreateDriverDialog from '@/components/on2door/dialogs/driver/create'
-import EditDriverDialog from '@/components/on2door/dialogs/driver/update'
-import DeleteDriverDialog from '@/components/on2door/dialogs/driver/delete'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -39,6 +35,11 @@ import {
   getPaginationRowModel,
   getSortedRowModel
 } from '@tanstack/react-table'
+
+import DeleteDriverDialog from '@/components/on2door/dialogs/driver/delete'
+import EditDriverDialog from '@/components/on2door/dialogs/driver/update'
+import CreateDriverDialog from '@/components/on2door/dialogs/driver/create'
+import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
 
 // Component Imports
 import DriverFilters from './DriverFilters'
@@ -127,6 +128,7 @@ const DriverListTable = ({
 
   useEffect(() => {
     const transformedData = transformApiData(tableData)
+
     setData(transformedData)
     setFilteredData(transformedData)
   }, [tableData])

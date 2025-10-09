@@ -25,7 +25,9 @@ const OrganizationDetails = ({ organizationData }) => {
       range_5001_12500: '5001 - 12500',
       range_12501_plus: '12501+'
     }
-    return volumeMap[volume] || volume || 'N/A'
+
+    
+return volumeMap[volume] || volume || 'N/A'
   }
 
   return (

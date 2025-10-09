@@ -8,10 +8,6 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 //Component Imports
-import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
-import CreateDipatcherDialog from '@/components/on2door/dialogs/administrators/dispatcher/create'
-import EditDispatcherDialog from '@/components/on2door/dialogs/administrators/dispatcher/update'
-import DeleteAdministratorDialog from '@/components/on2door/dialogs/administrators/delete'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -39,6 +35,11 @@ import {
   getPaginationRowModel,
   getSortedRowModel
 } from '@tanstack/react-table'
+
+import DeleteAdministratorDialog from '@/components/on2door/dialogs/administrators/delete'
+import EditDispatcherDialog from '@/components/on2door/dialogs/administrators/dispatcher/update'
+import CreateDipatcherDialog from '@/components/on2door/dialogs/administrators/dispatcher/create'
+import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
 
 // Component Imports
 import DispatcherFilters from './DispatcherFilters'
@@ -129,6 +130,7 @@ const DispatcherListTable = ({
 
   useEffect(() => {
     const transformedData = transformApiData(tableData)
+
     setData(transformedData)
     setFilteredData(transformedData)
   }, [tableData])

@@ -7,6 +7,7 @@ import { useTheme } from '@mui/material/styles'
 
 // Third-party Imports
 import PerfectScrollbar from 'react-perfect-scrollbar'
+
 // import { useSession } from 'next-auth/react'
 
 // Component Imports
@@ -34,6 +35,7 @@ const SideNav = ({ dictionary, scrollMenu }) => {
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
   const params = useParams()
+
   // const { data: session } = useSession()
 
   // Vars

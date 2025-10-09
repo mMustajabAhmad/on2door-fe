@@ -2,6 +2,7 @@
 
 // React Imports
 import React, { useState, useEffect } from 'react'
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -78,7 +79,9 @@ const EditOrganizationDialog = ({ open, setOpen, currentOrganization }) => {
       queryClient.invalidateQueries({
         predicate: query => {
           const queryKey = query.queryKey
-          return Array.isArray(queryKey) && (queryKey[0] === 'organization' || queryKey[0] === 'organizations')
+
+          
+return Array.isArray(queryKey) && (queryKey[0] === 'organization' || queryKey[0] === 'organizations')
         }
       })
       setOpen(false)

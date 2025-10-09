@@ -8,8 +8,6 @@ import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 
 //Component Imports
-import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
-import DeleteTaskDialog from '@/components/on2door/dialogs/task/delete'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -36,6 +34,9 @@ import {
   getPaginationRowModel,
   getSortedRowModel
 } from '@tanstack/react-table'
+
+import DeleteTaskDialog from '@/components/on2door/dialogs/task/delete'
+import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
 
 // Component Imports
 import TaskFilters from './TaskFilters'
@@ -102,6 +103,7 @@ const TaskListTable = ({
   onStateChange
 }) => {
   const router = useRouter()
+
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [data, setData] = useState([])
@@ -114,6 +116,7 @@ const TaskListTable = ({
   // Transform API data to match expected format
   const transformApiData = apiData => {
     if (!apiData?.tasks?.data) return []
+
     // console.log('API Data:', apiData)
     return apiData.tasks.data.map(task => ({
       id: task.id,
@@ -129,6 +132,7 @@ const TaskListTable = ({
   // Update data when tableData changes
   useEffect(() => {
     const transformedData = transformApiData(tableData)
+
     setData(transformedData)
     setFilteredData(transformedData)
   }, [tableData])

@@ -2,10 +2,12 @@
 
 // React Imports
 import { useRef, useState } from 'react'
+
+import { useParams, useRouter } from 'next/navigation'
+
 import { useMutation } from '@tanstack/react-query'
 
 // Next Imports
-import { useParams, useRouter } from 'next/navigation'
 
 // MUI Imports
 import { styled } from '@mui/material/styles'
@@ -51,6 +53,7 @@ const UserDropdown = () => {
 
   // Hooks
   const router = useRouter()
+
   // const { data: session } = useSession()
   const { settings } = useSettings()
   const { lang: locale } = useParams()

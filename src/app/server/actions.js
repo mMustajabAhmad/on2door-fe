@@ -61,40 +61,56 @@ export const getStatisticsData = async () => {
 
 export const getUserById = async (id) => {
   const user = userData.find(user => user.id === parseInt(id))
-  return user || null
+
+  
+return user || null
 }
 
 export const getAdminById = async (id) => {
   const user = userData.find(user => user.id === parseInt(id))
-  return user || null
+
+  
+return user || null
 }
 
 export const getDispatcherById = async (id) => {
   const user = userData.find(user => user.id === parseInt(id))
-  return user || null
+
+  
+return user || null
 }
 
 export const getOrganizationById = async (id) => {
   const user = userData.find(user => user.id === parseInt(id))
-  return user || null
+
+  
+return user || null
 }
 
 export const getDriverById = async (id) => {
   const user = userData.find(user => user.id === parseInt(id))
-  return user || null
+
+  
+return user || null
 }
 
 export const getHubById = async (id) => {
   const user = userData.find(user => user.id === parseInt(id))
-  return user || null
+
+  
+return user || null
 }
 
 export const getTaskById = async (id) => {
   const user = userData.find(user => user.id === parseInt(id))
-  return user || null
+
+  
+return user || null
 }
 
 export const getTeamById = async (id) => {
   const user = userData.find(user => user.id === parseInt(id))
-  return user || null
+
+  
+return user || null
 }

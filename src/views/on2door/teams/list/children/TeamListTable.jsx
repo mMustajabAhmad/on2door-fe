@@ -8,10 +8,6 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 //Component Imports
-import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
-import CreateTeamDialog from '@/components/on2door/dialogs/team/create'
-import EditTeamDialog from '@/components/on2door/dialogs/team/update'
-import DeleteTeamDialog from '@/components/on2door/dialogs/team/delete'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -41,6 +37,11 @@ import {
   getPaginationRowModel,
   getSortedRowModel
 } from '@tanstack/react-table'
+
+import DeleteTeamDialog from '@/components/on2door/dialogs/team/delete'
+import EditTeamDialog from '@/components/on2door/dialogs/team/update'
+import CreateTeamDialog from '@/components/on2door/dialogs/team/create'
+import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
 
 // Component Imports
 import TableFilters from './TeamFilters'
@@ -140,6 +141,7 @@ const TeamListTable = ({
   // Update data when tableData changes
   useEffect(() => {
     const transformedData = transformApiData(tableData)
+
     setData(transformedData)
     setFilteredData(transformedData)
   }, [tableData])
@@ -355,9 +357,12 @@ const TeamListTable = ({
                 tableData?.teams?.length ||
                 tableData?.teams?.data?.length ||
                 0
+
               const start = (page - 1) * perPage + 1
               const end = Math.min(page * perPage, totalCount)
-              return `Showing ${start} to ${end} of ${totalCount} results`
+
+              
+return `Showing ${start} to ${end} of ${totalCount} results`
             })()}
           </div>
           <CustomPagination

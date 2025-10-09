@@ -2,6 +2,7 @@
 
 // React Imports
 import { useState, useEffect } from 'react'
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -76,11 +77,13 @@ const HubTab = ({ teamData }) => {
 
   const handleAssignHub = () => {
     const payload = { team: { hub_id: parseInt(selectedHub) } }
+
     updateTeam({ id: teamId, payload })
   }
 
   const handleRemoveHub = () => {
     const payload = { team: { hub_id: null } }
+
     updateTeam({ id: teamId, payload })
     setSelectedHub('')
   }

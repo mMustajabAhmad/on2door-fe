@@ -28,6 +28,10 @@ import { object, string, email, minLength, pipe, nonEmpty } from 'valibot'
 import { useMutation } from '@tanstack/react-query'
 
 // Component Imports
+import { countries } from 'countries-list'
+
+import PhoneInput from 'react-phone-input-2'
+
 import Logo from '@components/layout/shared/Logo'
 import Illustrations from '@components/Illustrations'
 
@@ -40,8 +44,6 @@ import { getLocalizedUrl } from '@/utils/i18n'
 import { signupAdministratorApi } from '@/app/api/on2door/actions'
 
 // Country data
-import { countries } from 'countries-list'
-import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { useTheme } from '@mui/material/styles'
 
@@ -116,6 +118,7 @@ const RegisterV2 = ({ mode }) => {
 
     onSuccess: () => {
       const redirectURL = searchParams.get('redirectTo') ?? '/login'
+
       router.replace(getLocalizedUrl(redirectURL, locale))
     },
 
@@ -141,6 +144,7 @@ const RegisterV2 = ({ mode }) => {
         }
       }
     }
+
     signupAdministrator(payload)
   }
 

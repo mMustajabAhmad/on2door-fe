@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 import { useForm, Controller } from 'react-hook-form'
@@ -44,6 +45,7 @@ const DispatchersTab = ({ teamData }) => {
     queryKey: ['dispatchers'],
     queryFn: getDispatchersApi
   })
+
   const dispatchers = dispatchersRes?.administrators?.data || []
 
   const { control, handleSubmit, setValue } = useForm({
@@ -53,6 +55,7 @@ const DispatchersTab = ({ teamData }) => {
   useEffect(() => {
     if (teamDispatchers.length > 0) {
       const currentIds = teamDispatchers.map(d => d.id.toString())
+
       setValue('administrator_ids', currentIds)
     } else {
       setValue('administrator_ids', [])
@@ -70,28 +73,33 @@ const DispatchersTab = ({ teamData }) => {
 
     onError: err => {
       const currentIds = teamDispatchers.map(d => d.id.toString())
+
       setValue('administrator_ids', currentIds)
 
       const errorMessage =
         err?.response?.data?.error || err?.response?.data?.message || 'Update failed. Reverting changes.'
+
       toast.error(errorMessage, { position: 'top-right', autoClose: 3000 })
     }
   })
 
   const onSubmit = data => {
     const payload = { team: { administrator_ids: data.administrator_ids?.map(id => parseInt(id)) || [] } }
+
     updateTeam(payload)
   }
 
   const handleRemove = id => {
     const remaining = teamDispatchers.filter(d => d.id !== id).map(d => d.id)
     const payload = { team: { administrator_ids: remaining } }
+
     updateTeam(payload)
   }
 
   const getName = d => {
     if (!d) return 'Unknown Dispatcher'
-    return `${d.attributes?.first_name || ''} ${d.attributes?.last_name || ''}`.trim() || `Dispatcher ${d.id}`
+    
+return `${d.attributes?.first_name || ''} ${d.attributes?.last_name || ''}`.trim() || `Dispatcher ${d.id}`
   }
 
   return (
@@ -142,7 +150,9 @@ const DispatchersTab = ({ teamData }) => {
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                           {selected.map(value => {
                             const d = dispatchers.find(x => x.id.toString() === value)
-                            return <Chip key={value} label={getName(d)} size='small' />
+
+                            
+return <Chip key={value} label={getName(d)} size='small' />
                           })}
                         </Box>
                       )}

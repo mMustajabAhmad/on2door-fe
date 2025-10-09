@@ -2,6 +2,7 @@
 
 // React Imports
 import { useState, useEffect } from 'react'
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -51,6 +52,7 @@ const ScheduleTab = ({ driverData }) => {
     }
 
     const diffInHours = (end - start) / (1000 * 60 * 60)
+
     if (diffInHours < 1) {
       return 'Shift must be at least 1 hour long'
     }
@@ -87,7 +89,9 @@ const ScheduleTab = ({ driverData }) => {
 
     const existingSchedule = schedulesData.schedules.data.find(schedule => {
       const scheduleDate = new Date(schedule.attributes.date).toISOString().split('T')[0]
-      return scheduleDate === date
+
+      
+return scheduleDate === date
     })
 
     if (existingSchedule) {
@@ -126,6 +130,7 @@ const ScheduleTab = ({ driverData }) => {
         driver_id: parseInt(driverId)
       }
     }
+
     createSchedule(payload)
   }
 
@@ -137,12 +142,14 @@ const ScheduleTab = ({ driverData }) => {
 
   const addTimeSlot = () => {
     const newSlots = timeSlots.concat([{ start: '', end: '' }])
+
     setTimeSlots(newSlots)
   }
 
   const removeTimeSlot = index => {
     if (timeSlots.length > 1) {
       const newSlots = timeSlots.filter((slot, i) => i !== index)
+
       setTimeSlots(newSlots)
     }
   }
@@ -152,8 +159,11 @@ const ScheduleTab = ({ driverData }) => {
       if (i === index) {
         return Object.assign({}, slot, { [field]: value })
       }
-      return slot
+
+      
+return slot
     })
+
     setTimeSlots(newSlots)
   }
 
@@ -167,10 +177,12 @@ const ScheduleTab = ({ driverData }) => {
         pauseOnHover: true,
         draggable: true
       })
-      return
+      
+return
     }
 
     const validSlots = timeSlots.filter(slot => slot.start && slot.end)
+
     if (validSlots.length === 0) {
       toast.error('Please add at least one time slot!', {
         position: 'top-right',
@@ -180,11 +192,13 @@ const ScheduleTab = ({ driverData }) => {
         pauseOnHover: true,
         draggable: true
       })
-      return
+      
+return
     }
 
     for (const slot of validSlots) {
       const validation = validateShiftDuration(slot.start, slot.end)
+
       if (validation !== true) {
         toast.error(validation, {
           position: 'top-right',
@@ -194,7 +208,8 @@ const ScheduleTab = ({ driverData }) => {
           pauseOnHover: true,
           draggable: true
         })
-        return
+        
+return
       }
     }
 

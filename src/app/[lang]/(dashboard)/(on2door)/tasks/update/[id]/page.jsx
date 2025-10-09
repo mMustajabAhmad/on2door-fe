@@ -2,8 +2,10 @@
 
 // React Imports
 import React, { useState, useEffect } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+
 import { useRouter, useParams } from 'next/navigation'
+
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
 import Grid from '@mui/material/Grid2'
@@ -148,7 +150,9 @@ const UpdateTaskPage = () => {
   const filteredDrivers = selectedTeamId
     ? allDrivers.filter(driver => {
         const driverTeamIds = driver.attributes?.team_ids || []
-        return driverTeamIds.includes(parseInt(selectedTeamId))
+
+        
+return driverTeamIds.includes(parseInt(selectedTeamId))
       })
     : allDrivers
 
@@ -177,6 +181,7 @@ const UpdateTaskPage = () => {
 
       // Linked tasks
       const linkedTasks = task.linked_task_ids || []
+
       setValue(
         'linked_task_ids',
         linkedTasks.map(id => id.toString())
@@ -184,6 +189,7 @@ const UpdateTaskPage = () => {
 
       // Task completion requirements
       const completionReqs = task.task_completion_requirements || {}
+
       setValue('task_completion_requirements', {
         customer_signature: Boolean(completionReqs.customer_signature),
         photo_of_delivery: Boolean(completionReqs.photo_of_delivery),
@@ -192,6 +198,7 @@ const UpdateTaskPage = () => {
 
       // Recipient attributes
       const recipient = task.recipient_attributes || {}
+
       setValue('recipient_attributes', {
         name: recipient.name || '',
         phone_number: recipient.phone_number || ''
@@ -199,6 +206,7 @@ const UpdateTaskPage = () => {
 
       // Address attributes
       const address = task.address_attributes || {}
+
       setValue('address_attributes', {
         name: address.name || '',
         street: address.street || '',
@@ -486,7 +494,9 @@ const UpdateTaskPage = () => {
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                               {selected.map(value => {
                                 const task = existingTasks.find(t => t.id.toString() === value)
-                                return (
+
+                                
+return (
                                   <Chip
                                     key={value}
                                     label={

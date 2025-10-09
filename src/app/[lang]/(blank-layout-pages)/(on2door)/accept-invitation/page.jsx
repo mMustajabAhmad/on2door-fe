@@ -2,9 +2,12 @@
 
 // React Imports
 import { useState, useEffect } from 'react'
+
 import { useSearchParams, useRouter, useParams } from 'next/navigation'
-import { useMutation } from '@tanstack/react-query'
+
 import Link from 'next/link'
+
+import { useMutation } from '@tanstack/react-query'
 
 // MUI Imports
 import Typography from '@mui/material/Typography'
@@ -45,7 +48,8 @@ const AcceptInvitationPage = () => {
     if (!token || !email) {
       setErrorState({ message: 'Invalid invitation link. Missing token or email.' })
       setIsLoading(false)
-      return
+      
+return
     }
 
     setInvitationData({ token, email })
@@ -58,19 +62,24 @@ const AcceptInvitationPage = () => {
 
     try {
       const response = await acceptAdministratorInvitationApi(payload)
-      return response
+
+      
+return response
     } catch (error) {
       adminError = error
     }
 
     try {
       const response = await acceptDriverInvitationApi(payload)
-      return response
+
+      
+return response
     } catch (error) {
       driverError = error
     }
 
     const errorMessage = 'Invalid invitation. This invitation may have expired, been used already, or the email address may not be associated with any pending invitations.'
+
     throw new Error(errorMessage)
   }
 
@@ -99,7 +108,8 @@ const AcceptInvitationPage = () => {
 
     if (password !== confirmPassword) {
       setErrorState({ message: 'Passwords do not match' })
-      return
+      
+return
     }
 
     const payload = {

@@ -8,9 +8,11 @@ import HorizontalLayout from '@layouts/HorizontalLayout'
 
 // Component Imports
 import Providers from '@components/Providers'
+
 // import Navigation from '@components/layout/vertical/Navigation'
 import Navigation from '@components/on2door/vertical/Navigation'
 import Header from '@components/layout/horizontal/Header'
+
 // import Navbar from '@components/layout/vertical/Navbar'
 import TopBar from '@/components/on2door/vertical/TopBar'
 import VerticalFooter from '@components/layout/vertical/Footer'
@@ -44,6 +46,7 @@ const Layout = async props => {
           verticalLayout={
             <VerticalLayout
               navigation={<Navigation dictionary={dictionary} mode={mode} />}
+
               // navbar={<Navbar />}
               navbar={<TopBar />}
               footer={<VerticalFooter />}
