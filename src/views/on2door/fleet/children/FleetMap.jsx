@@ -34,9 +34,12 @@ const FleetMap = props => {
     '#A855F7',
     '#F97316'
   ]
+
   const getColorForDriver = useCallback(driverId => {
     const idNum = Math.abs(parseInt(driverId, 10) || 0)
-    return colorPalette[idNum % colorPalette.length]
+
+    
+return colorPalette[idNum % colorPalette.length]
   }, [])
 
   // Function to fetch route from Mapbox Directions API
@@ -62,7 +65,8 @@ const FleetMap = props => {
         }
       } catch (error) {
         alert('Route fetch failed. Showing live location only.')
-        return null
+        
+return null
       }
     },
     [mapboxAccessToken]
@@ -72,6 +76,7 @@ const FleetMap = props => {
   const updateDriverRoute = useCallback(
     async (driverId, driverLat, driverLng, destLat, destLng) => {
       const route = await fetchRoute(driverLat, driverLng, destLat, destLng)
+
       if (route) setRoutes(prev => new Map(prev.set(driverId, route)))
     },
     [fetchRoute]
@@ -152,7 +157,9 @@ const FleetMap = props => {
         {drivers.map((driver, index) => {
           const isSelected = selectedDriver?.id === driver.id
           const markerColor = getColorForDriver(driver.id)
-          return (
+
+          
+return (
             <div key={driver.id || index}>
               {/* Driver marker */}
               <Marker

@@ -17,6 +17,7 @@
  */
 const themeConfig = {
   templateName: 'on2door',
+
   // homePageUrl: '/dashboards/crm',
   on2doorDashboardPageUrl: '/dashboard',
   settingsCookieName: 'materio-mui-next-demo-1',

@@ -4,10 +4,11 @@
 import { useState, useEffect } from 'react'
 
 // Component Imports
+import Grid from '@mui/material/Grid2'
+
 import TeamListTable from './children/TeamListTable'
 
 // MUI Imports
-import Grid from '@mui/material/Grid2'
 
 const TeamList = ({
   teamData,

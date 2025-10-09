@@ -2,6 +2,7 @@
 
 // React Imports
 import React, { useState, useEffect } from 'react'
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -72,6 +73,7 @@ const EditDriverDialog = ({ open, setOpen, currentDriver }) => {
     queryFn: () => getTeamsApi(),
     enabled: open
   })
+
   const teams = teamsData?.teams?.data || []
 
   const { mutate: updateDriver, isPending } = useMutation({
@@ -90,7 +92,9 @@ const EditDriverDialog = ({ open, setOpen, currentDriver }) => {
       queryClient.invalidateQueries({
         predicate: query => {
           const queryKey = query.queryKey
-          return (
+
+          
+return (
             Array.isArray(queryKey) &&
             (queryKey[0] === 'driver' || queryKey[0] === 'drivers')
           )
@@ -249,7 +253,9 @@ const EditDriverDialog = ({ open, setOpen, currentDriver }) => {
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                           {selected.map((value, index) => {
                             const team = teams.find(t => t.id.toString() === value)
-                            return (
+
+                            
+return (
                               <Chip
                                 key={`${value}-${index}`}
                                 label={team ? team.attributes.name : `Team ${value}`}

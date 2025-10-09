@@ -2,6 +2,7 @@
 
 // React Imports
 import { useState } from 'react'
+
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -16,8 +17,9 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 
 // API Imports
-import { updateDriverApi } from '@/app/api/on2door/actions'
 import { toast } from 'react-toastify'
+
+import { updateDriverApi } from '@/app/api/on2door/actions'
 
 const RemoveTeamDialog = ({ open, setOpen, driverData, teamId }) => {
   const [errorState, setErrorState] = useState(null)
@@ -43,7 +45,9 @@ const RemoveTeamDialog = ({ open, setOpen, driverData, teamId }) => {
       queryClient.invalidateQueries({
         predicate: query => {
           const queryKey = query.queryKey
-          return Array.isArray(queryKey) && (queryKey[0] === 'driver' || queryKey[0] === 'drivers')
+
+          
+return Array.isArray(queryKey) && (queryKey[0] === 'driver' || queryKey[0] === 'drivers')
         }
       })
       setOpen(false)
@@ -55,6 +59,7 @@ const RemoveTeamDialog = ({ open, setOpen, driverData, teamId }) => {
   const handleRemoveTeam = () => {
     const updatedTeamIds = currentTeamIds.filter(id => id !== teamId)
     const payload = { driver: { team_ids: updatedTeamIds } }
+
     removeTeam({ id: driver.id, payload })
   }
 

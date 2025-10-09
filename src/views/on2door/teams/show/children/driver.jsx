@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 import { useForm, Controller } from 'react-hook-form'
@@ -43,6 +44,7 @@ const DriversTab = ({ teamData }) => {
     queryKey: ['drivers'],
     queryFn: getDriversApi
   })
+
   const drivers = driversRes?.drivers?.data || []
 
   const { control, handleSubmit, setValue } = useForm({
@@ -52,6 +54,7 @@ const DriversTab = ({ teamData }) => {
   useEffect(() => {
     if (teamDrivers.length > 0) {
       const currentIds = teamDrivers.map(d => d.id.toString())
+
       setValue('driver_ids', currentIds)
     } else {
       setValue('driver_ids', [])
@@ -69,28 +72,33 @@ const DriversTab = ({ teamData }) => {
 
     onError: err => {
       const currentIds = teamDrivers.map(d => d.id.toString())
+
       setValue('driver_ids', currentIds)
 
       const errorMessage =
         err?.response?.data?.error || err?.response?.data?.message || 'Update failed. Reverting changes.'
+
       toast.error(errorMessage, { position: 'top-right', autoClose: 3000 })
     }
   })
 
   const onSubmit = data => {
     const payload = { team: { driver_ids: data.driver_ids?.map(id => parseInt(id)) || [] } }
+
     updateTeam(payload)
   }
 
   const handleRemove = id => {
     const remaining = teamDrivers.filter(d => d.id !== id).map(d => d.id)
     const payload = { team: { driver_ids: remaining } }
+
     updateTeam(payload)
   }
 
   const getName = d => {
     if (!d) return 'Unknown Driver'
-    return `${d.attributes?.first_name || ''} ${d.attributes?.last_name || ''}`.trim() || `Driver ${d.id}`
+    
+return `${d.attributes?.first_name || ''} ${d.attributes?.last_name || ''}`.trim() || `Driver ${d.id}`
   }
 
   return (
@@ -141,7 +149,9 @@ const DriversTab = ({ teamData }) => {
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                           {selected.map(value => {
                             const d = drivers.find(x => x.id.toString() === value)
-                            return <Chip key={value} label={getName(d)} size='small' />
+
+                            
+return <Chip key={value} label={getName(d)} size='small' />
                           })}
                         </Box>
                       )}

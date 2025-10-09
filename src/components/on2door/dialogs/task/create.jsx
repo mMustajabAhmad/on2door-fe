@@ -2,6 +2,7 @@
 
 // React Imports
 import React, { useState, useEffect } from 'react'
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -140,7 +141,9 @@ const CreateTaskDialog = ({ open, setOpen }) => {
   const filteredDrivers = selectedTeamId 
     ? allDrivers.filter(driver => {
         const driverTeamIds = driver.attributes?.team_ids || []
-        return driverTeamIds.includes(parseInt(selectedTeamId))
+
+        
+return driverTeamIds.includes(parseInt(selectedTeamId))
       })
     : allDrivers
 
@@ -404,7 +407,9 @@ const CreateTaskDialog = ({ open, setOpen }) => {
                           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                             {selected.map(value => {
                               const task = existingTasks.find(t => t.id.toString() === value)
-                              return (
+
+                              
+return (
                                 <Chip
                                   key={value}
                                   label={ task? `Task# ${task.id}`: `Task ${value}`}

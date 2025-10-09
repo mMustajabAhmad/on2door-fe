@@ -2,6 +2,7 @@
 
 // React Imports
 import React, { useState, useEffect } from 'react'
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -76,7 +77,9 @@ const EditAdminDialog = ({ open, setOpen, currentAdmin }) => {
       queryClient.invalidateQueries({
         predicate: query => {
           const queryKey = query.queryKey
-          return Array.isArray(queryKey) && (queryKey[0] === 'administrator' || queryKey[0] === 'administrators')
+
+          
+return Array.isArray(queryKey) && (queryKey[0] === 'administrator' || queryKey[0] === 'administrators')
         }
       })
       setOpen(false)

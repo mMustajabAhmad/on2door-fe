@@ -4,12 +4,14 @@ import axios from 'axios'
 import Qs from 'qs'
 
 const API_DOMAIN = process.env.NEXT_PUBLIC_API_DOMAIN
+
 export const API_URL = process.env.NEXT_PUBLIC_API_URL
 export const AUTH_TOKEN = 'authToken'
 
 function getAuthToken() {
   if (typeof window !== 'undefined') return localStorage.getItem('authToken')
-  return null
+  
+return null
 }
 
 function handleTokenExpiration() {
@@ -37,8 +39,10 @@ const client = (apiURL = API_URL) => {
     axiosInstance.interceptors.request.use(
       config => {
         const token = getAuthToken()
+
         if (token) config.headers.Authorization = `Bearer ${token}`
-        return config
+        
+return config
       },
       error => {
         return Promise.reject(error)
@@ -52,6 +56,7 @@ const client = (apiURL = API_URL) => {
       },
       error => {
         const status = error.response?.status
+
         if (status === 401) handleTokenExpiration()
 
         return Promise.reject(error)

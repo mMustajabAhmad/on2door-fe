@@ -8,10 +8,6 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 //Component Imports
-import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
-import CreateAdminDialog from '@/components/on2door/dialogs/administrators/admin/create'
-import EditAdminDialog from '@/components/on2door/dialogs/administrators/admin/update'
-import DeleteAdministratorDialog from '@/components/on2door/dialogs/administrators/delete'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -40,6 +36,11 @@ import {
   getFacetedMinMaxValues,
   getSortedRowModel
 } from '@tanstack/react-table'
+
+import DeleteAdministratorDialog from '@/components/on2door/dialogs/administrators/delete'
+import EditAdminDialog from '@/components/on2door/dialogs/administrators/admin/update'
+import CreateAdminDialog from '@/components/on2door/dialogs/administrators/admin/create'
+import OpenDialogOnElementClick from '@components/on2door/dialogs/OpenDialogOnElementClick'
 
 // Component Imports
 import AdminFilters from './AdminFilters'
@@ -137,6 +138,7 @@ const AdminListTable = ({
   // Update data when tableData changes
   useEffect(() => {
     const transformedData = transformApiData(tableData)
+
     setData(transformedData)
     setFilteredData(transformedData)
   }, [tableData])
@@ -192,6 +194,7 @@ const AdminListTable = ({
           </Typography>
         )
       }),
+
       // columnHelper.accessor('phone_number', {
       //   header: 'Phone',
       //   cell: ({ row }) => <Typography color='text.primary'> {row.original.phone_number} </Typography>
@@ -296,6 +299,7 @@ const AdminListTable = ({
           <div className='flex items-center gap-x-4 gap-4 flex-col max-sm:is-full sm:flex-row justify-start'>
             <DebouncedInput
               value={searchQuery ?? ''}
+
               // onChange={value => setGlobalFilter(String(value))}
               onChange={value => setSearchQuery(String(value))}
               placeholder='Search Admin'
@@ -306,6 +310,7 @@ const AdminListTable = ({
               variant='outlined'
               className='max-sm:is-full'
               onClick={() => setSearchQuery('')}
+
               // sx={{ height: '45px', gap: 1.5 }}
             >
               Clear

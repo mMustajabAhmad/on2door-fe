@@ -12,6 +12,7 @@ import { styled, useColorScheme, useTheme } from '@mui/material/styles'
 
 // Component Imports
 import VerticalNav, { NavHeader, NavCollapseIcons } from '@menu/vertical-menu'
+
 // import VerticalMenu from './VerticalMenu'
 import SideNav from '@components/on2door/vertical/SideNav'
 import Logo from '@components/layout/shared/Logo'

@@ -10,8 +10,10 @@ const ActionCableContext = createContext()
 
 export const useActionCable = () => {
   const context = useContext(ActionCableContext)
+
   if (!context) throw new Error('useActionCable must be used within an ActionCableProvider')
-  return context
+  
+return context
 }
 
 export const ActionCableProvider = ({ children }) => {
@@ -30,6 +32,7 @@ export const ActionCableProvider = ({ children }) => {
       try {
         const baseUrl = process.env.NEXT_PUBLIC_ACTION_CABLE_URL || 'ws://localhost:3000/cable'
         const consumer = createConsumer(`${baseUrl}?auth_token=${authToken}`)
+
         setIsConnected(true)
         setConnectionError(null)
         setCable(consumer)

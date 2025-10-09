@@ -12,14 +12,16 @@ import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
 
 // API Imports
-import { getHubsApi } from '@/app/api/on2door/actions'
 import { useQuery } from '@tanstack/react-query'
+
+import { getHubsApi } from '@/app/api/on2door/actions'
 
 const TeamFilters = ({ perPage, onPerPageChange, hubFilter, onHubFilterChange }) => {
   const { data: hubsData } = useQuery({
     queryKey: ['hubs'],
     queryFn: () => getHubsApi()
   })
+
   const hubs = hubsData?.hubs?.data || []
 
   const handleClearFilters = () => {

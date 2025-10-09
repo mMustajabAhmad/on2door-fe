@@ -1,8 +1,9 @@
 'use client'
 
 // React Imports
-import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
+
+import { useQuery } from '@tanstack/react-query'
 
 // Component Imports
 import TaskList from '@/views/on2door/tasks/list'
@@ -20,6 +21,7 @@ const TaskListPage = () => {
     queryKey: ['tasks', page, perPage, searchQuery, state],
     queryFn: () => {
       const payload = { page, per_page: perPage }
+
       if (searchQuery) payload['q[state_or_driver_id_or_team_id_or_recipient_id_eq]'] = searchQuery
       if (state) payload['q[state_eq]'] = state
 

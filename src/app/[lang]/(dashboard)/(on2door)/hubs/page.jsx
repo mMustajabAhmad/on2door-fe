@@ -1,8 +1,9 @@
 'use client'
 
 // React Imports
-import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
+
+import { useQuery } from '@tanstack/react-query'
 
 // Component Imports
 import HubList from '@/views/on2door/hubs/list'

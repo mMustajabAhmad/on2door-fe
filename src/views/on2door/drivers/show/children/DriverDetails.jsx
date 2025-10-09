@@ -30,7 +30,9 @@ const DriverDetails = ({ driverData }) => {
       motorcycle: 'Motorcycle',
       bicycle: 'Bicycle'
     }
-    return typeMap[type] || type || 'N/A'
+
+    
+return typeMap[type] || type || 'N/A'
   }
 
   return (

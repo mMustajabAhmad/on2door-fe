@@ -2,6 +2,7 @@
 
 // React Imports
 import { useState } from 'react'
+
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 // MUI Imports
@@ -16,8 +17,9 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 
 // API Imports
-import { updateDispatcherApi } from '@/app/api/on2door/actions'
 import { toast } from 'react-toastify'
+
+import { updateDispatcherApi } from '@/app/api/on2door/actions'
 
 const RemoveTeamDialog = ({ open, setOpen, dispatcherData, teamId }) => {
   const [errorState, setErrorState] = useState(null)
@@ -43,7 +45,9 @@ const RemoveTeamDialog = ({ open, setOpen, dispatcherData, teamId }) => {
       queryClient.invalidateQueries({
         predicate: query => {
           const queryKey = query.queryKey
-          return Array.isArray(queryKey) && (queryKey[0] === 'dispatcher' || queryKey[0] === 'dispatchers')
+
+          
+return Array.isArray(queryKey) && (queryKey[0] === 'dispatcher' || queryKey[0] === 'dispatchers')
         }
       })
       setOpen(false)
@@ -55,6 +59,7 @@ const RemoveTeamDialog = ({ open, setOpen, dispatcherData, teamId }) => {
   const handleRemoveTeam = () => {
     const updatedTeamIds = currentTeamIds.filter(id => id !== teamId)
     const payload = { administrator: { team_ids: updatedTeamIds } }
+
     removeTeam({ id: dispatcher.id, payload })
   }
 

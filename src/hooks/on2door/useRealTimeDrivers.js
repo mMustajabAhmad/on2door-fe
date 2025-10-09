@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+
 import { useActionCable } from '@/contexts/on2door/ActionCableContext'
 import { getTasksApi } from '@/app/api/on2door/actions'
 
@@ -15,6 +16,7 @@ export const useRealTimeDrivers = () => {
   const updateDriverLocation = useCallback(data => {
     setDrivers(prev => {
       const newMap = new Map(prev)
+
       const driverData = {
         id: data.driver_id,
         name: data.driver_name || `Driver ${data.driver_id}`,
@@ -28,8 +30,10 @@ export const useRealTimeDrivers = () => {
           dest_lng: data.destination.lng
         }
       }
+
       newMap.set(data.driver_id, driverData)
-      return newMap
+      
+return newMap
     })
   }, [])
 
@@ -37,8 +41,10 @@ export const useRealTimeDrivers = () => {
   const removeDriver = useCallback(driverId => {
     setDrivers(prev => {
       const newMap = new Map(prev)
+
       newMap.delete(driverId)
-      return newMap
+      
+return newMap
     })
   }, [])
 
@@ -68,6 +74,7 @@ export const useRealTimeDrivers = () => {
     getTasksApi({ 'q[state_eq]': '2' }).then(response => {
       if (response?.tasks?.data) {
         const activeTasks = response.tasks.data.map(task => parseInt(task.id))
+
         setActiveTaskIds(new Set(activeTasks))
         activeTasks.forEach(taskId => {
           subscribeToTask(taskId)
@@ -99,6 +106,7 @@ export const useRealTimeDrivers = () => {
     }
 
     const interval = setInterval(pollNewActiveTasks, 60000)
+
     pollNewActiveTasks()
 
     return () => clearInterval(interval)

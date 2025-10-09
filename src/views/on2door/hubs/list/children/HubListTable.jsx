@@ -8,10 +8,6 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 // Component Imports
-import EditHubDialog from '@/components/on2door/dialogs/hub/update'
-import DeleteHubDialog from '@/components/on2door/dialogs/hub/delete'
-import CreateHubDialog from '@/components/on2door/dialogs/hub/create'
-import OpenDialogOnElementClick from '@/components/on2door/dialogs/OpenDialogOnElementClick'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -37,6 +33,11 @@ import {
   getPaginationRowModel
 } from '@tanstack/react-table'
 
+import OpenDialogOnElementClick from '@/components/on2door/dialogs/OpenDialogOnElementClick'
+import CreateHubDialog from '@/components/on2door/dialogs/hub/create'
+import DeleteHubDialog from '@/components/on2door/dialogs/hub/delete'
+import EditHubDialog from '@/components/on2door/dialogs/hub/update'
+
 // Component Imports
 import HubFilters from './HubFilters'
 import CustomPagination from '@/components/on2door/shared/CustomPagination'
@@ -49,8 +50,10 @@ import tableStyles from '@core/styles/table.module.css'
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   const itemRank = rankItem(row.getValue(columnId), value)
+
   addMeta({ itemRank })
-  return itemRank.passed
+  
+return itemRank.passed
 }
 
 const DebouncedInput = ({ value: initialValue, onChange, debounce = 3000, ...props }) => {
@@ -67,7 +70,9 @@ const DebouncedInput = ({ value: initialValue, onChange, debounce = 3000, ...pro
         onChange(value)
         setIsUserTyping(false)
       }, debounce)
-      return () => clearTimeout(timeout)
+
+      
+return () => clearTimeout(timeout)
     }
   }, [value, onChange, isUserTyping, debounce])
 
@@ -134,6 +139,7 @@ const HubListTable = ({
   // Update data when tableData changes
   useEffect(() => {
     const transformedData = transformApiData(tableData)
+
     setData(transformedData)
     setfilteredData(transformedData)
   }, [tableData])
