@@ -1,7 +1,7 @@
-import LogisticsDashboard from '../../apps/logistics/dashboard/page'
+import On2DoorDashboard from '@/views/on2door/dashboard'
 
-const DashboardLogistics = () => {
-  return <LogisticsDashboard />
+const DashboardPage = () => {
+  return <On2DoorDashboard />
 }
 
-export default DashboardLogistics
+export default DashboardPage
