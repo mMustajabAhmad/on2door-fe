@@ -17,11 +17,11 @@ import { useRouter } from 'next/navigation'
 import { getDriversApi, getTasksApi, getHubsApi } from '@/app/api/on2door/actions'
 
 // Component Imports
-import StatisticsCard from './StatisticsCard'
-import ActiveTasksTable from './ActiveTasksTable'
-import ActiveDriversList from './ActiveDriversList'
-import TaskStatusChart from './TaskStatusChart'
-import HubOverview from './HubOverview'
+import StatisticsCard from './children/StatisticsCard'
+import ActiveTasksTable from './children/ActiveTasksTable'
+import ActiveDriversList from './children/ActiveDriversList'
+import TaskStatusChart from './children/TaskStatusChart'
+import HubOverview from './children/HubOverview'
 
 const On2DoorDashboard = () => {
   const router = useRouter()
