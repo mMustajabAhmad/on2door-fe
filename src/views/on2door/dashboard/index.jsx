@@ -58,7 +58,7 @@ const On2DoorDashboard = () => {
 
   // Calculate statistics
   const activeDrivers = drivers.filter(driver => driver.attributes?.is_active).length
-  const totalTasks = tasks.length
+  const totalTasks = typeof tasksData?.total_count === 'number' ? tasksData.total_count : tasks.length
   const completedTasks = tasks.filter(task => task.attributes?.state === 'completed').length
   const activeTasks = tasks.filter(task => task.attributes?.state === 'active').length
   const failedTasks = tasks.filter(task => task.attributes?.state === 'failed').length
@@ -149,6 +149,7 @@ const On2DoorDashboard = () => {
               Task Status Overview
             </Typography>
             <TaskStatusChart
+              total={totalTasks}
               data={[
                 { status: 'Active', count: activeTasks, color: '#ff9800' },
                 { status: 'Assigned', count: assignedTasksCount, color: '#2196f3' },

@@ -27,35 +27,27 @@ const HubOverview = ({ hubs }) => {
         return (
           <Box key={hub.id}>
             <ListItem className='px-0'>
-              <ListItemText
-                primary={
-                  <Typography variant='body2' className='font-medium'>
-                    {attributes.name}
-                  </Typography>
-                }
-                secondaryTypographyProps={{ component: 'span' }}
-                secondary={
-                  <Box>
+              <Box className='flex items-center justify-between w-full gap-4'>
+                <ListItemText
+                  primary={
+                    <Typography variant='body2' className='font-medium'>
+                      {attributes.name}
+                    </Typography>
+                  }
+                  secondaryTypographyProps={{ component: 'span' }}
+                  secondary={
                     <Typography variant='caption' className='text-textSecondary block'>
                       {address.street}, {address.city}
                     </Typography>
-                    <Box className='flex items-center gap-2 mt-1'>
-                      <Chip
-                        label={`${attributes.team_ids?.length || 0} Teams`}
-                        size='small'
-                        color='primary'
-                        className='text-xs'
-                      />
-                      <Chip
-                        label={`${attributes.driver_ids?.length || 0} Drivers`}
-                        size='small'
-                        color='info'
-                        className='text-xs'
-                      />
-                    </Box>
-                  </Box>
-                }
-              />
+                  }
+                />
+                <Chip
+                  label={`${attributes.team_ids?.length || 0} Teams`}
+                  size='small'
+                  color='primary'
+                  className='text-xs'
+                />
+              </Box>
             </ListItem>
             {index < hubs.length - 1 && <Divider />}
           </Box>

@@ -2,12 +2,11 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import LinearProgress from '@mui/material/LinearProgress'
-import Grid from '@mui/material/Grid2'
 
-const TaskStatusChart = ({ data }) => {
-  const total = data.reduce((sum, item) => sum + item.count, 0)
+const TaskStatusChart = ({ data, total }) => {
+  const totalCount = typeof total === 'number' ? total : 0
 
-  if (total === 0) {
+  if (totalCount === 0) {
     return (
       <Box className='text-center py-8'>
         <Typography variant='body2' className='text-textSecondary'>
@@ -20,7 +19,7 @@ const TaskStatusChart = ({ data }) => {
   return (
     <Box>
       {data.map((item, index) => {
-        const percentage = total > 0 ? (item.count / total) * 100 : 0
+        const percentage = totalCount > 0 ? (item.count / totalCount) * 100 : 0
 
         return (
           <Box key={index} className='mb-3'>

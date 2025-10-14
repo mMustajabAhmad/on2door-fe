@@ -22,6 +22,10 @@ const ActiveTasksTable = ({ tasks }) => {
     )
   }
 
+  const getRecipientName = attrs =>
+    attrs?.recipient_attributes?.name || (attrs?.recipient_id ? `#${attrs.recipient_id}` : 'N/A')
+  const getDriverName = attrs => (attrs?.driver_id ? `ID ${attrs.driver_id}` : 'Unassigned')
+
   return (
     <TableContainer>
       <Table>
@@ -45,10 +49,10 @@ const ActiveTasksTable = ({ tasks }) => {
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant='body2'>{attributes.recipient_name || 'N/A'}</Typography>
+                  <Typography variant='body2'>{getRecipientName(attributes)}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant='body2'>{attributes.driver_name || 'Unassigned'}</Typography>
+                  <Typography variant='body2'>{getDriverName(attributes)}</Typography>
                 </TableCell>
                 <TableCell>
                   <Chip label='active' size='small' color={ACTIVE_COLOR} />
