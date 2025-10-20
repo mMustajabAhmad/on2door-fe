@@ -39,8 +39,8 @@ const schema = object({
   street: pipe(string(), nonEmpty('Street is required')),
   city: pipe(string(), nonEmpty('City is required')),
   country: pipe(string(), nonEmpty('Country is required')),
-  state: optional(string()),
-  postal_code: optional(string()),
+  state: pipe(string(), nonEmpty('State is required')),
+  postal_code: pipe(string(), nonEmpty('Postal code is required')),
   team_ids: optional(array(string()))
 })
 
@@ -229,7 +229,16 @@ return Array.isArray(queryKey) && (queryKey[0] === 'hub' || queryKey[0] === 'hub
               <Controller
                 name='state'
                 control={control}
-                render={({ field }) => <TextField {...field} fullWidth label='State/Province' disabled={isPending} />}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='State/Province'
+                    error={!!errors.state}
+                    helperText={errors.state?.message}
+                    disabled={isPending}
+                  />
+                )}
               />
             </Grid>
 
@@ -237,7 +246,16 @@ return Array.isArray(queryKey) && (queryKey[0] === 'hub' || queryKey[0] === 'hub
               <Controller
                 name='postal_code'
                 control={control}
-                render={({ field }) => <TextField {...field} fullWidth label='Postal Code' disabled={isPending} />}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label='Postal Code'
+                    error={!!errors.postal_code}
+                    helperText={errors.postal_code?.message}
+                    disabled={isPending}
+                  />
+                )}
               />
             </Grid>
 
