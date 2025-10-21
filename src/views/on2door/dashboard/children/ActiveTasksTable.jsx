@@ -9,8 +9,6 @@ import Typography from '@mui/material/Typography'
 import Chip from '@mui/material/Chip'
 import Box from '@mui/material/Box'
 
-const ACTIVE_COLOR = 'warning'
-
 const ActiveTasksTable = ({ tasks }) => {
   if (!tasks || tasks.length === 0) {
     return (
@@ -55,7 +53,7 @@ const ActiveTasksTable = ({ tasks }) => {
                   <Typography variant='body2'>{getDriverName(attributes)}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Chip label='active' size='small' color={ACTIVE_COLOR} />
+                  <Chip label='Active' size='small' color='success' />
                 </TableCell>
                 <TableCell>
                   <Typography variant='body2' className='text-textSecondary'>

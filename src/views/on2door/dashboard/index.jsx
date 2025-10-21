@@ -151,11 +151,11 @@ const On2DoorDashboard = () => {
             <TaskStatusChart
               total={totalTasks}
               data={[
-                { status: 'Active', count: activeTasks, color: '#ff9800' },
+                { status: 'Active', count: activeTasks, color: '#56CA01' },
                 { status: 'Assigned', count: assignedTasksCount, color: '#2196f3' },
-                { status: 'Unassigned', count: unassignedTasks, color: '#f44336' },
-                { status: 'Completed', count: completedTasks, color: '#4caf50' },
-                { status: 'Failed', count: failedTasks, color: '#9c27b0' }
+                { status: 'Unassigned', count: unassignedTasks, color: '#9c27b0' },
+                { status: 'Completed', count: completedTasks, color: '#009688' },
+                { status: 'Failed', count: failedTasks, color: '#f44336' }
               ]}
             />
           </CardContent>
