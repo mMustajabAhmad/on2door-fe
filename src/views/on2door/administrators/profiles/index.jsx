@@ -58,6 +58,7 @@ const ProfilePage = ({ userId }) => {
   useEffect(() => {
     if (userData) {
       const user = userData?.administrator?.data?.attributes || {}
+
       reset({
         email: user.email || '',
         first_name: user.first_name || '',

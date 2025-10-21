@@ -23,6 +23,7 @@ const ActiveDriversList = ({ drivers }) => {
     <List>
       {drivers.map((driver, index) => {
         const attributes = driver.attributes || {}
+
         return (
           <ListItem key={driver.id} className='px-0'>
             <ListItemAvatar>
