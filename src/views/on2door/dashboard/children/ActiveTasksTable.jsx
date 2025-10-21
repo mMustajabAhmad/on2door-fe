@@ -24,6 +24,7 @@ const ActiveTasksTable = ({ tasks }) => {
 
   const getRecipientName = attrs =>
     attrs?.recipient_attributes?.name || (attrs?.recipient_id ? `#${attrs.recipient_id}` : 'N/A')
+
   const getDriverName = attrs => (attrs?.driver_id ? `ID ${attrs.driver_id}` : 'Unassigned')
 
   return (
@@ -41,6 +42,7 @@ const ActiveTasksTable = ({ tasks }) => {
         <TableBody>
           {tasks.map(task => {
             const attributes = task.attributes || {}
+
             return (
               <TableRow key={task.id}>
                 <TableCell>

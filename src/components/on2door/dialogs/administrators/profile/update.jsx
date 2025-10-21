@@ -77,6 +77,7 @@ const EditProfileDialog = ({ open, setOpen, currentUser }) => {
       queryClient.invalidateQueries({
         predicate: query => {
           const queryKey = query.queryKey
+
           return Array.isArray(queryKey) && (queryKey[0] === 'administrator' || queryKey[0] === 'administrators')
         }
       })

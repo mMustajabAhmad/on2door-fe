@@ -17,7 +17,7 @@ const FormWizard = () => {
       <Grid size={{ xs: 12 }}>
         <Typography variant='h4'>Stepper</Typography>
         <Typography>
-          Please refer to MUI&#39;s official docs for more details on component&#39;s{' '}
+          Please refer to MUI&apos;s official docs for more details on component&apos;s{' '}
           <Link
             href='https://mui.com/material-ui/react-stepper'
             target='_blank'
