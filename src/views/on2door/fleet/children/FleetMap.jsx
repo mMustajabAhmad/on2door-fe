@@ -19,27 +19,31 @@ const FleetMap = props => {
   const mapRef = useRef()
   const { drivers, isConnected } = useRealTimeDrivers()
 
+  const lastFetchRef = useRef(new Map())
+  const inFlightRef = useRef(new Set())
+
+  const ROUTE_REFRESH_MS = 10000
+
   // State for routes
   const [routes, setRoutes] = useState(new Map())
-
-  // HEX color per driver
-  const colorPalette = [
-    '#F59E0B',
-    '#10B981',
-    '#3B82F6',
-    '#8B5CF6',
-    '#EC4899',
-    '#14B8A6',
-    '#84CC16',
-    '#A855F7',
-    '#F97316'
-  ]
 
   const getColorForDriver = useCallback(driverId => {
     const idNum = Math.abs(parseInt(driverId, 10) || 0)
 
-    
-return colorPalette[idNum % colorPalette.length]
+    // HEX color per driver
+    const colorPalette = [
+      '#F59E0B',
+      '#10B981',
+      '#3B82F6',
+      '#8B5CF6',
+      '#EC4899',
+      '#14B8A6',
+      '#84CC16',
+      '#A855F7',
+      '#F97316'
+    ]
+
+    return colorPalette[idNum % colorPalette.length]
   }, [])
 
   // Function to fetch route from Mapbox Directions API
@@ -65,8 +69,8 @@ return colorPalette[idNum % colorPalette.length]
         }
       } catch (error) {
         alert('Route fetch failed. Showing live location only.')
-        
-return null
+
+        return null
       }
     },
     [mapboxAccessToken]
@@ -75,9 +79,29 @@ return null
   //update route for a driver
   const updateDriverRoute = useCallback(
     async (driverId, driverLat, driverLng, destLat, destLng) => {
-      const route = await fetchRoute(driverLat, driverLng, destLat, destLng)
+      if (!driverId) return
 
-      if (route) setRoutes(prev => new Map(prev.set(driverId, route)))
+      const now = Date.now()
+      const last = lastFetchRef.current.get(driverId)
+
+      if (typeof destLat !== 'number' || typeof destLng !== 'number') return
+
+      if (last && now - last.ts < ROUTE_REFRESH_MS) {
+        return
+      }
+
+      if (inFlightRef.current.has(driverId)) return
+
+      inFlightRef.current.add(driverId)
+
+      try {
+        const route = await fetchRoute(driverLat, driverLng, destLat, destLng)
+
+        if (route) setRoutes(prev => new Map(prev.set(driverId, route)))
+        lastFetchRef.current.set(driverId, { ts: now })
+      } finally {
+        inFlightRef.current.delete(driverId)
+      }
     },
     [fetchRoute]
   )
@@ -85,7 +109,12 @@ return null
   // Update routes when drivers change
   useEffect(() => {
     drivers.forEach(driver => {
-      if (driver.destination && driver.destination.dest_lat && driver.destination.dest_lng) {
+      if (
+        driver &&
+        driver.destination &&
+        typeof driver.destination.dest_lat === 'number' &&
+        typeof driver.destination.dest_lng === 'number'
+      ) {
         updateDriverRoute(
           driver.id,
           driver.latitude,
@@ -158,8 +187,7 @@ return null
           const isSelected = selectedDriver?.id === driver.id
           const markerColor = getColorForDriver(driver.id)
 
-          
-return (
+          return (
             <div key={driver.id || index}>
               {/* Driver marker */}
               <Marker
