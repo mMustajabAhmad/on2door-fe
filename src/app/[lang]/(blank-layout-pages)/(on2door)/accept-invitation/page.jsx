@@ -48,8 +48,7 @@ const AcceptInvitationPage = () => {
     if (!token || !email) {
       setErrorState({ message: 'Invalid invitation link. Missing token or email.' })
       setIsLoading(false)
-      
-return
+      return
     }
 
     setInvitationData({ token, email })
@@ -57,30 +56,16 @@ return
   }, [searchParams])
 
   const handleInvitation = async (payload) => {
-    let adminError = null
-    let driverError = null
-
     try {
-      const response = await acceptAdministratorInvitationApi(payload)
-
-      
-return response
-    } catch (error) {
-      adminError = error
+      return await acceptAdministratorInvitationApi(payload)
+    } catch (adminError) {
+      try {
+        return await acceptDriverInvitationApi(payload)
+      } catch (driverError) {
+        if (driverError.response?.data?.error) throw driverError
+        throw new Error('Failed to accept invitation.')
+      }
     }
-
-    try {
-      const response = await acceptDriverInvitationApi(payload)
-
-      
-return response
-    } catch (error) {
-      driverError = error
-    }
-
-    const errorMessage = 'Invalid invitation. This invitation may have expired, been used already, or the email address may not be associated with any pending invitations.'
-
-    throw new Error(errorMessage)
   }
 
   // Accept invitation mutation
@@ -108,14 +93,14 @@ return response
 
     if (password !== confirmPassword) {
       setErrorState({ message: 'Passwords do not match' })
-      
-return
+      return
     }
 
     const payload = {
       invitation_token: invitationData.token,
       email: invitationData.email,
-      password: password
+      password,
+      password_confirmation: confirmPassword
     }
 
     acceptInvitation(payload)
@@ -144,16 +129,18 @@ return
   return (
     <Box className='flex flex-col gap-5 max-w-[480px] mx-auto p-6'>
       <Typography variant='h4'>Accept Invitation</Typography>
-      {invitationData?.email ? <Typography color='text.secondary'>for {invitationData.email}</Typography> : null}
+      {invitationData?.email && (<Typography color='text.secondary'>for {invitationData.email}</Typography>)} 
 
       {success && <Alert severity='success'>Invitation accepted successfully! Redirecting to login...</Alert>}
 
       {errorState && (
         <Alert severity='error'>
-          {errorState?.response?.data?.error ||
-            errorState?.response?.data?.message ||
-            errorState?.message ||
-            'Failed to accept invitation. Please try again.'}
+          {Array.isArray(errorState?.response?.data?.error)
+            ? errorState.response.data.error.join(', ')
+            : errorState?.response?.data?.error ||
+              errorState?.response?.data?.message ||
+              errorState?.message ||
+              'Something went wrong.'}
         </Alert>
       )}
 
