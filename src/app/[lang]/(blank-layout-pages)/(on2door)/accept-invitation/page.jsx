@@ -48,6 +48,7 @@ const AcceptInvitationPage = () => {
     if (!token || !email) {
       setErrorState({ message: 'Invalid invitation link. Missing token or email.' })
       setIsLoading(false)
+
       return
     }
 
@@ -93,6 +94,7 @@ const AcceptInvitationPage = () => {
 
     if (password !== confirmPassword) {
       setErrorState({ message: 'Passwords do not match' })
+
       return
     }
 
