@@ -1,6 +1,9 @@
 'use client'
 
+// React Imports
 import { useState } from 'react'
+
+// Next Imports
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -54,6 +57,7 @@ const ResetPassword = ({ token, email }) => {
 
   const onSubmit = e => {
     e.preventDefault()
+
     const payload = {
       administrator: {
         reset_password_token: token,
@@ -61,6 +65,7 @@ const ResetPassword = ({ token, email }) => {
         password_confirmation: passwordConfirmation
       }
     }
+
     resetPassword(payload)
   }
 

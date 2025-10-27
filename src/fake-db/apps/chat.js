@@ -38,7 +38,7 @@ export const db = {
       fullName: 'Joaquina Weisenborn',
       role: 'Town planner',
       about:
-        'Soufflé soufflé caramels sweet roll. Jelly lollipop sesame snaps bear claw jelly beans sugar plum sugar plum.',
+        'Souffl\u00e9 souffl\u00e9 caramels sweet roll. Jelly lollipop sesame snaps bear claw jelly beans sugar plum sugar plum.',
       avatar: '/images/avatars/8.png',
       status: 'busy'
     },
@@ -73,7 +73,7 @@ export const db = {
       fullName: 'Miguel Guelff',
       role: 'Special educational needs teacher',
       about:
-        'Biscuit powder oat cake donut brownie ice cream I love soufflé. I love tootsie roll I love powder tootsie roll.',
+        'Biscuit powder oat cake donut brownie ice cream I love souffl\u00e9. I love tootsie roll I love powder tootsie roll.',
       avatar: '/images/avatars/7.png',
       status: 'online'
     },
@@ -108,7 +108,7 @@ export const db = {
       fullName: 'Lashawna Gotschall',
       role: 'Therapist, sports',
       about:
-        'Soufflé soufflé caramels sweet roll. Jelly lollipop sesame snaps bear claw jelly beans sugar plum sugar plum.',
+        'Souffl\u00e9 souffl\u00e9 caramels sweet roll. Jelly lollipop sesame snaps bear claw jelly beans sugar plum sugar plum.',
       avatarColor: 'info',
       status: 'online'
     },
@@ -143,7 +143,7 @@ export const db = {
       fullName: 'Lauran Starner',
       role: 'AI specialist',
       about:
-        'Soufflé soufflé caramels sweet roll. Jelly lollipop sesame snaps bear claw jelly beans sugar plum sugar plum.',
+        'Souffl\u00e9 souffl\u00e9 caramels sweet roll. Jelly lollipop sesame snaps bear claw jelly beans sugar plum sugar plum.',
       avatarColor: 'warning',
       status: 'online'
     },

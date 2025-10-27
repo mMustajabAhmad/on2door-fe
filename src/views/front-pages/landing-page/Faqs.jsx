@@ -26,7 +26,7 @@ const FaqsData = [
     id: 'panel1',
     question: 'Do you charge for each upgrade?',
     answer:
-      'Lemon drops chocolate cake gummies carrot cake chupa chups muffin topping. Sesame snaps icing marzipan gummi bears macaroon dragée danish caramels powder. Bear claw dragée pastry topping soufflé. Wafer gummi bears marshmallow pastry pie.'
+      'Lemon drops chocolate cake gummies carrot cake chupa chups muffin topping. Sesame snaps icing marzipan gummi bears macaroon drag\u00e9e danish caramels powder. Bear claw drag\u00e9e pastry topping souffl\u00e9. Wafer gummi bears marshmallow pastry pie.'
   },
   {
     id: 'panel2',

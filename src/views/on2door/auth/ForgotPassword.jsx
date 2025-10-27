@@ -1,5 +1,8 @@
 'use client'
 
+// React Imports
+import { useState } from 'react'
+
 // Next Imports
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
@@ -13,7 +16,6 @@ import Alert from '@mui/material/Alert'
 // Third-party Imports
 import classnames from 'classnames'
 import { useMutation } from '@tanstack/react-query'
-import { useState } from 'react'
 
 // Component Imports
 import Logo from '@components/layout/shared/Logo'
@@ -69,7 +71,9 @@ const ForgotPasswordV2 = ({ mode }) => {
 
   const onSubmit = e => {
     e.preventDefault()
+
     const payload = { administrator: { email } }
+
     requestReset(payload)
   }
 

@@ -9,6 +9,7 @@ export const metadata = {
 const ResetPasswordPage = async ({ searchParams }) => {
   const token = (await searchParams)?.reset_password_token || ''
   const email = (await searchParams)?.email || ''
+
   return <ResetPassword token={token} email={email} />
 }
 

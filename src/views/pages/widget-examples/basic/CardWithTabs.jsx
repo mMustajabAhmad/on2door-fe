@@ -45,7 +45,7 @@ const CardWithTabs = () => {
               Header Two
             </Typography>
             <Typography className='mbe-6'>
-              Dragée chupa chups soufflé cheesecake jelly tootsie roll cupcake marzipan. Carrot cake sweet roll gummi
+              Drag\u00e9e chupa chups souffl\u00e9 cheesecake jelly tootsie roll cupcake marzipan. Carrot cake sweet roll gummi
               bears caramels jelly beans.
             </Typography>
             <Button variant='contained'>Button Two</Button>
@@ -55,7 +55,7 @@ const CardWithTabs = () => {
               Header Three
             </Typography>
             <Typography className='mbe-6'>
-              Icing cake macaroon macaroon jelly chocolate bar. Chupa chups dessert dessert soufflé chocolate bar
+              Icing cake macaroon macaroon jelly chocolate bar. Chupa chups dessert dessert souffl\u00e9 chocolate bar
               jujubes gummi bears lollipop.
             </Typography>
             <Button variant='contained'>Button Three</Button>
