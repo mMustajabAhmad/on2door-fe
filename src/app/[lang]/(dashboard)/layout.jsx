@@ -15,7 +15,7 @@ import Header from '@components/layout/horizontal/Header'
 
 // import Navbar from '@components/layout/vertical/Navbar'
 import TopBar from '@/components/on2door/vertical/TopBar'
-import VerticalFooter from '@components/layout/vertical/Footer'
+import VerticalFooter from '@components/on2door/vertical/Footer'
 import HorizontalFooter from '@components/layout/horizontal/Footer'
 import Customizer from '@core/components/customizer'
 import ScrollToTop from '@core/components/scroll-to-top'
