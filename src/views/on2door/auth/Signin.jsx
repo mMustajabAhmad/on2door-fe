@@ -204,7 +204,7 @@ const Login = ({ mode }) => {
                     if (errorState) setErrorState(null)
                   }}
                   {...(errors.email && { error: true, helperText: errors.email.message })}
-                />
+                /> 
               )}
             />
 
@@ -221,20 +221,22 @@ const Login = ({ mode }) => {
                     field.onChange(e.target.value)
                     if (errorState) setErrorState(null)
                   }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position='end'>
-                        <IconButton
-                          size='small'
-                          edge='end'
-                          onClick={handleClickShowPassword}
-                          onMouseDown={e => e.preventDefault()}
-                          aria-label='toggle password visibility'
-                        >
-                          <i className={isPasswordShown ? 'ri-eye-off-line' : 'ri-eye-line'} />
-                        </IconButton>
-                      </InputAdornment>
-                    )
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position='end'>
+                          <IconButton
+                            size='small'
+                            edge='end'
+                            onClick={handleClickShowPassword}
+                            onMouseDown={e => e.preventDefault()}
+                            aria-label='toggle password visibility'
+                          >
+                            <i className={isPasswordShown ? 'ri-eye-off-line' : 'ri-eye-line'} />
+                          </IconButton>
+                        </InputAdornment>
+                      )
+                    }
                   }}
                   {...(errors.password && { error: true, helperText: errors.password.message })}
                 />

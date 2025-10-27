@@ -13,7 +13,7 @@ export const db = {
     {
       id: 2,
       location: 302781,
-      startCity: 'Köln',
+      startCity: 'K\u00f6ln',
       startCountry: 'Germany',
       endCity: 'Laspezia',
       endCountry: 'Italy',
@@ -23,7 +23,7 @@ export const db = {
     {
       id: 3,
       location: 715822,
-      startCity: 'Chambray-lès-Tours',
+      startCity: 'Chambray-l\u00e8s-Tours',
       startCountry: 'France',
       endCity: 'Hamm',
       endCountry: 'Germany',
@@ -53,7 +53,7 @@ export const db = {
     {
       id: 6,
       location: 480957,
-      startCity: 'Villefranche-sur-Saône',
+      startCity: 'Villefranche-sur-Sa\u00f4ne',
       startCountry: 'France',
       endCity: 'Halle',
       endCountry: 'Germany',
@@ -75,7 +75,7 @@ export const db = {
       location: 595525,
       startCity: 'Fullerton',
       startCountry: 'USA',
-      endCity: 'Lübeck',
+      endCity: 'L\u00fcbeck',
       endCountry: 'Germany',
       warnings: 'No Warnings',
       progress: 100
@@ -95,7 +95,7 @@ export const db = {
       location: 706085,
       startCity: 'Fort Wayne',
       startCountry: 'USA',
-      endCity: 'Mülheim an der Ruhr',
+      endCity: 'M\u00fclheim an der Ruhr',
       endCountry: 'Germany',
       warnings: 'Oil Leakage',
       progress: 49
@@ -165,7 +165,7 @@ export const db = {
       location: 318119,
       startCity: 'Mundolsheim',
       startCountry: 'France',
-      endCity: 'München',
+      endCity: 'M\u00fcnchen',
       endCountry: 'Germany',
       warnings: 'No Warnings',
       progress: 26
@@ -183,7 +183,7 @@ export const db = {
     {
       id: 19,
       location: 469399,
-      startCity: 'München',
+      startCity: 'M\u00fcnchen',
       startCountry: 'Germany',
       endCity: 'Ath',
       endCountry: 'Belgium',
@@ -213,7 +213,7 @@ export const db = {
     {
       id: 22,
       location: 882341,
-      startCity: 'Cesson-Sévigné',
+      startCity: 'Cesson-S\u00e9vign\u00e9',
       startCountry: 'France',
       endCity: 'Napoli',
       endCountry: 'Italy',

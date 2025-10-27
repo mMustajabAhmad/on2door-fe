@@ -250,3 +250,16 @@ export function destroySubscheduleApi(id) {
     .delete(`/administrators/subschedules/${id}`)
     .then(response => response.data)
 }
+
+// Password Reset
+export function requestPasswordResetApi(payload) {
+  return client()
+    .post('/administrator/password', payload)
+    .then(response => response.data)
+}
+
+export function resetPasswordApi(payload) {
+  return client()
+    .put('/administrator/password', payload)
+    .then(response => response.data)
+}
