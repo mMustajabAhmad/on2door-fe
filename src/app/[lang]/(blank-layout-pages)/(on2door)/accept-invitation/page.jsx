@@ -44,6 +44,7 @@ const AcceptInvitationPage = () => {
   useEffect(() => {
     const token = searchParams.get('invitation_token')
     const email = searchParams.get('email')
+    const role = searchParams.get('role')
 
     if (!token || !email) {
       setErrorState({ message: 'Invalid invitation link. Missing token or email.' })
@@ -52,20 +53,15 @@ const AcceptInvitationPage = () => {
       return
     }
 
-    setInvitationData({ token, email })
+    setInvitationData({ token, email, role })
     setIsLoading(false)
   }, [searchParams])
 
   const handleInvitation = async (payload) => {
-    try {
+    if (invitationData?.role === 'admin' || invitationData?.role === 'dispatcher') {
       return await acceptAdministratorInvitationApi(payload)
-    } catch (adminError) {
-      try {
-        return await acceptDriverInvitationApi(payload)
-      } catch (driverError) {
-        if (driverError.response?.data?.error) throw driverError
-        throw new Error('Failed to accept invitation.')
-      }
+    } else {
+      return await acceptDriverInvitationApi(payload)
     }
   }
 
@@ -131,7 +127,11 @@ const AcceptInvitationPage = () => {
   return (
     <Box className='flex flex-col gap-5 max-w-[480px] mx-auto p-6'>
       <Typography variant='h4'>Accept Invitation</Typography>
-      {invitationData?.email && (<Typography color='text.secondary'>for {invitationData.email}</Typography>)} 
+      {invitationData?.email && (
+        <Typography color='text.secondary'>
+          for {invitationData.email} ({invitationData?.role || 'user'})
+        </Typography>
+      )} 
 
       {success && <Alert severity='success'>Invitation accepted successfully! Redirecting to login...</Alert>}
 
@@ -154,6 +154,7 @@ const AcceptInvitationPage = () => {
           onChange={e => setPassword(e.target.value)}
           disabled={isPending}
           fullWidth
+          required
           slotProps={{
             input: {
               endAdornment: (
@@ -180,6 +181,7 @@ const AcceptInvitationPage = () => {
           onChange={e => setConfirmPassword(e.target.value)}
           disabled={isPending}
           fullWidth
+          required
           slotProps={{
             input: {
               endAdornment: (
