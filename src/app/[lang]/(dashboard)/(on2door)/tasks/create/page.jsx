@@ -32,7 +32,7 @@ import CardHeader from '@mui/material/CardHeader'
 // Third-party Imports
 import { Controller, useForm } from 'react-hook-form'
 import { valibotResolver } from '@hookform/resolvers/valibot'
-import { object, string, pipe, nonEmpty, optional, array, boolean, number } from 'valibot'
+import { object, string, pipe, nonEmpty, optional, array, boolean, number, email } from 'valibot'
 import { toast } from 'react-toastify'
 
 // API Imports
@@ -62,6 +62,7 @@ const schema = object({
   }),
   recipient_attributes: object({
     name: pipe(string(), nonEmpty('Recipient name is required')),
+    email: pipe(string(), email('Invalid email address')),
     phone_number: pipe(string(), nonEmpty('Phone number is required'))
   }),
   address_attributes: object({
@@ -107,6 +108,7 @@ const CreateTaskPage = () => {
       },
       recipient_attributes: {
         name: '',
+        email: '',
         phone_number: ''
       },
       address_attributes: {
@@ -460,6 +462,23 @@ return (
                       label='Recipient Name *'
                       error={!!errors.recipient_attributes?.name}
                       helperText={errors.recipient_attributes?.name?.message}
+                      disabled={isPending}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Controller
+                  name='recipient_attributes.email'
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label='Email *'
+                      error={!!errors.recipient_attributes?.email}
+                      helperText={errors.recipient_attributes?.email?.message}
                       disabled={isPending}
                     />
                   )}
