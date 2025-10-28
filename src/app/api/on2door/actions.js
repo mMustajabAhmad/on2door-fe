@@ -263,3 +263,9 @@ export function resetPasswordApi(payload) {
     .put('/administrator/password', payload)
     .then(response => response.data)
 }
+
+export function getPublicTaskApi(shortId) {
+  return client()
+    .get(`/customers/tasks/${shortId}`)
+    .then(response => response.data)
+}
