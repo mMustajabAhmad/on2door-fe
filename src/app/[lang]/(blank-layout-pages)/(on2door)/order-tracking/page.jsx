@@ -6,8 +6,9 @@ export const metadata = {
   description: 'Track your delivery order in real-time'
 }
 
-const OrderTrackingPage = ({ searchParams }) => {
-  const taskShortId = searchParams?.task_short_id || ''
+const OrderTrackingPage = async ({ searchParams }) => {
+  const params = await searchParams
+  const taskShortId = params?.task_short_id || ''
 
   return <OrderTracking taskShortId={taskShortId}/>
 }
